@@ -6,6 +6,7 @@
 
 
 class Window;
+class Pipeline;
 
 
 class Base {
@@ -24,6 +25,7 @@ public:
 
 private:
     std::shared_ptr<Window> mainWindow;
+    std::shared_ptr<Pipeline> pipeline;
 };
 
 

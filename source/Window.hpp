@@ -9,7 +9,11 @@ class Window {
 public:
     Window();
 
+    Window(const Window &) = delete;
+
     Window(const char* name, int width, int height);
+
+    Window &operator=(const Window &) = delete;
 
     ~Window();
 
@@ -19,7 +23,6 @@ public:
 
 private:
     GLFWwindow* window{};
-    bool clean{};
 };
 
 

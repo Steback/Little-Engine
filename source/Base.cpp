@@ -1,9 +1,11 @@
 #include "Base.hpp"
 
-#include "fstream"
+#include <fstream>
+
+#include <nlohmann/json.hpp>
 
 #include "Window.hpp"
-#include <nlohmann/json.hpp>
+#include "pipeline/Pipeline.hpp"
 
 using json = nlohmann::json;
 
@@ -18,6 +20,7 @@ Base::Base()  {
 
     mainWindow = std::make_shared<Window>(config["title"].get<std::string>().c_str(), config["width"].get<int>(),
                                           config["height"].get<int>());
+    pipeline = std::make_shared<Pipeline>("model.vert.spv", "model.frag.spv");
 
     setup();
 }

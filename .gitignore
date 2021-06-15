@@ -16,3 +16,9 @@ Engine
 
 ### JetBrains
 .idea/
+
+### Shader
+*.spv
+
+### Python
+venv/

@@ -5,11 +5,14 @@
 
 ### CMake
 build/
-build-debug-cmake/
-build-release-cmake/
+cmake-build-debug/
+cmake-build-release/
 
 ### Binaries
 Engine
 
 ### VS Code
 .vscode/
+
+### JetBrains
+.idea/

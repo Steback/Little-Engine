@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.18)
+project(LittleEngine)
+
+set(CMAKE_CXX_STANDARD 20)
+
+# Binary output
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+
+# Conan
+set(CONAN_DISABLE_CHECK_COMPILER OFF)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup(NO_OUTPUT_DIRS)
+
+# Source code and link
+add_subdirectory(source)
+
+target_link_libraries(Engine ${CONAN_LIBS} ${VALIDATION_LAYERS})

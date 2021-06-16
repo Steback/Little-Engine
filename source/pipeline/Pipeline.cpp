@@ -22,7 +22,7 @@ std::vector<char> Pipeline::readFile(const std::string &name) {
     std::filesystem::path path(SHADERS_DIR + name);
 
     if (!exists(path)) {
-        spdlog::error("{} doesn't exist", name);
+        spdlog::error("{} doesn't exist", path.string());
         return std::vector<char>();
     } else {
         std::ifstream file(path, std::ios::ate | std::ios::binary);

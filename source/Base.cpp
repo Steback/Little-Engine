@@ -5,6 +5,7 @@
 #include <nlohmann/json.hpp>
 
 #include "Window.hpp"
+#include "Device.hpp"
 #include "pipeline/Pipeline.hpp"
 
 using json = nlohmann::json;
@@ -20,6 +21,7 @@ Base::Base()  {
 
     mainWindow = std::make_shared<Window>(config["title"].get<std::string>().c_str(), config["width"].get<int>(),
                                           config["height"].get<int>());
+    device = std::make_shared<Device>(mainWindow);
     pipeline = std::make_shared<Pipeline>("model.vert.spv", "model.frag.spv");
 
     setup();
@@ -27,6 +29,7 @@ Base::Base()  {
 
 Base::~Base() {
     destroy();
+    device->destroy();
     mainWindow->destroy();
 }
 
@@ -43,7 +46,7 @@ void Base::destroy() {
 }
 
 void Base::loop() {
-    while (mainWindow->open()) {
+    while (mainWindow->isOpen()) {
         glfwPollEvents();
         update();
     }

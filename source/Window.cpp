@@ -5,7 +5,7 @@
 
 Window::Window() = default;
 
-Window::Window(const char *name, int width, int height) {
+Window::Window(const char *name, int width, int height) : name(name), width(width), height(height) {
     if (!glfwInit())
         spdlog::error("Failed to init GLFW");
 
@@ -23,6 +23,23 @@ void Window::destroy() {
     glfwTerminate();
 }
 
-bool Window::open() {
+bool Window::isOpen() {
     return !glfwWindowShouldClose(window);
+}
+
+int Window::getWidth() const {
+    return width;
+}
+
+int Window::getHeight() const {
+    return height;
+}
+
+vk::SurfaceKHR Window::createSurface(const vk::Instance &instance) {
+    VkSurfaceKHR surface;
+
+    if (glfwCreateWindowSurface(instance, window, nullptr, &surface))
+        spdlog::error("Failed to create surface to {} window", name);
+
+    return vk::SurfaceKHR(surface);
 }

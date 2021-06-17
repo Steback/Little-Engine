@@ -39,7 +39,7 @@ private:
 
     static bool checkLayers(const std::vector<const char*>& layers, const std::vector<vk::LayerProperties>& properties);
 
-    static bool checkExtensionsSupport(vk::PhysicalDevice& device, const std::vector<const char*>& extensions);
+    static bool checkExtensionsSupport(const vk::PhysicalDevice& device, const std::vector<const char*>& extensions);
 
 private:
     std::shared_ptr<Window> window;
@@ -48,6 +48,7 @@ private:
     vk::PhysicalDevice physicalDevice;
     vk::Device logicalDevice;
     QueueFamilyIndices queueFamilyIndices;
+    vk::SurfaceKHR surface;
 };
 
 

@@ -2,6 +2,8 @@
 
 #include "spdlog/spdlog.h"
 
+#include "Constants.hpp"
+
 
 Window::Window() = default;
 
@@ -39,7 +41,7 @@ vk::SurfaceKHR Window::createSurface(const vk::Instance &instance) {
     VkSurfaceKHR surface;
 
     if (glfwCreateWindowSurface(instance, window, nullptr, &surface))
-        spdlog::error("Failed to create surface to {} window", name);
+       THROW_EX(fmt::format("Failed to create surface to {} window", name))
 
     return vk::SurfaceKHR(surface);
 }

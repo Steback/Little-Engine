@@ -38,6 +38,9 @@ Device::Device(std::shared_ptr<Window> window) : window(std::move(window)) {
 #endif
 
     createInstance(layers);
+
+    surface = this->window->createSurface(instance);
+
     selectPhysicalDevice(extensions);
     createLogicalDevice(extensions, layers);
 }
@@ -50,6 +53,7 @@ void Device::destroy() {
 #endif
 
     logicalDevice.destroy();
+    instance.destroy(surface);
     instance.destroy();
 }
 
@@ -160,7 +164,7 @@ bool Device::checkLayers(const std::vector<const char*>& layers, const std::vect
     });
 }
 
-bool Device::checkExtensionsSupport(vk::PhysicalDevice &device, const std::vector<const char *> &extensions) {
+bool Device::checkExtensionsSupport(const vk::PhysicalDevice &device, const std::vector<const char *> &extensions) {
     std::vector<vk::ExtensionProperties> properties = device.enumerateDeviceExtensionProperties();
 
     return std::all_of(extensions.begin(), extensions.end(), [&properties](const char* name){

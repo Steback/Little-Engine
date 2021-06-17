@@ -13,24 +13,41 @@ class Window;
 
 class Device {
 public:
+    struct QueueFamilyIndices {
+        uint32_t graphics{};
+        uint32_t compute{};
+        uint32_t transfer{};
+    };
+
+public:
     explicit Device(std::shared_ptr<Window> window);
 
     ~Device();
 
     void destroy();
 
+    [[nodiscard]] uint32_t getQueueFamilyIndex(vk::QueueFlags queueFlags) const;
+
 private:
+    void createInstance(const std::vector<const char*>& layers);
+
+    void selectPhysicalDevice(const std::vector<const char*>& extensions);
+
+    void createLogicalDevice(const std::vector<const char*>& extensions, const std::vector<const char*>& layers,
+                             vk::QueueFlags requestedQueueTypes = vk::QueueFlagBits::eGraphics |
+                                     vk::QueueFlagBits::eCompute | vk::QueueFlagBits::eTransfer);
+
     static bool checkLayers(const std::vector<const char*>& layers, const std::vector<vk::LayerProperties>& properties);
 
-    void createInstance();
-
-    void selectPhysicalDevice();
+    static bool checkExtensionsSupport(vk::PhysicalDevice& device, const std::vector<const char*>& extensions);
 
 private:
     std::shared_ptr<Window> window;
     vk::Instance instance;
     vk::DebugUtilsMessengerEXT debugUtilsMessenger;
     vk::PhysicalDevice physicalDevice;
+    vk::Device logicalDevice;
+    QueueFamilyIndices queueFamilyIndices;
 };
 
 

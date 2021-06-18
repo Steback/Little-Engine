@@ -83,6 +83,10 @@ uint32_t Device::getQueueFamilyIndex(vk::QueueFlags queueFlags) const {
     THROW_EX("Could not find a matching queue family index")
 }
 
+vk::Device &Device::getLogicalDevice() {
+    return logicalDevice;
+}
+
 void Device::createInstance(const std::vector<const char*>& layers) {
     vk::ApplicationInfo appInfo("Little Engine", 1, "Little Engine", VK_API_VERSION_1_2);
     std::vector<const char*> extensions = getRequiredExtensions();

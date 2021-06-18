@@ -7,7 +7,7 @@
 
 class Window;
 class Device;
-class Pipeline;
+class GraphicsPipeline;
 
 class Base {
 public:
@@ -24,9 +24,9 @@ public:
     void loop();
 
 private:
-    std::shared_ptr<Window> mainWindow;
+    std::shared_ptr<Window> window;
     std::shared_ptr<Device> device;
-    std::shared_ptr<Pipeline> pipeline;
+    std::shared_ptr<GraphicsPipeline> pipeline;
 };
 
 

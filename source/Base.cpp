@@ -6,7 +6,7 @@
 
 #include "Window.hpp"
 #include "Device.hpp"
-#include "pipeline/Pipeline.hpp"
+#include "pipeline/GraphicsPipeline.hpp"
 
 using json = nlohmann::json;
 
@@ -19,18 +19,20 @@ Base::Base()  {
         file.close();
     }
 
-    mainWindow = std::make_shared<Window>(config["title"].get<std::string>().c_str(), config["width"].get<int>(),
-                                          config["height"].get<int>());
-    device = std::make_shared<Device>(mainWindow);
-    pipeline = std::make_shared<Pipeline>("model.vert.spv", "model.frag.spv");
+    window = std::make_shared<Window>(config["title"].get<std::string>().c_str(), config["width"].get<int>(),
+                                      config["height"].get<int>());
+    device = std::make_shared<Device>(window);
+    pipeline = std::make_shared<GraphicsPipeline>(device, "model.vert.spv", "model.frag.spv",
+                                                  GraphicsPipeline::defaultConfigInfo(window->getWidth(), window->getHeight()));
 
     setup();
 }
 
 Base::~Base() {
     destroy();
+    pipeline->cleanup();
     device->destroy();
-    mainWindow->destroy();
+    window->destroy();
 }
 
 void Base::setup() {
@@ -46,7 +48,7 @@ void Base::destroy() {
 }
 
 void Base::loop() {
-    while (mainWindow->isOpen()) {
+    while (window->isOpen()) {
         glfwPollEvents();
         update();
     }

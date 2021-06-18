@@ -28,6 +28,8 @@ public:
 
     [[nodiscard]] uint32_t getQueueFamilyIndex(vk::QueueFlags queueFlags) const;
 
+    vk::Device& getLogicalDevice();
+
 private:
     void createInstance(const std::vector<const char*>& layers);
 

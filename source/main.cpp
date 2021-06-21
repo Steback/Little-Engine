@@ -1,1 +1,1 @@
-#include "vulkan/vulkan.hpp"#include "spdlog/spdlog.h"#include "Base.hpp"int main() {    std::unique_ptr<Base> engine = std::make_unique<Base>();    try {        engine->loop();    } catch (const std::runtime_error& e) {        spdlog::error(e.what());    }    return 0;}
+#include "vulkan/vulkan.hpp"#include "spdlog/spdlog.h"#include "Base.hpp"int main() {   Base engine = Base();    try {        engine.loop();    } catch (const std::runtime_error& e) {        spdlog::error(e.what());    }    return 0;}

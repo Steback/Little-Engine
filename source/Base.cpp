@@ -6,6 +6,7 @@
 
 #include "Window.hpp"
 #include "Instance.hpp"
+#include "Device.hpp"
 #include "Constants.hpp"
 
 using json = nlohmann::json;
@@ -17,7 +18,8 @@ Base::Base()  {
     file >> config;
     file.close();
 
-    window = std::make_shared<Window>(config["title"].get<std::string>().c_str(), config["width"].get<int>(),
+    auto appName = config["title"].get<std::string>();
+    window = std::make_shared<Window>(appName.c_str(), config["width"].get<int>(),
                                       config["height"].get<int>());
 
     std::vector<const char*> reqLayers;
@@ -26,12 +28,13 @@ Base::Base()  {
 #endif
 
     vk::ApplicationInfo appInfo(
-            "Vulkan Engine",
+            appName.c_str(),
             VK_MAKE_VERSION(0, 0, 1),
             "Custom Engine",
             VK_VERSION_1_2);
 
     instance = std::make_shared<Instance>(appInfo, reqLayers);
+    device = std::make_shared<Device>(window, instance);
 
     setup();
 }

@@ -7,6 +7,7 @@
 
 class Window;
 class Instance;
+class Device;
 
 class Base {
 public:
@@ -25,6 +26,7 @@ public:
 private:
     std::shared_ptr<Window> window;
     std::shared_ptr<Instance> instance;
+    std::shared_ptr<Device> device;
 };
 
 

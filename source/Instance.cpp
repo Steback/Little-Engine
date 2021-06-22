@@ -140,6 +140,28 @@ const vk::Instance &Instance::getHandle() const {
     return instance;
 }
 
+vk::PhysicalDevice Instance::selectPhysicalDevice(const std::vector<const char*>& reqExtensions) {
+    for (auto& device : instance.enumeratePhysicalDevices()) {
+        if (checkExtensionsSupport(device, reqExtensions)) {
+            spdlog::info("GPU: {}", device.getProperties().deviceName);
+
+            return device;
+        }
+    }
+
+    THROW_EX("failed to find a suitable GPU");
+}
+
 void Instance::destroy(const vk::SurfaceKHR &surface) {
     instance.destroy(surface);
+}
+
+bool Instance::checkExtensionsSupport(const vk::PhysicalDevice& device, const std::vector<const char*>& extensions) {
+    std::vector<vk::ExtensionProperties> properties = device.enumerateDeviceExtensionProperties();
+
+    return std::all_of(extensions.begin(), extensions.end(), [&properties](const char* name){
+        return std::find_if(properties.begin(), properties.end(), [&name](const vk::ExtensionProperties& property){
+            return std::strcmp(property.extensionName, name) == 0;
+        }) != properties.end();
+    });
 }

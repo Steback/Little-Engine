@@ -27,7 +27,12 @@ public:
 
     [[nodiscard]] const vk::Instance& getHandle() const;
 
+    vk::PhysicalDevice selectPhysicalDevice(const std::vector<const char*>& reqExtensions);
+
     void destroy(const vk::SurfaceKHR& surface);
+
+private:
+    static bool checkExtensionsSupport(const vk::PhysicalDevice& device, const std::vector<const char*>& extensions);
 
 private:
     vk::Instance instance{};

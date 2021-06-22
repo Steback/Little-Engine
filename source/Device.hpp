@@ -20,7 +20,7 @@ public:
     };
 
 public:
-    explicit Device(const std::shared_ptr<Window>& window, std::shared_ptr<Instance> instance, const std::vector<const char*>& layers,
+    explicit Device(const std::shared_ptr<Window>& window, std::shared_ptr<Instance> instance, const std::vector<const char*>& layers = {},
                     vk::QueueFlags requestedQueueTypes = vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute | vk::QueueFlagBits::eTransfer);
 
     [[nodiscard]] const std::shared_ptr<Instance> &getInstance() const;

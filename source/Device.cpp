@@ -36,9 +36,8 @@ Device::Device(const std::shared_ptr<Window>& window, std::shared_ptr<Instance> 
     if (requestedQueueTypes & vk::QueueFlagBits::eCompute) {
         queueFamilyIndices.compute = getQueueFamilyIndex(vk::QueueFlagBits::eCompute);
 
-        if (queueFamilyIndices.compute != queueFamilyIndices.graphics) {
+        if (queueFamilyIndices.compute != queueFamilyIndices.graphics)
             queueCreateInfos.push_back({{}, queueFamilyIndices.compute, 1, &DEFAULT_QUEUE_PRIORITY});
-        }
     } else {
         queueFamilyIndices.compute = queueFamilyIndices.graphics;
     }
@@ -47,9 +46,8 @@ Device::Device(const std::shared_ptr<Window>& window, std::shared_ptr<Instance> 
         queueFamilyIndices.transfer = getQueueFamilyIndex(vk::QueueFlagBits::eTransfer);
 
         if ((queueFamilyIndices.transfer != queueFamilyIndices.graphics)
-                && (queueFamilyIndices.transfer != queueFamilyIndices.compute)) {
+                && (queueFamilyIndices.transfer != queueFamilyIndices.compute))
             queueCreateInfos.push_back({{}, queueFamilyIndices.transfer, 1, &DEFAULT_QUEUE_PRIORITY});
-        }
     } else {
         queueFamilyIndices.transfer = queueFamilyIndices.graphics;
     }
@@ -103,11 +101,12 @@ uint32_t Device::getQueueFamilyIndex(vk::QueueFlags flags, bool presentSupport) 
 
     for (uint32_t i = 0; i < static_cast<uint32_t>(properties.size()); i++)
         if (properties[i].queueFlags & flags) {
-            if (presentSupport)
+            if (presentSupport) {
                 if (physicalDevice.getSurfaceSupportKHR(i, surface))
                     return i;
-
-            return i;
+            } else {
+                return i;
+            }
         }
 
     THROW_EX("Could not find a matching queue family index")

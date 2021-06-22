@@ -11,7 +11,7 @@
 #ifdef NDEBUG
 #define ERROR_MESSAGE(message) { fmt::format("{}", message) }
 #else
-#define ERROR_MESSAGE(message) { fmt::format("{} {} {}", __FILE__, __LINE__) }
+#define ERROR_MESSAGE(message) { fmt::format("{} {} {}", message, __FILE__, __LINE__) }
 #endif
 
 #define THROW_EX(message) { \

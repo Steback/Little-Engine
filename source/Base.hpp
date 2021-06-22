@@ -6,8 +6,7 @@
 
 
 class Window;
-class Device;
-class GraphicsPipeline;
+class Instance;
 
 class Base {
 public:
@@ -25,8 +24,7 @@ public:
 
 private:
     std::shared_ptr<Window> window;
-    std::shared_ptr<Device> device;
-    std::shared_ptr<GraphicsPipeline> pipeline;
+    std::shared_ptr<Instance> instance;
 };
 
 

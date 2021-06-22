@@ -8,5 +8,6 @@
 #define ENGINE_DEBUG
 #endif
 
+const float DEFAULT_QUEUE_PRIORITY = 0.0f;
 
 #endif //LITTLEENGINE_CONSTANTS_HPP

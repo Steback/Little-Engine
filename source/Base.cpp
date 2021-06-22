@@ -34,13 +34,14 @@ Base::Base()  {
             VK_VERSION_1_2);
 
     instance = std::make_shared<Instance>(appInfo, reqLayers);
-    device = std::make_shared<Device>(window, instance);
+    device = std::make_shared<Device>(window, instance, reqLayers);
 
     setup();
 }
 
 Base::~Base() {
     destroy();
+    device->destroy();
     instance->destroy();
     window->destroy();
 }

@@ -2,8 +2,10 @@
 #define LITTLEVULKANENGINE_WINDOW_HPP
 
 
+#include <string>
+
 #define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+#include "GLFW/glfw3.h"
 
 
 namespace lve {
@@ -18,7 +20,7 @@ namespace lve {
         };
 
     public:
-        Window(int width, int height, const char* name);
+        Window(int width, int height, const std::string& name);
 
         Window(const Window&) = delete;
 
@@ -36,7 +38,7 @@ namespace lve {
 
     private:
         GLFWwindow* window;
-        const char* name{};
+        std::string name{};
         Size size{};
     };
 

@@ -1,5 +1,7 @@
 #include "Window.hpp"
 
+#include "spdlog/spdlog.h"
+
 #include "Tools.hpp"
 
 
@@ -9,22 +11,26 @@ namespace lve {
         return static_cast<float>(width) / static_cast<float>(height);
     }
 
-    Window::Window(int width, int height, const char *name) : size{width, height}, name{name} {
+    Window::Window(int width, int height, const std::string &name) : size{width, height}, name{name} {
         if (!glfwInit())
             THROW_EX(fmt::format("Failed to create window {}", name));
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-        window = glfwCreateWindow(size.width, size.height, this->name, nullptr, nullptr);
+        window = glfwCreateWindow(size.width, size.height, this->name.c_str(), nullptr, nullptr);
+
+        spdlog::info("Open window {}", this->name);
     }
 
-    Window::~Window() {
-        destroy();
-    }
+    Window::~Window() = default;
 
     void Window::destroy() {
-        if (window) glfwDestroyWindow(window);
+        if (window) {
+            spdlog::info("Destroy window {}", this->name);
+
+            glfwDestroyWindow(window);
+        }
 
         glfwTerminate();
     }

@@ -1,5 +1,5 @@
 {
-    "title": "Vulkan Window",
-    "width": 800,
-    "height": 600
+    "appName": "Vulkan Window",
+    "height": 600,
+    "width": 800
 }

@@ -1,1 +1,1 @@
-#include "spdlog/spdlog.h"int main() {    spdlog::info("Hello World!");    return 0;}
+#include "spdlog/spdlog.h"#include "BaseApp.hpp"int main() {    lve::BaseApp app;    try {        app.run();    } catch (const std::runtime_error& e) {        spdlog::error(e.what());    }    return 0;}

@@ -1,0 +1,46 @@
+#ifndef LITTLEVULKANENGINE_WINDOW_HPP
+#define LITTLEVULKANENGINE_WINDOW_HPP
+
+
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+
+
+namespace lve {
+
+    class Window {
+    public:
+        struct Size {
+            int width;
+            int height;
+
+            [[nodiscard]] float aspect() const;
+        };
+
+    public:
+        Window(int width, int height, const char* name);
+
+        Window(const Window&) = delete;
+
+        ~Window();
+
+        Window& operator=(const Window&) = delete;
+
+        void destroy();
+
+        [[nodiscard]] bool shouldClose() const;
+
+        GLFWwindow* getHandle();
+
+        [[nodiscard]] Size getSize() const;
+
+    private:
+        GLFWwindow* window;
+        const char* name{};
+        Size size{};
+    };
+
+} // namespace lve
+
+
+#endif //LITTLEVULKANENGINE_WINDOW_HPP

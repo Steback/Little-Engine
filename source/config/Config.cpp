@@ -3,10 +3,10 @@
 #include <filesystem>
 #include <fstream>
 
-#include "Tools.hpp"
-#include "BaseApp.hpp"
-#include "FileManager.hpp"
-#include "json.hpp"
+#include "../tools/Tools.hpp"
+#include "../BaseApp.hpp"
+#include "../fileManager/FileManager.hpp"
+#include "../tools/json.hpp"
 
 
 namespace lve {

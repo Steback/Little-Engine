@@ -3,9 +3,9 @@
 #include "spdlog/spdlog.h"
 #include "CLI/App.hpp"
 
-#include "Config.hpp"
-#include "Window.hpp"
-#include "FileManager.hpp"
+#include "config/Config.hpp"
+#include "render/Window.hpp"
+#include "fileManager/FileManager.hpp"
 
 
 namespace lve {

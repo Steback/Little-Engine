@@ -1,24 +1,45 @@
 #!/usr/bin/python
 import sys
 import os
+from pathlib import Path
 
-GLSLC = ''
 
-if sys.platform == "linux":
-    GLSLC = '../bin/glslangValidator'
-elif sys.platform == "win32":
-    GLSLC = '../bin/glslangValidator.exe'
-
-SHADERS_DIR = '../shaders/'
-BUILD_DIR = '../bin/shaders/'
+SHADERS_DIR = 'shaders'
+BIN_SHADERS_DIR = 'bin/shaders'
 
 if __name__ == "__main__":
-    print("Compile Shaders!")
+    rootDir = Path('.').absolute()
+    if rootDir.name == "tools":
+        rootDir = rootDir.parent
 
-    if not os.path.exists(BUILD_DIR):
-        os.mkdir(BUILD_DIR)
+    print("Root path:", rootDir)
 
-    for shader in os.listdir(SHADERS_DIR):
-        cmd = GLSLC + ' -V -o ' + (BUILD_DIR + shader + '.spv') + ' ' + (SHADERS_DIR + shader)
-        print(cmd)
-        os.system(cmd)
+    shadersDir = rootDir / SHADERS_DIR
+    if not shadersDir.exists():
+        print("Failed to find shaders dir")
+        exit()
+    else:
+        print("Shaders dir:", shadersDir)
+
+    shadersBinDir = rootDir / BIN_SHADERS_DIR
+    if not shadersBinDir.exists():
+        os.mkdir(shadersBinDir)
+
+    print("Shaders bin dir:", shadersBinDir)
+
+    glslc = ''
+    # TODO: Add Windows .exe file
+    if sys.platform == "linux":
+        glslc = rootDir / 'bin/glslc'
+
+        if not glslc.exists():
+            print("Failed to find glslc file")
+            exit()
+        else:
+            print("glslc file:", glslc, '\n')
+
+    print("COMPILE SHADERS")
+    for file in shadersDir.iterdir():
+        binFile = shadersBinDir / (file.name + '.spv')
+        print(file.name + " >> " + binFile.name)
+        os.system(str(glslc.absolute()) + ' ' + str(file.absolute()) + " -o " + str(binFile.absolute()))

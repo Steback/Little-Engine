@@ -14,7 +14,7 @@ namespace lve {
     Config::Config() = default;
 
     Config::Config(const std::string &fileName) {
-        file = BaseApp::fileManager->getFile(FileDirectory::DATA, fileName);
+        file = BaseApp::fileManager->getFile(BaseApp::fileManager->dataPath() + fileName);
 
         if (!file.empty()) {
             load();

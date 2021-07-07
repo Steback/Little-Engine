@@ -1,5 +1,7 @@
 #include "FileManager.hpp"
 
+#include <fstream>
+
 #include "spdlog/spdlog.h"
 
 #include "../tools/Tools.hpp"
@@ -15,50 +17,62 @@ namespace lve {
 
         spdlog::info("Root path: {}", root.string());
 
-        for (const auto& dir : std::filesystem::directory_iterator(root)) {
-            const std::filesystem::path& path = dir.path();
+        data = root + "data";
+        pathExists(data, "Data");
 
-            if (path.filename() == "data") data = path;
-        }
-
-        if (!exists(data)) {
-            THROW_EX("Data path not exists");
-        } else {
-            spdlog::info("Data path: {}", data.string());
-        }
+        shaders = root + "bin/shaders";
+        pathExists(shaders, "Shaders");
     }
 
     FileManager::~FileManager() = default;
 
-    std::string FileManager::getFile(FileDirectory dir, const std::string& fileName) const {
-        std::filesystem::path path;
-
-        switch (dir) {
-            case ROOT:
-                path = root; path.append(fileName);
-                return (existsFile(path) ? path.string() : "");
-            case DATA:
-                path = data; path.append(fileName);
-                return (existsFile(path) ? path.string() : "");
-        }
-
-        return "";
+    std::filesystem::path FileManager::rootPath() const {
+        return root;
     }
 
-    std::string FileManager::getRoot() const {
-        return root.string();
+    std::filesystem::path FileManager::dataPath() const {
+        return data;
     }
 
-    std::string FileManager::getData() const {
-        return data.string();
+    std::filesystem::path FileManager::shadersPath() const {
+        return shaders;
+    }
+
+    std::string FileManager::getFile(const std::string& fileName) {
+        std::filesystem::path path(fileName);
+        return (existsFile(path) ? path.string() : "");
     }
 
     bool FileManager::existsFile(const std::filesystem::path& path) {
-        if (exists(path)) {
-            return true;
-        } else {
+        bool exist = exists(path);
+
+        if (!exist)
             spdlog::error("File {} not exist", path.string());
-            return false;
+
+        return exist;
+    }
+
+    void FileManager::pathExists(const std::filesystem::path& path, const std::string& name) {
+        if (!exists(path)) {
+            THROW_EX(fmt::format("{} path not exists", name));
+        } else {
+            spdlog::info("{} path: {}", name, path.string());
+        }
+    }
+
+    std::vector<char> FileManager::readFile(const std::string &name) {
+        if (existsFile(name)) {
+            std::ifstream file{name, std::ios::ate | std::ios::binary};
+            size_t fileSize = (size_t)file.tellg();
+            std::vector<char> buffer(fileSize);
+
+            file.seekg(0);
+            file.read(buffer.data(), fileSize);
+            file.close();
+
+            return buffer;
+        } else {
+            return std::vector<char>();
         }
     }
 

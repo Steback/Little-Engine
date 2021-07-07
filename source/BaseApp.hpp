@@ -14,6 +14,7 @@ namespace lve {
     class FileManager;
     class Window;
     class Config;
+    class GraphicsPipeline;
 
     class BaseApp {
     public:
@@ -34,6 +35,7 @@ namespace lve {
 
     private:
         std::shared_ptr<Window> window;
+        std::unique_ptr<GraphicsPipeline> graphicsPipeline;
     };
 
 } // namespace lve

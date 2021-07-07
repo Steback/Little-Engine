@@ -6,6 +6,7 @@
 #include "config/Config.hpp"
 #include "render/Window.hpp"
 #include "fileManager/FileManager.hpp"
+#include "render/pipeline/GraphicsPipeline.hpp"
 
 
 namespace lve {
@@ -22,6 +23,7 @@ namespace lve {
         fileManager = std::make_unique<FileManager>();
         config = std::make_unique<Config>("config.json");
         window = std::make_shared<Window>(config->getWidth(), config->getHeight(), config->getAppName());
+        graphicsPipeline = std::make_unique<GraphicsPipeline>("model");
     }
 
     BaseApp::~BaseApp() = default;
@@ -42,6 +44,7 @@ namespace lve {
     }
 
     void BaseApp::setupCliOptions(CLI::App &cli) {
+        // TODO: Find for a better approach to add cli options dynamically
         cli.add_flag("-v, --validation", "Enable vulkan Validations Layers");
     }
 

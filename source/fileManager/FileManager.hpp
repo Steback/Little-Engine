@@ -3,14 +3,10 @@
 
 
 #include <filesystem>
+#include <vector>
 
 
 namespace lve {
-
-    enum FileDirectory {
-        ROOT,
-        DATA
-    };
 
     class FileManager {
     public:
@@ -18,20 +14,31 @@ namespace lve {
 
         ~FileManager();
 
-        [[nodiscard]] std::string getFile(FileDirectory dir, const std::string& fileName) const;
+        [[nodiscard]] std::filesystem::path rootPath() const;
 
-        [[nodiscard]] std::string getRoot() const;
+        [[nodiscard]] std::filesystem::path dataPath() const;
 
-        [[nodiscard]] std::string getData() const;
+        [[nodiscard]] std::filesystem::path shadersPath() const;
 
-        static bool existsFile(const std::filesystem::path& path) ;
+        [[nodiscard]] static std::string getFile(const std::string& fileName) ;
+
+        static bool existsFile(const std::filesystem::path& path);
+
+        static void pathExists(const std::filesystem::path& path, const std::string& name);
+
+        static std::vector<char> readFile(const std::string& name);
 
     private:
         std::filesystem::path root{};
         std::filesystem::path data{};
+        std::filesystem::path shaders{};
     };
 
 } // namespace lve
+
+inline std::string operator+(const std::filesystem::path& path, const std::string& name) {
+    return (std::filesystem::path(path) /= name).string();
+}
 
 
 #endif //LITTLEVULKANENGINE_FILEMANAGER_HPP

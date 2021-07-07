@@ -4,17 +4,20 @@
 
 #include <memory>
 
-#include "Config.hpp"
 
+namespace CLI {
+    class App;
+}
 
 namespace lve {
 
     class FileManager;
     class Window;
+    class Config;
 
     class BaseApp {
     public:
-        BaseApp();
+        explicit BaseApp(CLI::App& cli);
 
         ~BaseApp();
 
@@ -23,6 +26,8 @@ namespace lve {
         void loop();
 
         void shutdown();
+
+        static void setupCliOptions(CLI::App& cli);
 
         static std::unique_ptr<FileManager> fileManager;
         static std::unique_ptr<Config> config;

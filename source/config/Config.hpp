@@ -5,13 +5,18 @@
 #include <string>
 
 
+namespace CLI {
+    class App;
+}
+
+
 namespace lve {
 
     class Config {
     public:
         Config();
 
-        explicit Config(const std::string& fileName);
+        explicit Config(const std::string& fileName, CLI::App& cli);
 
         void load();
 
@@ -23,11 +28,19 @@ namespace lve {
 
         [[nodiscard]] std::string getAppName() const;
 
+        [[nodiscard]] bool reqValidationLayers() const;
+
+        [[nodiscard]] bool reqDeviceInfo() const;
+
+        static void setupCliOptions(CLI::App &cli);
+
     private:
         int width{};
         int height{};
         std::string appName{};
         std::string file{};
+        bool validationLayers{};
+        bool deviceInfo{};
     };
 
 } // namespace lve

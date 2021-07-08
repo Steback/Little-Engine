@@ -13,6 +13,7 @@ namespace lve {
 
     class Window;
     class Config;
+    class Device;
     class GraphicsPipeline;
 
     class BaseApp {
@@ -27,12 +28,11 @@ namespace lve {
 
         void shutdown();
 
-        static void setupCliOptions(CLI::App& cli);
-
         static std::unique_ptr<Config> config;
 
     private:
         std::shared_ptr<Window> window;
+        std::shared_ptr<Device> device;
         std::unique_ptr<GraphicsPipeline> graphicsPipeline;
     };
 

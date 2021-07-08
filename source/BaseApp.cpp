@@ -4,9 +4,9 @@
 
 #include "config/Config.hpp"
 #include "render/Window.hpp"
-#include "render/Device.hpp"
 #include "fileManager/FileManager.hpp"
 #include "render/pipeline/GraphicsPipeline.hpp"
+#include "render/RenderEngine.hpp"
 
 
 namespace lve {
@@ -17,8 +17,7 @@ namespace lve {
         FileManager::setupPaths();
         config = std::make_unique<Config>("config.json", cli);
         window = std::make_shared<Window>(config->getWidth(), config->getHeight(), config->getAppName());
-        device = std::make_shared<Device>(window);
-        graphicsPipeline = std::make_unique<GraphicsPipeline>("model");
+        renderEngine = std::make_unique<RenderEngine>(window);
     }
 
     BaseApp::~BaseApp() = default;
@@ -35,7 +34,7 @@ namespace lve {
     }
 
     void BaseApp::shutdown() {
-        device->destroy();
+        renderEngine->cleanup();
         window->destroy();
     }
 

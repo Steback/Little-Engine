@@ -13,8 +13,7 @@ namespace lve {
 
     class Window;
     class Config;
-    class Device;
-    class GraphicsPipeline;
+    class RenderEngine;
 
     class BaseApp {
     public:
@@ -32,8 +31,7 @@ namespace lve {
 
     private:
         std::shared_ptr<Window> window;
-        std::shared_ptr<Device> device;
-        std::unique_ptr<GraphicsPipeline> graphicsPipeline;
+        std::unique_ptr<RenderEngine> renderEngine;
     };
 
 } // namespace lve

@@ -9,7 +9,13 @@
 
 namespace lve {
 
-    FileManager::FileManager() {
+    std::filesystem::path FileManager::root;
+    std::filesystem::path FileManager::data;
+    std::filesystem::path FileManager::shaders;
+
+    FileManager::FileManager() = default;
+
+    void FileManager::setupPaths() {
         root = std::filesystem::current_path();
 
         if (root.filename().string() == "bin")
@@ -26,15 +32,15 @@ namespace lve {
 
     FileManager::~FileManager() = default;
 
-    std::filesystem::path FileManager::rootPath() const {
+    std::filesystem::path FileManager::rootPath() {
         return root;
     }
 
-    std::filesystem::path FileManager::dataPath() const {
+    std::filesystem::path FileManager::dataPath() {
         return data;
     }
 
-    std::filesystem::path FileManager::shadersPath() const {
+    std::filesystem::path FileManager::shadersPath() {
         return shaders;
     }
 

@@ -11,7 +11,6 @@
 
 namespace lve {
 
-    std::unique_ptr<FileManager> BaseApp::fileManager;
     std::unique_ptr<Config> BaseApp::config;
 
     BaseApp::BaseApp(CLI::App& cli) {
@@ -20,7 +19,7 @@ namespace lve {
         if (validation)
             spdlog::info("Enable Validations Layers");
 
-        fileManager = std::make_unique<FileManager>();
+        FileManager::setupPaths();
         config = std::make_unique<Config>("config.json");
         window = std::make_shared<Window>(config->getWidth(), config->getHeight(), config->getAppName());
         graphicsPipeline = std::make_unique<GraphicsPipeline>("model");

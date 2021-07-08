@@ -10,15 +10,15 @@ namespace lve {
 
     class FileManager {
     public:
-        FileManager();
-
         ~FileManager();
 
-        [[nodiscard]] std::filesystem::path rootPath() const;
+        static void setupPaths();
 
-        [[nodiscard]] std::filesystem::path dataPath() const;
+        [[nodiscard]] static std::filesystem::path rootPath();
 
-        [[nodiscard]] std::filesystem::path shadersPath() const;
+        [[nodiscard]] static std::filesystem::path dataPath();
+
+        [[nodiscard]] static std::filesystem::path shadersPath();
 
         [[nodiscard]] static std::string getFile(const std::string& fileName) ;
 
@@ -29,9 +29,11 @@ namespace lve {
         static std::vector<char> readFile(const std::string& name);
 
     private:
-        std::filesystem::path root{};
-        std::filesystem::path data{};
-        std::filesystem::path shaders{};
+        FileManager();
+
+        static std::filesystem::path root;
+        static std::filesystem::path data;
+        static std::filesystem::path shaders;
     };
 
 } // namespace lve

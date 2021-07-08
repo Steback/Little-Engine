@@ -11,7 +11,6 @@ namespace CLI {
 
 namespace lve {
 
-    class FileManager;
     class Window;
     class Config;
     class GraphicsPipeline;
@@ -30,7 +29,6 @@ namespace lve {
 
         static void setupCliOptions(CLI::App& cli);
 
-        static std::unique_ptr<FileManager> fileManager;
         static std::unique_ptr<Config> config;
 
     private:

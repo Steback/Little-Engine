@@ -4,9 +4,8 @@
 #include <fstream>
 
 #include "../tools/Tools.hpp"
-#include "../BaseApp.hpp"
-#include "../fileManager/FileManager.hpp"
 #include "../tools/json.hpp"
+#include "../fileManager/FileManager.hpp"
 
 
 namespace lve {
@@ -14,7 +13,7 @@ namespace lve {
     Config::Config() = default;
 
     Config::Config(const std::string &fileName) {
-        file = BaseApp::fileManager->getFile(BaseApp::fileManager->dataPath() + fileName);
+        file = FileManager::getFile(FileManager::dataPath() + fileName);
 
         if (!file.empty()) {
             load();

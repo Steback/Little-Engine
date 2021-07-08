@@ -6,8 +6,6 @@
 
 #include "vulkan/vulkan.hpp"
 
-#include "../tools/Constants.hpp"
-
 
 namespace lve {
 
@@ -15,7 +13,16 @@ namespace lve {
 
     class Device {
     public:
-        explicit Device(const std::shared_ptr<Instance>& instance);
+        struct QueueFamilyIndices {
+            uint32_t graphics{};
+            uint32_t compute{};
+            uint32_t transfer{};
+            uint32_t present{};
+        };
+
+    public:
+        explicit Device(const std::shared_ptr<Instance>& instance, const std::vector<const char*>& reqLayers = {},
+                        vk::SurfaceKHR* surface = nullptr);
 
         Device(const Device&) = delete;
 
@@ -25,11 +32,22 @@ namespace lve {
 
         void destroy();
 
+        [[nodiscard]] QueueFamilyIndices getQueueFamilyIndices() const;
+
+        [[nodiscard]] uint32_t getQueueFamilyIndex(vk::QueueFlags flags, vk::SurfaceKHR* surface = nullptr) const;
+
+        [[nodiscard]] const vk::PhysicalDevice &getPhysicalDevice() const;
+
+        [[nodiscard]] const vk::Device &getLogicalDevice() const;
+
     private:
-        void createLogicalDevice();
+        void createLogicalDevice(const std::vector<const char*>& reqExtensions, const std::vector<const char*>& reqLayers,
+                                 vk::SurfaceKHR* surface = nullptr,
+                                 vk::QueueFlags requestedQueueTypes = vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute | vk::QueueFlagBits::eTransfer);
 
         vk::PhysicalDevice physicalDevice{};
         vk::Device logicalDevice{};
+        QueueFamilyIndices queueFamilyIndices;
     };
 
 } // namespace lve

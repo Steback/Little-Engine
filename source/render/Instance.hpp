@@ -13,7 +13,7 @@ namespace lve {
 
     class Instance {
     public:
-        Instance();
+        Instance(const std::vector<const char*>& reqLayer);
 
         Instance(const Instance&) = delete;
 

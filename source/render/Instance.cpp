@@ -98,7 +98,7 @@ inline bool checkExtensionsSupport(const vk::PhysicalDevice &device, const std::
 
 namespace lve {
 
-    Instance::Instance() {
+    Instance::Instance(const std::vector<const char*>& reqLayer) {
         vk::ApplicationInfo appInfo(
                 BaseApp::config->getAppName().c_str(),
                 VK_MAKE_VERSION(0, 0, 1),
@@ -108,18 +108,12 @@ namespace lve {
         );
 
         std::vector<const char*> reqExtensions = getRequiredExtensions();
-        std::vector<const char*> reqValidationLayers;
-
-#ifdef LVE_DEBUG
-        spdlog::info("Validations Layers: {}", "VK_LAYER_KHRONOS_validation");
-        reqValidationLayers.push_back("VK_LAYER_KHRONOS_validation");
-#endif
 
         vk::InstanceCreateInfo createInfo(
                 {},
                 &appInfo,
-                castU32(reqValidationLayers.size()),
-                reqValidationLayers.data(),
+                castU32(reqLayer.size()),
+                reqLayer.data(),
                 castU32(reqExtensions.size()),
                 reqExtensions.data()
         );
@@ -163,20 +157,8 @@ namespace lve {
         if (physicalDevices.empty()) THROW_EX("Failed to find GPUs with Vulkan support!");
 
         for (auto& device : physicalDevices) {
-            if (checkExtensionsSupport(device, {VK_KHR_SWAPCHAIN_EXTENSION_NAME})) {
-                if (BaseApp::config->reqDeviceInfo()) {
-                    vk::PhysicalDeviceProperties properties = device.getProperties();
-                    std::vector<vk::ExtensionProperties> extensionsProperties = device.enumerateDeviceExtensionProperties();
-
-                    spdlog::info("Physical Device: {}", properties.deviceName);
-
-                    fmt::print("\tExtensions supported:\n");
-                    for (auto& extension : extensionsProperties)
-                        fmt::print("\t\t{}\n", extension.extensionName);
-                }
-
+            if (checkExtensionsSupport(device, {VK_KHR_SWAPCHAIN_EXTENSION_NAME}))
                 return device;
-            }
         }
 
         THROW_EX("Failed to find a suitable GPU!")

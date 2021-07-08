@@ -39,7 +39,7 @@ namespace lve {
         [[nodiscard]] Size getSize() const;
 
     private:
-        GLFWwindow* window;
+        GLFWwindow* window{};
         std::string name{};
         Size size{};
     };

@@ -4,6 +4,8 @@
 
 #include <memory>
 
+#include <vulkan/vulkan.hpp>
+
 
 namespace lve {
 
@@ -25,6 +27,7 @@ namespace lve {
         std::shared_ptr<Instance> instance{};
         std::shared_ptr<Device> device{};
         std::unique_ptr<GraphicsPipeline> graphicsPipeline{};
+        vk::SurfaceKHR surface{};
     };
 
 } // namespace lve

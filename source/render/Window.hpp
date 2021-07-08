@@ -32,6 +32,8 @@ namespace lve {
 
         [[nodiscard]] bool shouldClose() const;
 
+        [[nodiscard]] VkSurfaceKHR createWindowSurface(const VkInstance& instance) const;
+
         GLFWwindow* getHandle();
 
         [[nodiscard]] Size getSize() const;

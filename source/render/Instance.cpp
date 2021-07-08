@@ -86,7 +86,6 @@ inline std::vector<const char*> getRequiredExtensions() {
     return extensionsNames;
 }
 
-
 inline bool checkExtensionsSupport(const vk::PhysicalDevice &device, const std::vector<const char *> &extensions) {
     std::vector<vk::ExtensionProperties> properties = device.enumerateDeviceExtensionProperties();
 

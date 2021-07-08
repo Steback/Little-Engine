@@ -28,8 +28,6 @@ namespace lve {
 
         [[nodiscard]] std::string getAppName() const;
 
-        [[nodiscard]] bool reqValidationLayers() const;
-
         [[nodiscard]] bool reqDeviceInfo() const;
 
         static void setupCliOptions(CLI::App &cli);
@@ -39,7 +37,6 @@ namespace lve {
         int height{};
         std::string appName{};
         std::string file{};
-        bool validationLayers{};
         bool deviceInfo{};
     };
 

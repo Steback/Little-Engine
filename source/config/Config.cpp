@@ -18,8 +18,7 @@ namespace lve {
         file = FileManager::getFile(FileManager::dataPath() + fileName);
 
         if (!file.empty()) {
-            validationLayers = cli.get_option("-v")->as<bool>();
-            deviceInfo = cli.get_option("-d")->as<bool>();
+            deviceInfo = cli.get_option("--deviceInfo")->as<bool>();
             load();
         } else {
             THROW_EX("Failed to load config file");
@@ -61,18 +60,13 @@ namespace lve {
         return appName;
     }
 
-    bool Config::reqValidationLayers() const {
-        return validationLayers;
-    }
-
     bool Config::reqDeviceInfo() const {
         return deviceInfo;
     }
 
     void Config::setupCliOptions(CLI::App &cli) {
         // TODO: Find for a better approach to add cli options dynamically
-        cli.add_flag("-v, --validation", "Enable vulkan Validations Layers");
-        cli.add_flag("-d, --deviceInfo", "Enable print physical device info");
+        cli.add_flag("--deviceInfo", "Enable print physical device info");
     }
 
 } // namespace lve

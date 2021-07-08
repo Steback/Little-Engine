@@ -13,6 +13,10 @@
     if (result != VK_SUCCESS) THROW_EX(message) \
 }
 
+#define VK_HPP_CHECK_RESULT(result, message) { \
+    if (result != vk::Success) THROW_EX(message) \
+}
+
 namespace lve {
 
     inline uint32_t castU32(size_t n) {

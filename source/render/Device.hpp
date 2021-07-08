@@ -5,7 +5,9 @@
 #include <memory>
 #include <vector>
 
-#include "vulkan/vulkan.h"
+#include "vulkan/vulkan.hpp"
+
+#include "../tools/Constants.hpp"
 
 
 namespace lve {
@@ -24,11 +26,7 @@ namespace lve {
 
         void destroy();
 
-        static VkPhysicalDeviceProperties getPhysicalDeviceProperties(const VkPhysicalDevice &device);
-
-        static std::vector<VkExtensionProperties> getExtensionsProperties(const VkPhysicalDevice &device);
-
-        static bool checkExtensionsSupport(const VkPhysicalDevice& device, const std::vector<const char*>& extensions);
+        static bool checkExtensionsSupport(const vk::PhysicalDevice &devic, const std::vector<const char*>& extensions);
 
     private:
         void createInstance();
@@ -36,8 +34,11 @@ namespace lve {
         void pickPhysicalDevice();
 
         std::shared_ptr<Window> window;
-        VkInstance instance{};
-        VkPhysicalDevice physicalDevice{};
+        vk::Instance instance{};
+#ifdef LVE_DEBUG
+        vk::DebugUtilsMessengerEXT debugMessenger{};
+#endif
+        vk::PhysicalDevice physicalDevice{};
     };
 
 } // namespace lve

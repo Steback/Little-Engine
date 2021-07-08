@@ -7,8 +7,72 @@
 #include "../BaseApp.hpp"
 #include "../config/Config.hpp"
 #include "../tools/Tools.hpp"
-#include "../tools/Constants.hpp"
 
+
+#ifdef LVE_DEBUG
+PFN_vkCreateDebugUtilsMessengerEXT  pfnVkCreateDebugUtilsMessengerEXT;
+PFN_vkDestroyDebugUtilsMessengerEXT pfnVkDestroyDebugUtilsMessengerEXT;
+
+VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugUtilsMessengerEXT(VkInstance instance,
+                                                              const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
+                                                              const VkAllocationCallbacks *pAllocator,
+                                                              VkDebugUtilsMessengerEXT *pMessenger) {
+    return pfnVkCreateDebugUtilsMessengerEXT(instance, pCreateInfo, pAllocator, pMessenger);
+}
+
+VKAPI_ATTR void VKAPI_CALL vkDestroyDebugUtilsMessengerEXT(VkInstance instance,
+                                                           VkDebugUtilsMessengerEXT messenger,
+                                                           VkAllocationCallbacks const *pAllocator) {
+    return pfnVkDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
+}
+
+VKAPI_ATTR VkBool32 VKAPI_CALL debugMessageFunc(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                VkDebugUtilsMessageTypeFlagsEXT messageTypes,
+                                                VkDebugUtilsMessengerCallbackDataEXT const *pCallbackData,
+                                                void* pUserData) {
+    std::string message{};
+    message += vk::to_string(static_cast<vk::DebugUtilsMessageTypeFlagsEXT>(messageTypes)) + ":\n";
+    message += std::string("\t") + "messageIDName   = <" + pCallbackData->pMessageIdName + ">\n";
+    message += std::string("\t") + "messageIdNumber = " + std::to_string(pCallbackData->messageIdNumber) + "\n";
+    message += std::string("\t") + "message         = <" + pCallbackData->pMessage + ">\n";
+
+    if (0 < pCallbackData->queueLabelCount) {
+        message += std::string("\t") + "Queue Labels:\n";
+
+        for (uint8_t i = 0; i < pCallbackData->queueLabelCount; i++) {
+            message += std::string("\t\t") + "labelName = <" + pCallbackData->pQueueLabels[i].pLabelName + ">\n";
+        }
+    }
+    if (0 < pCallbackData->cmdBufLabelCount) {
+        message += std::string("\t") + "CommandBuffer Labels:\n";
+
+        for ( uint8_t i = 0; i < pCallbackData->cmdBufLabelCount; i++ ) {
+            message += std::string("\t\t") + "labelName = <" + pCallbackData->pCmdBufLabels[i].pLabelName + ">\n";
+        }
+    }
+
+    if (0 < pCallbackData->objectCount) {
+        message += std::string("\t") + "Objects:\n";
+
+        for ( uint8_t i = 0; i < pCallbackData->objectCount; i++ ) {
+            message += std::string("\t\t") + "Object " + std::to_string(i) + "\n";
+            message += std::string("\t\t\t")
+                       + "objectType   = "
+                       + vk::to_string( static_cast<vk::ObjectType>( pCallbackData->pObjects[i].objectType ) ) + "\n";
+            message += std::string("\t\t\t")
+                       + "objectHandle = " + std::to_string(pCallbackData->pObjects[i].objectHandle) + "\n";
+
+            if (pCallbackData->pObjects[i].pObjectName) {
+                message += std::string("\t\t\t") + "objectName   = <" + pCallbackData->pObjects[i].pObjectName + ">\n";
+            }
+        }
+    }
+
+    spdlog::error(message);
+
+    return false;
+}
+#endif
 
 inline std::vector<const char*> getRequiredExtensions() {
     uint32_t extensionsCount = 0;
@@ -33,78 +97,84 @@ namespace lve {
     Device::~Device() = default;
 
     void Device::destroy() {
-        vkDestroyInstance(instance, nullptr);
+#ifdef LVE_DEBUG
+        instance.destroy(debugMessenger);
+#endif
+
+        instance.destroy();
     }
 
-    VkPhysicalDeviceProperties Device::getPhysicalDeviceProperties(const VkPhysicalDevice &device) {
-        VkPhysicalDeviceProperties properties;
-        vkGetPhysicalDeviceProperties(device, &properties);
-
-        return properties;
-    }
-
-    std::vector<VkExtensionProperties> Device::getExtensionsProperties(const VkPhysicalDevice &device) {
-        uint32_t extensionsCount = 0;
-        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionsCount, nullptr);
-
-        std::vector<VkExtensionProperties> properties(extensionsCount);
-        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionsCount, properties.data());
-
-        return properties;
-    }
-
-    bool Device::checkExtensionsSupport(const VkPhysicalDevice &device, const std::vector<const char *> &extensions) {
-        std::vector<VkExtensionProperties> properties = getExtensionsProperties(device);
+    bool Device::checkExtensionsSupport(const vk::PhysicalDevice &device, const std::vector<const char *> &extensions) {
+        std::vector<vk::ExtensionProperties> properties = device.enumerateDeviceExtensionProperties();
 
         return std::all_of(extensions.begin(), extensions.end(), [&properties](const char* name){
-            return std::find_if(properties.begin(), properties.end(), [&name](const VkExtensionProperties& property){
+            return std::find_if(properties.begin(), properties.end(), [&name](const vk::ExtensionProperties& property){
                 return std::strcmp(property.extensionName, name) == 0;
             }) != properties.end();
         });
     }
 
     void Device::createInstance() {
-        VkApplicationInfo appInfo = initializers::applicationInfo(
+        vk::ApplicationInfo appInfo(
                 BaseApp::config->getAppName().c_str(),
                 VK_MAKE_VERSION(0, 0, 1),
                 "Little Vulkan Engine",
-                VK_MAKE_VERSION(0, 0, 1)
+                VK_MAKE_VERSION(0, 0, 1),
+                VK_API_VERSION_1_2
         );
 
         std::vector<const char*> reqExtensions = getRequiredExtensions();
         std::vector<const char*> reqValidationLayers;
 
-        if (BaseApp::config->reqValidationLayers()) {
-            spdlog::info("Validations Layers: {}", "VK_LAYER_KHRONOS_validation");
-            reqValidationLayers.push_back("VK_LAYER_KHRONOS_validation");
-        }
+#ifdef LVE_DEBUG
+        spdlog::info("Validations Layers: {}", "VK_LAYER_KHRONOS_validation");
+        reqValidationLayers.push_back("VK_LAYER_KHRONOS_validation");
+#endif
 
-        VkInstanceCreateInfo createInfo = initializers::instanceCreateInfo(appInfo);
-        createInfo.enabledExtensionCount = castU32(reqExtensions.size());
-        createInfo.ppEnabledExtensionNames = reqExtensions.data();
-        createInfo.enabledLayerCount = castU32(reqValidationLayers.size());
-        createInfo.ppEnabledLayerNames = reqValidationLayers.data();
+        vk::InstanceCreateInfo createInfo(
+                {},
+                &appInfo,
+                castU32(reqValidationLayers.size()),
+                reqValidationLayers.data(),
+                castU32(reqExtensions.size()),
+                reqExtensions.data()
+        );
 
-        VK_CHECK_RESULT(vkCreateInstance(&createInfo, nullptr, &instance),
-                        "Failed to create vulkan instance");
+        instance = vk::createInstance(createInfo);
+
+#ifdef LVE_DEBUG
+        pfnVkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(instance.getProcAddr("vkCreateDebugUtilsMessengerEXT"));
+        if (!pfnVkCreateDebugUtilsMessengerEXT)
+            THROW_EX("GetInstanceProcAddr: Unable to find pfnVkCreateDebugUtilsMessengerEXT function.");
+
+        pfnVkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(instance.getProcAddr("vkDestroyDebugUtilsMessengerEXT"));
+        if (!pfnVkDestroyDebugUtilsMessengerEXT)
+            THROW_EX("GetInstanceProcAddr: Unable to find pfnVkDestroyDebugUtilsMessengerEXT function.");
+
+        vk::DebugUtilsMessengerCreateInfoEXT debugCreateInfo(
+                {},
+                vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning | vk::DebugUtilsMessageSeverityFlagBitsEXT::eError,
+                vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral | vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance |
+                vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation,
+                &debugMessageFunc
+        );
+
+        debugMessenger = instance.createDebugUtilsMessengerEXT(debugCreateInfo);
+#endif
     }
 
     void Device::pickPhysicalDevice() {
-        uint32_t deviceCount = 0;
-        vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+        std::vector<vk::PhysicalDevice> physicalDevices = instance.enumeratePhysicalDevices();
 
-        if (deviceCount == 0) THROW_EX("Failed to find GPUs with Vulkan support!");
-
-        std::vector<VkPhysicalDevice> physicalDevices(deviceCount);
-        vkEnumeratePhysicalDevices(instance, &deviceCount, physicalDevices.data());
+        if (physicalDevices.empty()) THROW_EX("Failed to find GPUs with Vulkan support!");
 
         for (auto& device : physicalDevices) {
             if (checkExtensionsSupport(device, {VK_KHR_SWAPCHAIN_EXTENSION_NAME})) {
                 physicalDevice = device;
 
                 if (BaseApp::config->reqDeviceInfo()) {
-                    VkPhysicalDeviceProperties properties = getPhysicalDeviceProperties(physicalDevice);
-                    std::vector<VkExtensionProperties> extensionsProperties = getExtensionsProperties(physicalDevice);
+                    vk::PhysicalDeviceProperties properties = device.getProperties();
+                    std::vector<vk::ExtensionProperties> extensionsProperties = device.enumerateDeviceExtensionProperties();
 
                     spdlog::info("Physical Device: {}", properties.deviceName);
 

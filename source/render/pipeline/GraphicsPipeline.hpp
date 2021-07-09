@@ -11,10 +11,23 @@ namespace lve {
 
     class GraphicsPipeline : public Pipeline {
     public:
-        GraphicsPipeline(const std::string& shadersName);
+        GraphicsPipeline(const vk::Device& device, const std::string& vert, const std::string& frag,
+                         const Pipeline::Config &config);
+
+        ~GraphicsPipeline();
+
+        void create(const std::string& vert, const std::string& frag, const Config& config);
+
+        void destroy() override;
+
+        [[nodiscard]] const vk::PipelineLayout &getLayout() const;
+
+        static Config defaultConfig(uint32_t width, uint32_t height);
 
     private:
-
+        vk::PipelineLayout layout{};
+        vk::ShaderModule vertShaderModule{};
+        vk::ShaderModule fragShaderModule{};
     };
 
 } // namespace lve

@@ -1,18 +1,32 @@
 #include "Pipeline.hpp"
 
-#include "spdlog/spdlog.h"
-
-#include "../../fileManager/FileManager.hpp"
+#include "../../tools/Tools.hpp"
 
 
 namespace lve {
 
-    Pipeline::Pipeline(const std::string& shadersName) {
-        auto vertCode = FileManager::readFile(FileManager::shadersPath() + shadersName + ".vert.spv");
-        auto fragCode = FileManager::readFile(FileManager::shadersPath() + shadersName + ".frag.spv");
+    Pipeline::Pipeline(const vk::Device& device) : device{device} {
 
-        spdlog::info("Vertex Shader Code Size: {}", vertCode.size());
-        spdlog::info("Fragment Shader Code Size: {}", fragCode.size());
+    }
+
+    Pipeline::~Pipeline() = default;
+
+    void Pipeline::destroy() {
+        device.destroy(pipeline);
+    }
+
+    const vk::Pipeline &Pipeline::getPipeline() const {
+        return pipeline;
+    }
+
+    vk::ShaderModule Pipeline::createShaderModule(const std::vector<char> &code) {
+        vk::ShaderModuleCreateInfo createInfo(
+                {},
+                castU32(code.size()),
+                reinterpret_cast<const uint32_t*>(code.data())
+        );
+
+        return device.createShaderModule(createInfo);
     }
 
 } // namespace lve

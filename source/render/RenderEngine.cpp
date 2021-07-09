@@ -21,7 +21,11 @@ namespace lve {
         instance = std::make_shared<Instance>(reqValidationLayers);
         surface = vk::SurfaceKHR(this->window->createWindowSurface(instance->getHandle()));
         device = std::make_shared<Device>(instance, reqValidationLayers, &surface);
-        graphicsPipeline = std::make_unique<GraphicsPipeline>("model");
+        graphicsPipeline = std::make_unique<GraphicsPipeline>(
+                device->getLogicalDevice(),
+                "model.vert.spv","model.frag.spv",
+                GraphicsPipeline::defaultConfig(this->window->getSize().width, this->window->getSize().height)
+        );
     }
 
     RenderEngine::~RenderEngine() = default;

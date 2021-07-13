@@ -5,7 +5,7 @@
 #include "../BaseApp.hpp"
 #include "../config/Config.hpp"
 #include "../tools/Tools.hpp"
-#include "../tools/Constants.hpp"
+#include "../Constants.hpp"
 
 #include "Instance.hpp"
 
@@ -74,6 +74,33 @@ namespace lve {
         return logicalDevice;
     }
 
+    vk::Format Device::findSupportFormat(const std::vector<vk::Format> &candidates, vk::ImageTiling tiling,
+                                         vk::FormatFeatureFlagBits features) {
+        for (auto& format : candidates) {
+            vk::FormatProperties properties = physicalDevice.getFormatProperties(format);
+
+            if (tiling == vk::ImageTiling::eLinear && (properties.linearTilingFeatures & features) == features) {
+                return format;
+            } else if (tiling == vk::ImageTiling::eOptimal && (properties.optimalTilingFeatures & features) == features) {
+                return format;
+            }
+        }
+
+        THROW_EX("Failed to find supported format!");
+    }
+
+    vk::Queue Device::getGraphicsQueue() {
+        return logicalDevice.getQueue(queueFamilyIndices.graphics, 0);
+    }
+
+    vk::Queue Device::getPresentQueue() {
+        if (queueFamilyIndices.graphics != queueFamilyIndices.present) {
+            return logicalDevice.getQueue(queueFamilyIndices.present, 0);
+        } else {
+            return logicalDevice.getQueue(queueFamilyIndices.present, 1);
+        }
+    }
+
     void Device::createLogicalDevice(const std::vector<const char*>& reqExtensions, const std::vector<const char*>& reqLayers, vk::SurfaceKHR* surface,
                                      vk::QueueFlags requestedQueueTypes) {
         std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos{};
@@ -125,6 +152,17 @@ namespace lve {
         );
 
         logicalDevice = physicalDevice.createDevice(createInfo);
+    }
+
+    uint32_t Device::getMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) const {
+        vk::PhysicalDeviceMemoryProperties memProperties = physicalDevice.getMemoryProperties();
+
+        for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+            if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
+                return i;
+        }
+
+        THROW_EX("Failed to find suitable memory type");
     }
 
 } // namespace lve

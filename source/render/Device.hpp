@@ -40,6 +40,14 @@ namespace lve {
 
         [[nodiscard]] const vk::Device &getLogicalDevice() const;
 
+        vk::Format findSupportFormat(const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlagBits features);
+
+        vk::Queue getGraphicsQueue();
+
+        vk::Queue getPresentQueue();
+
+        uint32_t getMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) const;
+
     private:
         void createLogicalDevice(const std::vector<const char*>& reqExtensions, const std::vector<const char*>& reqLayers,
                                  vk::SurfaceKHR* surface = nullptr,

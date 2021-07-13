@@ -8,6 +8,7 @@
 #define LVE_DEBUG
 #endif
 
-const float DEFAULT_QUEUE_PRIORITY = 0.0f;
+static constexpr float DEFAULT_QUEUE_PRIORITY = 0.0f;
+static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
 #endif //LITTLEVULKANENGINE_SOURCE_TOOLS_CONSTANTS_HPP

@@ -39,6 +39,15 @@ namespace lve {
         return glfwWindowShouldClose(window);
     }
 
+    VkSurfaceKHR Window::createWindowSurface(const VkInstance& instance) const {
+        VkSurfaceKHR surface;
+
+        VK_CHECK_RESULT(glfwCreateWindowSurface(instance, window, nullptr, &surface),
+                        "Failed to create window surface!");
+
+        return surface;
+    }
+
     GLFWwindow *Window::getHandle() {
         return window;
     }
@@ -47,13 +56,8 @@ namespace lve {
         return size;
     }
 
-    VkSurfaceKHR Window::createWindowSurface(const VkInstance& instance) const {
-        VkSurfaceKHR surface;
-
-        VK_CHECK_RESULT(glfwCreateWindowSurface(instance, window, nullptr, &surface),
-                        "Failed to create window surface!");
-
-        return surface;
+    VkExtent2D Window::getExtent() const {
+        return {castU32(size.width), castU32(size.height)};
     }
 
 } // namespace lve

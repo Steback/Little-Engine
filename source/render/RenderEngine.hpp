@@ -13,6 +13,7 @@ namespace lve {
     class Instance;
     class Device;
     class GraphicsPipeline;
+    class SwapChain;
 
     class RenderEngine {
     public:
@@ -22,12 +23,19 @@ namespace lve {
 
         void cleanup();
 
+        void draw();
+
+    private:
+        void createPipelines();
+
     private:
         std::shared_ptr<Window> window{};
         std::shared_ptr<Instance> instance{};
         std::shared_ptr<Device> device{};
         std::unique_ptr<GraphicsPipeline> graphicsPipeline{};
+        std::unique_ptr<SwapChain> swapChain{};
         vk::SurfaceKHR surface{};
+        uint32_t indexImage{};
     };
 
 } // namespace lve

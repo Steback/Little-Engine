@@ -5,6 +5,7 @@
 #include "Window.hpp"
 #include "Instance.hpp"
 #include "Device.hpp"
+#include "SwapChain.hpp"
 #include "pipeline/GraphicsPipeline.hpp"
 
 
@@ -21,19 +22,31 @@ namespace lve {
         instance = std::make_shared<Instance>(reqValidationLayers);
         surface = vk::SurfaceKHR(this->window->createWindowSurface(instance->getHandle()));
         device = std::make_shared<Device>(instance, reqValidationLayers, &surface);
-        graphicsPipeline = std::make_unique<GraphicsPipeline>(
-                device->getLogicalDevice(),
-                "model.vert.spv","model.frag.spv",
-                GraphicsPipeline::defaultConfig(this->window->getSize().width, this->window->getSize().height)
-        );
+        swapChain = std::make_unique<SwapChain>(device, this->window->getExtent(), surface);
+        createPipelines();
     }
 
     RenderEngine::~RenderEngine() = default;
 
     void RenderEngine::cleanup() {
+        device->getLogicalDevice().waitIdle();
+
+        graphicsPipeline->destroy();
+        swapChain->cleanup();
         instance->getHandle().destroy(surface);
         device->destroy();
         instance->destroy();
+    }
+
+    void RenderEngine::createPipelines() {
+        graphicsPipeline = std::make_unique<GraphicsPipeline>(
+                device->getLogicalDevice(),
+                "model.vert.spv","model.frag.spv",
+                GraphicsPipeline::defaultConfig(swapChain->getRenderPass(), window->getSize().width, window->getSize().height)
+        );
+    }
+
+    void RenderEngine::draw() {
     }
 
 } // namespace lve

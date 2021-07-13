@@ -38,6 +38,8 @@ namespace lve {
 
         [[nodiscard]] Size getSize() const;
 
+        [[nodiscard]] VkExtent2D getExtent() const;
+
     private:
         GLFWwindow* window{};
         std::string name{};

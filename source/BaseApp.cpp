@@ -30,6 +30,7 @@ namespace lve {
     void BaseApp::loop() {
         while (!window->shouldClose()) {
             glfwPollEvents();
+            renderEngine->draw();
         }
     }
 

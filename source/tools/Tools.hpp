@@ -6,7 +6,7 @@
 
 
 #define THROW_EX(message) { \
-    throw std::runtime_error(fmt::format("{} {} {}", message, __LINE__, __FILE__)); \
+    throw std::runtime_error(fmt::format("{} {} {}", message, __FILE__, __LINE__)); \
 }
 
 #define VK_CHECK_RESULT(result, message) { \
@@ -14,7 +14,11 @@
 }
 
 #define VK_HPP_CHECK_RESULT(result, message) { \
-    if (result != vk::Success) THROW_EX(message) \
+    if (result != vk::Result::eSuccess) THROW_EX(message) \
+}
+
+#define VK_ERROR(result, message) { \
+    THROW_EX(fmt::format("{} Error code: {}", message, vk::to_string(result))) \
 }
 
 namespace lve {

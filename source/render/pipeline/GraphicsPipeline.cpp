@@ -17,12 +17,8 @@ namespace lve {
     GraphicsPipeline::~GraphicsPipeline() = default;
 
     void GraphicsPipeline::create(const std::string &vert, const std::string &frag, const Pipeline::Config &config) {
-        assert(config.layout &&
-            "Cannot create graphics pipeline: no pipelineLayout provided in config info");
         assert(config.renderPass &&
             "Cannot create graphics pipeline: no renderPass provided in config info");
-
-        layout = config.layout;
 
         vertShaderModule = createShaderModule(FileManager::readFile(FileManager::shadersPath() + vert));
         fragShaderModule = createShaderModule(FileManager::readFile(FileManager::shadersPath() + frag));
@@ -37,7 +33,7 @@ namespace lve {
         );
         shaderStages[1] = vk::PipelineShaderStageCreateInfo(
                 {}, // flags
-                vk::ShaderStageFlagBits::eVertex, // stage
+                vk::ShaderStageFlagBits::eFragment, // stage
                 fragShaderModule, // module
                 "main", // pName
                 nullptr // pSpecializationInfo
@@ -50,6 +46,16 @@ namespace lve {
                 0, // vertexAttributeDescriptionCount
                 nullptr // pVertexAttributeDescriptions
         );
+
+        vk::PipelineLayoutCreateInfo layoutInfo(
+                {},
+                0,
+                nullptr,
+                0,
+                nullptr
+        );
+
+        layout = device.createPipelineLayout(layoutInfo);
 
         vk::GraphicsPipelineCreateInfo createInfo(
                 {}, // flags
@@ -93,7 +99,7 @@ namespace lve {
         return layout;
     }
 
-    Pipeline::Config GraphicsPipeline::defaultConfig(uint32_t width, uint32_t height) {
+    Pipeline::Config GraphicsPipeline::defaultConfig(const vk::RenderPass& renderPass, uint32_t width, uint32_t height) {
         Config config;
 
         config.inputAssemblyInfo = vk::PipelineInputAssemblyStateCreateInfo(
@@ -181,6 +187,8 @@ namespace lve {
                 0.0f, // minDepthBounds
                 1.0f // maxDepthBounds
         );
+
+        config.renderPass = renderPass;
 
         return config;
     }

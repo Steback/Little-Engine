@@ -23,7 +23,6 @@ namespace lve {
             vk::PipelineColorBlendAttachmentState colorBlendAttachment;
             vk::PipelineColorBlendStateCreateInfo colorBlendInfo;
             vk::PipelineDepthStencilStateCreateInfo depthStencilInfo;
-            vk::PipelineLayout layout = nullptr;
             vk::RenderPass renderPass = nullptr;
             uint32_t subpass = 0;
         };
@@ -35,7 +34,7 @@ namespace lve {
 
         virtual void destroy();
 
-        [[nodiscard]] const vk::Pipeline &getPipeline() const;
+        [[nodiscard]] const vk::Pipeline &getHandle() const;
 
         vk::ShaderModule createShaderModule(const std::vector<char>& code);
 

@@ -15,7 +15,7 @@ namespace lve {
         device.destroy(pipeline);
     }
 
-    const vk::Pipeline &Pipeline::getPipeline() const {
+    const vk::Pipeline &Pipeline::getHandle() const {
         return pipeline;
     }
 

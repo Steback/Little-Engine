@@ -11,5 +11,9 @@ set(CONAN_DISABLE_CHECK_COMPILER OFF)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(NO_OUTPUT_DIRS)
 
+# Compile Shaders
+set(COMPILE_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/tools/compileShaders.py ${CMAKE_CURRENT_SOURCE_DIR})
+execute_process(COMMAND python ${COMPILE_SCRIPT})
+
 # Source code and link
 add_subdirectory(source)

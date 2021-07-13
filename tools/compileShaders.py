@@ -8,7 +8,14 @@ SHADERS_DIR = 'shaders'
 BIN_SHADERS_DIR = 'bin/shaders'
 
 if __name__ == "__main__":
-    rootDir = Path('.').absolute()
+    currentPath = ""
+
+    if len(sys.argv) > 1:
+        currentPath = str(str(sys.argv[1]))
+    else:
+        currentPath = "."
+
+    rootDir = Path(currentPath).absolute()
     if rootDir.name == "tools":
         rootDir = rootDir.parent
 

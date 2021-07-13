@@ -38,6 +38,8 @@ namespace lve {
 
         vk::ShaderModule createShaderModule(const std::vector<char>& code);
 
+        void bind(const vk::CommandBuffer& cmdBuffer, vk::PipelineBindPoint bindPoint);
+
     protected:
         vk::Device device{};
         vk::Pipeline pipeline{};

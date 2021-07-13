@@ -22,6 +22,8 @@ namespace lve {
 
         [[nodiscard]] const vk::PipelineLayout &getLayout() const;
 
+        void bind(const vk::CommandBuffer& cmdBuffer);
+
         static Config defaultConfig(const vk::RenderPass& renderPass, uint32_t width, uint32_t height);
 
     private:

@@ -29,4 +29,8 @@ namespace lve {
         return device.createShaderModule(createInfo);
     }
 
+    void Pipeline::bind(const vk::CommandBuffer& cmdBuffer, vk::PipelineBindPoint bindPoint) {
+        cmdBuffer.bindPipeline(bindPoint, pipeline);
+    }
+
 } // namespace lve

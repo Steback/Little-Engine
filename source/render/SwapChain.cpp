@@ -34,21 +34,21 @@ namespace lve {
     SwapChain::~SwapChain() = default;
 
     void SwapChain::cleanup() {
+        for (auto& framebuffer : framebuffers)
+            device->getLogicalDevice().destroy(framebuffer);
+
+        device->getLogicalDevice().destroy(renderPass);
+
         for (auto& image : images)
             device->getLogicalDevice().destroy(image.view);
+
+        for (auto& image : depthImages)
+            image.destroy(device->getLogicalDevice());
 
         if (swapchain) {
             device->getLogicalDevice().destroy(swapchain);
             swapchain = VK_NULL_HANDLE;
         }
-
-        for (auto& image : depthImages)
-            image.destroy(device->getLogicalDevice());
-
-        for (auto& framebuffer : framebuffers)
-            device->getLogicalDevice().destroy(framebuffer);
-
-        device->getLogicalDevice().destroy(renderPass);
 
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
             device->getLogicalDevice().destroy(renderFinishedSemaphores[i]);
@@ -344,7 +344,7 @@ namespace lve {
         vk::SemaphoreCreateInfo semaphoreInfo{};
         vk::FenceCreateInfo fenceInfo(vk::FenceCreateFlagBits::eSignaled);
 
-        for (size_t i = 0; i < imageCount(); ++i) {
+        for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
             imageAvailableSemaphores[i] = device->getLogicalDevice().createSemaphore(semaphoreInfo);
             renderFinishedSemaphores[i] = device->getLogicalDevice().createSemaphore(semaphoreInfo);
             inFlightFences[i] = device->getLogicalDevice().createFence(fenceInfo);

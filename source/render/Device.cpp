@@ -16,11 +16,11 @@ namespace lve {
         std::vector<const char*> extensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
         physicalDevice = instance->pickPhysicalDevice(extensions);
 
-        if (BaseApp::config->reqDeviceInfo()) {
-            vk::PhysicalDeviceProperties properties = physicalDevice.getProperties();
-            std::vector<vk::ExtensionProperties> extensionsProperties = physicalDevice.enumerateDeviceExtensionProperties();
+        vk::PhysicalDeviceProperties properties = physicalDevice.getProperties();
+        spdlog::info("Physical Device: {}", properties.deviceName);
 
-            spdlog::info("Physical Device: {}", properties.deviceName);
+        if (BaseApp::config->reqDeviceInfo()) {
+            std::vector<vk::ExtensionProperties> extensionsProperties = physicalDevice.enumerateDeviceExtensionProperties();
 
             fmt::print("\tExtensions supported:\n");
             for (auto& extension : extensionsProperties)
@@ -163,6 +163,23 @@ namespace lve {
         }
 
         THROW_EX("Failed to find suitable memory type");
+    }
+
+    vk::CommandPool Device::createCommandPool(uint32_t queueFamilyIndex) {
+        vk::CommandPoolCreateInfo createInfo(
+                vk::CommandPoolCreateFlagBits::eTransient | vk::CommandPoolCreateFlagBits::eResetCommandBuffer // flags
+        );
+
+        if (queueFamilyIndex == queueFamilyIndices.compute) {
+            createInfo.queueFamilyIndex = queueFamilyIndices.compute;
+            return logicalDevice.createCommandPool(createInfo);
+        } else if (queueFamilyIndex == queueFamilyIndices.transfer) {
+            createInfo.queueFamilyIndex = queueFamilyIndices.transfer;
+            return logicalDevice.createCommandPool(createInfo);
+        } else {
+            createInfo.queueFamilyIndex = queueFamilyIndices.graphics;
+            return logicalDevice.createCommandPool(createInfo);
+        }
     }
 
 } // namespace lve

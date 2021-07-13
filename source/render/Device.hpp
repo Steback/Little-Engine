@@ -46,7 +46,9 @@ namespace lve {
 
         vk::Queue getPresentQueue();
 
-        uint32_t getMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) const;
+        [[nodiscard]] uint32_t getMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) const;
+
+        vk::CommandPool createCommandPool(uint32_t queueFamilyIndex);
 
     private:
         void createLogicalDevice(const std::vector<const char*>& reqExtensions, const std::vector<const char*>& reqLayers,

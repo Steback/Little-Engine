@@ -193,4 +193,8 @@ namespace lve {
         return config;
     }
 
+    void GraphicsPipeline::bind(const vk::CommandBuffer& cmdBuffer) {
+        Pipeline::bind(cmdBuffer, vk::PipelineBindPoint::eGraphics);
+    }
+
 } // namespace lve

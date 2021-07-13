@@ -3,6 +3,7 @@
 
 
 #include <memory>
+#include <vector>
 
 #include <vulkan/vulkan.hpp>
 
@@ -28,6 +29,8 @@ namespace lve {
     private:
         void createPipelines();
 
+        void createCmdBuffers();
+
     private:
         std::shared_ptr<Window> window{};
         std::shared_ptr<Instance> instance{};
@@ -36,6 +39,8 @@ namespace lve {
         std::unique_ptr<SwapChain> swapChain{};
         vk::SurfaceKHR surface{};
         uint32_t indexImage{};
+        vk::CommandPool graphicsCmdPool;
+        std::vector<vk::CommandBuffer> graphicsCmdBuffers;
     };
 
 } // namespace lve

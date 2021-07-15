@@ -8,7 +8,6 @@
 #include "render/pipeline/GraphicsPipeline.hpp"
 #include "render/RenderEngine.hpp"
 
-
 namespace lve {
 
     std::unique_ptr<Config> BaseApp::config;
@@ -37,6 +36,10 @@ namespace lve {
     void BaseApp::shutdown() {
         renderEngine->cleanup();
         window->destroy();
+    }
+
+    void BaseApp::loadModels() {
+
     }
 
 } // namespace lve

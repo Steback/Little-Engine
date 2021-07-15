@@ -2,12 +2,12 @@
 
 #include "spdlog/spdlog.h"
 
+#include "Buffer.hpp"
+#include "Instance.hpp"
 #include "../BaseApp.hpp"
 #include "../config/Config.hpp"
 #include "../tools/Tools.hpp"
 #include "../Constants.hpp"
-
-#include "Instance.hpp"
 
 
 namespace lve {
@@ -180,6 +180,16 @@ namespace lve {
             createInfo.queueFamilyIndex = queueFamilyIndices.graphics;
             return logicalDevice.createCommandPool(createInfo);
         }
+    }
+
+    Buffer Device::createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties) {
+        Buffer buffer(logicalDevice, size, usage);
+
+        vk::MemoryRequirements requirements = logicalDevice.getBufferMemoryRequirements(buffer.buffer);
+        buffer.allocateMemory(requirements.size, getMemoryType(requirements.memoryTypeBits, properties));
+        buffer.bind();
+
+        return buffer;
     }
 
 } // namespace lve

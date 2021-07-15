@@ -5,6 +5,7 @@
 
 #include "../../tools/Tools.hpp"
 #include "../../fileManager/FileManager.hpp"
+#include "../../mesh/Mesh.hpp"
 
 
 namespace lve {
@@ -39,12 +40,15 @@ namespace lve {
                 nullptr // pSpecializationInfo
         );
 
+
+        auto bindings = Mesh::Vertex::getBindingDescriptions();
+        auto attributes = Mesh::Vertex::getAttributeDescriptions();
         vk::PipelineVertexInputStateCreateInfo vertexInputStateCreateInfo(
                 {}, // flags
-                0, // vertexBindingDescriptionCount
-                nullptr, // pVertexBindingDescriptions
-                0, // vertexAttributeDescriptionCount
-                nullptr // pVertexAttributeDescriptions
+                castU32(bindings.size()), // vertexBindingDescriptionCount
+                bindings.data(), // pVertexBindingDescriptions
+                castU32(attributes.size()), // vertexAttributeDescriptionCount
+                attributes.data() // pVertexAttributeDescriptions
         );
 
         vk::PipelineLayoutCreateInfo layoutInfo(

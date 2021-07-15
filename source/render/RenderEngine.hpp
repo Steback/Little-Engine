@@ -15,6 +15,7 @@ namespace lve {
     class Device;
     class GraphicsPipeline;
     class SwapChain;
+    class Mesh;
 
     class RenderEngine {
     public:
@@ -25,6 +26,12 @@ namespace lve {
         void cleanup();
 
         void draw();
+
+        void beginDraw(const std::array<float, 4>& clearColor);
+
+        void endDraw();
+
+        [[nodiscard]] const std::shared_ptr<Device> &getDevice() const;
 
     private:
         void createPipelines();
@@ -41,6 +48,7 @@ namespace lve {
         uint32_t indexImage{};
         vk::CommandPool graphicsCmdPool;
         std::vector<vk::CommandBuffer> graphicsCmdBuffers;
+        std::unique_ptr<Mesh> model;
     };
 
 } // namespace lve

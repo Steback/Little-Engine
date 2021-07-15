@@ -75,7 +75,13 @@ namespace lve {
         float z{};
     };
 
+    using vec3 = Vector3;
+
 } // namespace lve
+
+inline lve::vec3 operator*(float n, const lve::vec3& v) {
+    return v * n;
+}
 
 
 #endif //LITTLEVULKANENGINE_SOURCE_MATH_VECTOR3_HPP

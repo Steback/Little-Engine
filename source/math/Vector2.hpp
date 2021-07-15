@@ -70,7 +70,13 @@ namespace lve {
         float y{};
     };
 
+    using vec2 = Vector2;
+
 } // namespace lve
+
+inline lve::vec2 operator*(float n, const lve::vec2& v) {
+    return v * n;
+}
 
 
 #endif //LITTLEVULKANENGINE_SOURCE_MATH_VECTOR2_HPP

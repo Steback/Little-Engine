@@ -137,7 +137,7 @@ namespace lve {
 
         device->getLogicalDevice().resetFences(inFlightFences[currentFrame]);
         VK_HPP_CHECK_RESULT(graphicsQueue.submit(1, &submitInfo, inFlightFences[currentFrame]),
-                            "Failed to submit draw command buffer!");
+                            "Failed to submit draw command Buffer!");
 
         vk::PresentInfoKHR presentInfo(1, signalSemaphores, 1, &swapchain, &imageIndex);
         vk::Result result = presentQueue.presentKHR(presentInfo);

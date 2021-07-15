@@ -10,6 +10,7 @@
 namespace lve {
 
     class Instance;
+    class Buffer;
 
     class Device {
     public:
@@ -49,6 +50,8 @@ namespace lve {
         [[nodiscard]] uint32_t getMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) const;
 
         vk::CommandPool createCommandPool(uint32_t queueFamilyIndex);
+
+        Buffer createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties);
 
     private:
         void createLogicalDevice(const std::vector<const char*>& reqExtensions, const std::vector<const char*>& reqLayers,

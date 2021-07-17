@@ -38,6 +38,8 @@ if __name__ == "__main__":
     # TODO: Add Windows .exe file
     if sys.platform == "linux":
         glslc = rootDir / 'bin/glslc'
+    elif sys.platform == "win32":
+        glslc = rootDir / 'bin/glslc.exe'
 
         if not glslc.exists():
             print("Failed to find glslc file")

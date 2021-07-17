@@ -10,6 +10,7 @@ cmake-build-release/
 
 ### Binaries
 Engine
+bin/Release/
 
 ### VS Code
 .vscode/

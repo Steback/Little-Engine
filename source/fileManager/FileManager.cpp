@@ -18,8 +18,15 @@ namespace lve {
     void FileManager::setupPaths() {
         root = std::filesystem::current_path();
 
-        if (root.filename().string() == "bin")
+#ifdef _WIN64
+        if (root.filename().string() == "Release") {
+            root = root.parent_path().parent_path();
+        }
+#endif
+
+        if (root.filename().string() == "bin") {
             root = root.parent_path();
+        }
 
         spdlog::info("Root path: {}", root.string());
 

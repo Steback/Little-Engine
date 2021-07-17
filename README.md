@@ -15,3 +15,27 @@ All the dependencies are installed with [Conan](https://conan.io/) package manag
 | [Vulkan Loader](https://github.com/KhronosGroup/Vulkan-Loader) | 1.2.182 |  
 | [Nlohmann json](https://github.com/nlohmann/json) | 3.9.1 |  
 | [CLI11](https://github.com/CLIUtils/CLI11) | 1.9.1 |  
+
+## Build
+### Requirements
+* CMake 3.18
+* Python 3
+* Conan 1.35.1
+
+### Linux
+* GCC 11
+```
+mkdir build && cd build
+conan install .. 
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make
+```
+
+### Windows
+* Visual Studio 16
+```
+mkdir build && cd build
+conan install ..
+cmake .. -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 16"
+cmake --build . --config Release 
+```

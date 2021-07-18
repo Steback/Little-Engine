@@ -18,9 +18,12 @@ All the dependencies are installed with [Conan](https://conan.io/) package manag
 
 ## Build
 ### Requirements
-* CMake 3.18
-* Python 3
-* Conan 1.35.1
+* CMake 3.18+
+* Python 3+
+* Conan 1.35.1+
+
+### Conan
+For install Conan and create the profile, there is the [Conan Getting Started](https://docs.conan.io/en/latest/getting_started.html).
 
 ### Linux
 * GCC 11

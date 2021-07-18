@@ -6,6 +6,7 @@
 #include "../BaseApp.hpp"
 #include "../tools/Tools.hpp"
 #include "../config/Config.hpp"
+#include "../logger/Logger.hpp"
 
 
 #ifdef LVE_DEBUG
@@ -161,7 +162,7 @@ namespace lve {
                 return device;
         }
 
-        THROW_EX("Failed to find a suitable GPU!")
+        EXIT_ERROR("Failed to find a suitable GPU!")
     }
 
     vk::Instance Instance::getHandle() const {

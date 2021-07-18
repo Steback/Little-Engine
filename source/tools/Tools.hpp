@@ -5,6 +5,11 @@
 #include "fmt/format.h"
 
 
+#define EXIT_ERROR(message) { \
+    Logger::error(fmt::format("{} {} {}", message, __FILE__, __LINE__)); \
+    std::exit(EXIT_FAILURE); \
+}
+
 #define THROW_EX(message) { \
     throw std::runtime_error(fmt::format("{} {} {}", message, __FILE__, __LINE__)); \
 }

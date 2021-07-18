@@ -5,9 +5,10 @@
 
 #include "CLI/App.hpp"
 
-#include "../tools/Tools.hpp"
 #include "../tools/json.hpp"
 #include "../fileManager/FileManager.hpp"
+#include "../logger/Logger.hpp"
+#include "../tools/Tools.hpp"
 
 
 namespace lve {
@@ -21,7 +22,7 @@ namespace lve {
             deviceInfo = cli.get_option("--deviceInfo")->as<bool>();
             load();
         } else {
-            THROW_EX("Failed to load config file");
+            EXIT_ERROR("Failed to load config file");
         }
     }
 

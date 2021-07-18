@@ -3,6 +3,7 @@
 #include "spdlog/spdlog.h"
 
 #include "../tools/Tools.hpp"
+#include "../logger/Logger.hpp"
 
 
 namespace lve {
@@ -13,7 +14,7 @@ namespace lve {
 
     Window::Window(int width, int height, const std::string &name) : size{width, height}, name{name} {
         if (!glfwInit())
-            THROW_EX(fmt::format("Failed to create window {}", name));
+            EXIT_ERROR(fmt::format("Failed to create window {}", name));
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);

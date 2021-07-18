@@ -11,6 +11,7 @@
 #include "pipeline/GraphicsPipeline.hpp"
 #include "../tools/Tools.hpp"
 #include "../mesh/Mesh.hpp"
+#include "../fileManager/FileManager.hpp"
 
 
 inline void sierpinski(std::vector<lve::Mesh::Vertex> &vertices,

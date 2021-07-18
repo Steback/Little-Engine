@@ -7,7 +7,7 @@
 #include "../BaseApp.hpp"
 #include "../config/Config.hpp"
 #include "../tools/Tools.hpp"
-#include "../Constants.hpp"
+#include "../logger/Logger.hpp"
 
 
 namespace lve {
@@ -63,7 +63,7 @@ namespace lve {
                 return i;
             }
 
-        THROW_EX("Could not find a matching queue family index")
+        EXIT_ERROR("Could not find a matching queue family index")
     }
 
     const vk::PhysicalDevice &Device::getPhysicalDevice() const {
@@ -162,7 +162,7 @@ namespace lve {
                 return i;
         }
 
-        THROW_EX("Failed to find suitable memory type");
+        EXIT_ERROR("Failed to find suitable memory type");
     }
 
     vk::CommandPool Device::createCommandPool(uint32_t queueFamilyIndex) {

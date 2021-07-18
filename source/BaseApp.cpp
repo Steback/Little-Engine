@@ -7,6 +7,8 @@
 #include "fileManager/FileManager.hpp"
 #include "render/pipeline/GraphicsPipeline.hpp"
 #include "render/RenderEngine.hpp"
+#include "logger/Logger.hpp"
+
 
 namespace lve {
 
@@ -14,6 +16,7 @@ namespace lve {
 
     BaseApp::BaseApp(CLI::App& cli) {
         FileManager::setupPaths();
+        Logger::setup();
         config = std::make_unique<Config>("config.json", cli);
         window = std::make_shared<Window>(config->getWidth(), config->getHeight(), config->getAppName());
         renderEngine = std::make_unique<RenderEngine>(window);

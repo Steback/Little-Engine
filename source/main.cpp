@@ -5,6 +5,7 @@
 
 #include "BaseApp.hpp"
 #include "config/Config.hpp"
+#include "logger/Logger.hpp"
 
 
 int main(int argc, char** argv) {
@@ -17,7 +18,7 @@ int main(int argc, char** argv) {
     try {
         app.run();
     } catch (const std::runtime_error& e) {
-        spdlog::error(e.what());
+        lve::Logger::error(e.what());
     }
 
     return 0;

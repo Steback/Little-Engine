@@ -6,6 +6,7 @@
 #include "../../tools/Tools.hpp"
 #include "../../fileManager/FileManager.hpp"
 #include "../../mesh/Mesh.hpp"
+#include "../../logger/Logger.hpp"
 
 
 namespace lve {
@@ -84,7 +85,7 @@ namespace lve {
         switch (result) {
             case vk::Result::eSuccess: break;
             case vk::Result::ePipelineCompileRequiredEXT:
-                THROW_EX("Failed to create graphics pipeline")
+                EXIT_ERROR("Failed to create graphics pipeline")
         }
 
         device.destroy(vertShaderModule);

@@ -12,8 +12,10 @@ namespace lve {
     std::filesystem::path FileManager::root;
     std::filesystem::path FileManager::data;
     std::filesystem::path FileManager::shaders;
+    std::filesystem::path FileManager::logs;
 
     FileManager::FileManager() = default;
+
 
     void FileManager::setupPaths() {
         root = std::filesystem::current_path();
@@ -30,14 +32,19 @@ namespace lve {
 
         spdlog::info("Root path: {}", root.string());
 
+        logs = root + "logs";
+
+        if (!exists(logs))
+            std::filesystem::create_directories(logs);
+
+        spdlog::info("Logs path: {}", logs.string());
+
         data = root + "data";
-        pathExists(data, "Data");
+        spdlog::info("Data path: {}", data.string());
 
         shaders = root + "bin/shaders";
-        pathExists(shaders, "Shaders");
+        spdlog::info("Shaders path: {}", shaders.string());
     }
-
-    FileManager::~FileManager() = default;
 
     std::filesystem::path FileManager::rootPath() {
         return root;
@@ -51,36 +58,27 @@ namespace lve {
         return shaders;
     }
 
+    std::filesystem::path FileManager::logsPath() {
+        return logs;
+    }
+
     std::string FileManager::getFile(const std::string& fileName) {
         std::filesystem::path path(fileName);
-        return (existsFile(path) ? path.string() : "");
+        return (fileExists(path) ? path.string() : "");
     }
 
-    bool FileManager::existsFile(const std::filesystem::path& path) {
-        bool exist = exists(path);
-
-        if (!exist)
-            spdlog::error("File {} not exist", path.string());
-
-        return exist;
-    }
-
-    void FileManager::pathExists(const std::filesystem::path& path, const std::string& name) {
-        if (!exists(path)) {
-            THROW_EX(fmt::format("{} path not exists", name));
-        } else {
-            spdlog::info("{} path: {}", name, path.string());
-        }
+    bool FileManager::fileExists(const std::filesystem::path& path) {
+        return exists(path);
     }
 
     std::vector<char> FileManager::readFile(const std::string &name) {
-        if (existsFile(name)) {
+        if (fileExists(name)) {
             std::ifstream file{name, std::ios::ate | std::ios::binary};
-            size_t fileSize = (size_t)file.tellg();
-            std::vector<char> buffer(fileSize);
+            size_t size = static_cast<size_t>(file.tellg());
+            std::vector<char> buffer(size);
 
             file.seekg(0);
-            file.read(buffer.data(), fileSize);
+            file.read(buffer.data(), static_cast<std::streamsize>(size));
             file.close();
 
             return buffer;

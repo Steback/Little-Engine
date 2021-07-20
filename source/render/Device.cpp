@@ -28,11 +28,13 @@ namespace lve {
         }
 
         createLogicalDevice(extensions, reqLayers, surface);
+        createVmaAllocator(instance);
     }
 
     Device::~Device() = default;
 
     void Device::destroy() {
+        allocator.destroy();
         logicalDevice.destroy();
     }
 
@@ -101,6 +103,45 @@ namespace lve {
         }
     }
 
+    uint32_t Device::getMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) const {
+        vk::PhysicalDeviceMemoryProperties memProperties = physicalDevice.getMemoryProperties();
+
+        for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+            if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
+                return i;
+        }
+
+        EXIT_ERROR("Failed to find suitable memory type");
+    }
+
+    vk::CommandPool Device::createCommandPool(uint32_t queueFamilyIndex) {
+        vk::CommandPoolCreateInfo createInfo(
+                vk::CommandPoolCreateFlagBits::eTransient | vk::CommandPoolCreateFlagBits::eResetCommandBuffer // flags
+        );
+
+        if (queueFamilyIndex == queueFamilyIndices.compute) {
+            createInfo.queueFamilyIndex = queueFamilyIndices.compute;
+            return logicalDevice.createCommandPool(createInfo);
+        } else if (queueFamilyIndex == queueFamilyIndices.transfer) {
+            createInfo.queueFamilyIndex = queueFamilyIndices.transfer;
+            return logicalDevice.createCommandPool(createInfo);
+        } else {
+            createInfo.queueFamilyIndex = queueFamilyIndices.graphics;
+            return logicalDevice.createCommandPool(createInfo);
+        }
+    }
+
+    Buffer Device::createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vma::MemoryUsage memoryUsage) {
+        Buffer buffer(allocator);
+        buffer.allocateMemory(size, usage, memoryUsage);
+
+        return buffer;
+    }
+
+    const vma::Allocator &Device::getAllocator() const {
+        return allocator;
+    }
+
     void Device::createLogicalDevice(const std::vector<const char*>& reqExtensions, const std::vector<const char*>& reqLayers, vk::SurfaceKHR* surface,
                                      vk::QueueFlags requestedQueueTypes) {
         std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos{};
@@ -154,42 +195,14 @@ namespace lve {
         logicalDevice = physicalDevice.createDevice(createInfo);
     }
 
-    uint32_t Device::getMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) const {
-        vk::PhysicalDeviceMemoryProperties memProperties = physicalDevice.getMemoryProperties();
+    void Device::createVmaAllocator(const std::shared_ptr<Instance>& instance) {
+        vma::AllocatorCreateInfo createInfo{};
+        createInfo.physicalDevice = physicalDevice;
+        createInfo.device = logicalDevice;
+        createInfo.instance = instance->getHandle();
+        createInfo.vulkanApiVersion = VK_API_VERSION_1_2;
 
-        for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-            if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
-                return i;
-        }
-
-        EXIT_ERROR("Failed to find suitable memory type");
-    }
-
-    vk::CommandPool Device::createCommandPool(uint32_t queueFamilyIndex) {
-        vk::CommandPoolCreateInfo createInfo(
-                vk::CommandPoolCreateFlagBits::eTransient | vk::CommandPoolCreateFlagBits::eResetCommandBuffer // flags
-        );
-
-        if (queueFamilyIndex == queueFamilyIndices.compute) {
-            createInfo.queueFamilyIndex = queueFamilyIndices.compute;
-            return logicalDevice.createCommandPool(createInfo);
-        } else if (queueFamilyIndex == queueFamilyIndices.transfer) {
-            createInfo.queueFamilyIndex = queueFamilyIndices.transfer;
-            return logicalDevice.createCommandPool(createInfo);
-        } else {
-            createInfo.queueFamilyIndex = queueFamilyIndices.graphics;
-            return logicalDevice.createCommandPool(createInfo);
-        }
-    }
-
-    Buffer Device::createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties) {
-        Buffer buffer(logicalDevice, size, usage);
-
-        vk::MemoryRequirements requirements = logicalDevice.getBufferMemoryRequirements(buffer.handle);
-        buffer.allocateMemory(requirements.size, getMemoryType(requirements.memoryTypeBits, properties));
-        buffer.bind();
-
-        return buffer;
+        allocator = vma::createAllocator(createInfo);
     }
 
 } // namespace lve

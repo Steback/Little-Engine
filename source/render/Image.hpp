@@ -3,7 +3,7 @@
 
 
 #include "vulkan/vulkan.hpp"
-
+#include "../extras/vk_mem_alloc.hpp"
 
 namespace lve {
 
@@ -15,21 +15,19 @@ namespace lve {
     public:
         Image();
 
-        Image(vk::Device device, const vk::ImageCreateInfo& createInfo);
+        Image(vma::Allocator allocator, const vk::ImageCreateInfo& createInfo, vma::MemoryUsage memoryUsage);
 
         ~Image();
 
-        void bind(vk::Device device, uint32_t memoryTypeIndex, vk::DeviceSize size, vk::ImageAspectFlagBits aspectFlags);
+        void createView(vk::Device device, vk::ImageAspectFlagBits aspectFlags);
 
-        void destroy(vk::Device device);
+        void destroy(vk::Device device, vma::Allocator allocator);
 
         [[nodiscard]] const vk::Image &getHandle() const;
 
         [[nodiscard]] const vk::ImageView &getView() const;
 
         [[nodiscard]] vk::Format getFormat() const;
-
-        [[nodiscard]] const vk::DeviceMemory &getMemory() const;
 
         [[nodiscard]] const vk::Extent3D &getExtent() const;
 
@@ -39,6 +37,7 @@ namespace lve {
         vk::Image handle{};
         vk::ImageView view{};
         vk::Format format{};
+        vma::Allocation allocation{};
         vk::DeviceMemory memory{};
         vk::Extent3D extent{};
         uint32_t mipLevels{1};

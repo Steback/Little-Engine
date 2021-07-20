@@ -3,6 +3,7 @@
 
 
 #include "vulkan/vulkan.hpp"
+#include "../extras/vk_mem_alloc.hpp"
 
 
 namespace lve {
@@ -11,35 +12,27 @@ namespace lve {
     public:
         Buffer();
 
-        Buffer(vk::Device device, vk::DeviceSize size, vk::BufferUsageFlags usage);
+        explicit Buffer(vma::Allocator allocator);
 
         ~Buffer();
 
         void destroy() const;
 
-        void allocateMemory(vk::DeviceSize size, uint32_t memoryTypeIndex);
+        void allocateMemory(vk::DeviceSize size, vk::BufferUsageFlags usage, vma::MemoryUsage memoryUsage);
 
-        void bind(vk::DeviceSize offset = 0) const;
-
-        void map(vk::DeviceSize size = VK_WHOLE_SIZE, vk::DeviceSize offset = 0);
+        void map();
 
         void unmap();
-
-        void setupDescriptor(vk::DeviceSize offset = 0);
 
         template<typename T>
         void copyTo(T *data) const {
             std::memcpy(mapped, data, size);
         }
 
-        [[nodiscard]] vk::Result flush(vk::DeviceSize offset = 0) const;
-
     public:
-        vk::Device device{};
+        vma::Allocator allocator;
         vk::Buffer handle{};
-        vk::DeviceMemory memory{};
-        vk::DescriptorBufferInfo descriptor{};
-        vk::DescriptorSet descriptorSet{};
+        vma::Allocation allocation;
         vk::DeviceSize size{0};
         void* mapped{nullptr};
     };

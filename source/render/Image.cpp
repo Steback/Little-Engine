@@ -5,20 +5,18 @@ namespace lve {
 
     Image::Image() = default;
 
-    Image::Image(vk::Device device, const vk::ImageCreateInfo &createInfo) {
+    Image::Image(vma::Allocator allocator, const vk::ImageCreateInfo &createInfo, vma::MemoryUsage memoryUsage) {
         format = createInfo.format;
         mipLevels = createInfo.mipLevels;
         extent = createInfo.extent;
-        handle = device.createImage(createInfo);
+
+        vma::AllocationCreateInfo allocationCreateInfo({}, memoryUsage);
+        allocator.createImage(&createInfo, &allocationCreateInfo, &handle, &allocation, nullptr);
     }
 
     Image::~Image() = default;
 
-    void Image::bind(vk::Device device, uint32_t memoryTypeIndex, vk::DeviceSize size, vk::ImageAspectFlagBits aspectFlags) {
-        memory = device.allocateMemory({size, memoryTypeIndex});
-
-        device.bindImageMemory(handle, memory, 0);
-
+    void Image::createView(vk::Device device, vk::ImageAspectFlagBits aspectFlags) {
         vk::ImageViewCreateInfo viewCreateInfo(
                 {}, // flags
                 handle,
@@ -31,10 +29,9 @@ namespace lve {
         view = device.createImageView(viewCreateInfo);
     }
 
-    void Image::destroy(vk::Device device) {
+    void Image::destroy(vk::Device device, vma::Allocator allocator) {
         device.destroy(view);
-        device.destroy(handle);
-        device.free(memory);
+        allocator.destroyImage(handle, allocation);
     }
 
     const vk::Image &Image::getHandle() const {
@@ -47,10 +44,6 @@ namespace lve {
 
     vk::Format Image::getFormat() const {
         return format;
-    }
-
-    const vk::DeviceMemory &Image::getMemory() const {
-        return memory;
     }
 
     const vk::Extent3D &Image::getExtent() const {

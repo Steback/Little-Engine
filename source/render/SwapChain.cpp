@@ -43,7 +43,7 @@ namespace lve {
             device->getLogicalDevice().destroy(image.view);
 
         for (auto& image : depthImages)
-            image.destroy(device->getLogicalDevice());
+            image.destroy(device->getLogicalDevice(), device->getAllocator());
 
         if (handle) {
             device->getLogicalDevice().destroy(handle);
@@ -241,15 +241,8 @@ namespace lve {
                     vk::ImageLayout::eUndefined
             );
 
-            image = Image(device->getLogicalDevice(), imageInfo);
-
-            vk::MemoryRequirements memoryRequirements = device->getLogicalDevice().getImageMemoryRequirements(image.handle);
-            image.bind(
-                    device->getLogicalDevice(),
-                    device->getMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal),
-                    memoryRequirements.size,
-                    vk::ImageAspectFlagBits::eDepth
-            );
+            image = Image(device->getAllocator(), imageInfo, vma::MemoryUsage::eGpuOnly);
+            image.createView(device->getLogicalDevice(), vk::ImageAspectFlagBits::eDepth);
         }
     }
 

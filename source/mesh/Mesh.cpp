@@ -44,7 +44,7 @@ namespace lve {
         vertexBuffer = device->createBuffer(
                 size,
                 vk::BufferUsageFlagBits::eVertexBuffer,
-                vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent
+                vma::MemoryUsage::eCpuToGpu
         );
 
         vertexBuffer.map();

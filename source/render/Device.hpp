@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "vulkan/vulkan.hpp"
+#include "../extras/vk_mem_alloc.hpp"
 
 
 namespace lve {
@@ -51,16 +52,21 @@ namespace lve {
 
         vk::CommandPool createCommandPool(uint32_t queueFamilyIndex);
 
-        Buffer createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties);
+        Buffer createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vma::MemoryUsage memoryUsage);
+
+        [[nodiscard]] const vma::Allocator &getAllocator() const;
 
     private:
         void createLogicalDevice(const std::vector<const char*>& reqExtensions, const std::vector<const char*>& reqLayers,
                                  vk::SurfaceKHR* surface = nullptr,
                                  vk::QueueFlags requestedQueueTypes = vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute | vk::QueueFlagBits::eTransfer);
 
+        void createVmaAllocator(const std::shared_ptr<Instance>& instance);
+
         vk::PhysicalDevice physicalDevice{};
         vk::Device logicalDevice{};
         QueueFamilyIndices queueFamilyIndices;
+        vma::Allocator allocator{};
     };
 
 } // namespace lve

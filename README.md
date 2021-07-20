@@ -36,7 +36,7 @@ make
 ```
 
 ### Windows
-* Visual Studio 16
+* MSVC Compiler 16
 ```
 mkdir build && cd build
 conan install ..

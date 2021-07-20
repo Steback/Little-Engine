@@ -1,7 +1,5 @@
 #include "BaseApp.hpp"
 
-#include "spdlog/spdlog.h"
-
 #include "config/Config.hpp"
 #include "render/Window.hpp"
 #include "fileManager/FileManager.hpp"

@@ -15,6 +15,7 @@ All the dependencies are installed with [Conan](https://conan.io/) package manag
 | [Vulkan Loader](https://github.com/KhronosGroup/Vulkan-Loader) | 1.2.182 |  
 | [Nlohmann json](https://github.com/nlohmann/json) | 3.9.1 |  
 | [CLI11](https://github.com/CLIUtils/CLI11) | 1.9.1 |  
+| [Vulkan® Memory Allocator](https://gpuopen.com/vulkan-memory-allocator) | 2.3.0 |  
 
 ## Build
 ### Requirements

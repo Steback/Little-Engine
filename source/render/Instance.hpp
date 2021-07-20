@@ -13,7 +13,7 @@ namespace lve {
 
     class Instance {
     public:
-        Instance(const std::vector<const char*>& reqLayer);
+        explicit Instance(const std::vector<const char*>& reqLayer);
 
         Instance(const Instance&) = delete;
 
@@ -28,7 +28,7 @@ namespace lve {
         [[nodiscard]] vk::Instance getHandle() const;
 
     private:
-        vk::Instance instance{};
+        vk::Instance handle{};
 #ifdef LVE_DEBUG
         vk::DebugUtilsMessengerEXT debugMessenger{};
 #endif

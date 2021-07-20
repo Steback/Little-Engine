@@ -41,7 +41,7 @@ namespace lve {
         [[nodiscard]] VkExtent2D getExtent() const;
 
     private:
-        GLFWwindow* window{};
+        GLFWwindow* handle{};
         std::string name{};
         Size size{};
     };

@@ -81,7 +81,7 @@ namespace lve {
     private:
         std::shared_ptr<Device> device;
         vk::SurfaceKHR surface;
-        vk::SwapchainKHR swapchain;
+        vk::SwapchainKHR handle;
         vk::Queue graphicsQueue;
         vk::Queue presentQueue;
 

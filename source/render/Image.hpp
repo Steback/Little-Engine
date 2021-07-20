@@ -36,7 +36,7 @@ namespace lve {
         [[nodiscard]] uint32_t getMipLevels() const;
 
     private:
-        vk::Image image{};
+        vk::Image handle{};
         vk::ImageView view{};
         vk::Format format{};
         vk::DeviceMemory memory{};

@@ -119,14 +119,14 @@ namespace lve {
                 reqExtensions.data()
         );
 
-        instance = vk::createInstance(createInfo);
+        handle = vk::createInstance(createInfo);
 
 #ifdef LVE_DEBUG
-        pfnVkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(instance.getProcAddr("vkCreateDebugUtilsMessengerEXT"));
+        pfnVkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(handle.getProcAddr("vkCreateDebugUtilsMessengerEXT"));
         if (!pfnVkCreateDebugUtilsMessengerEXT)
             THROW_EX("GetInstanceProcAddr: Unable to find pfnVkCreateDebugUtilsMessengerEXT function.");
 
-        pfnVkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(instance.getProcAddr("vkDestroyDebugUtilsMessengerEXT"));
+        pfnVkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(handle.getProcAddr("vkDestroyDebugUtilsMessengerEXT"));
         if (!pfnVkDestroyDebugUtilsMessengerEXT)
             THROW_EX("GetInstanceProcAddr: Unable to find pfnVkDestroyDebugUtilsMessengerEXT function.");
 
@@ -138,7 +138,7 @@ namespace lve {
                 &debugMessageFunc
         );
 
-        debugMessenger = instance.createDebugUtilsMessengerEXT(debugCreateInfo);
+        debugMessenger = handle.createDebugUtilsMessengerEXT(debugCreateInfo);
 #endif
     }
 
@@ -146,14 +146,14 @@ namespace lve {
 
     void Instance::destroy() {
 #ifdef LVE_DEBUG
-        instance.destroy(debugMessenger);
+        handle.destroy(debugMessenger);
 #endif
 
-        instance.destroy();
+        handle.destroy();
     }
 
     vk::PhysicalDevice Instance::pickPhysicalDevice(const std::vector<const char*> &extensions) {
-        std::vector<vk::PhysicalDevice> physicalDevices = instance.enumeratePhysicalDevices();
+        std::vector<vk::PhysicalDevice> physicalDevices = handle.enumeratePhysicalDevices();
 
         if (physicalDevices.empty()) THROW_EX("Failed to find GPUs with Vulkan support!");
 
@@ -166,7 +166,7 @@ namespace lve {
     }
 
     vk::Instance Instance::getHandle() const {
-        return instance;
+        return handle;
     }
 
 } // namespace lve

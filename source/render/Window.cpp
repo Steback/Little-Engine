@@ -14,43 +14,43 @@ namespace lve {
 
     Window::Window(int width, int height, const std::string &name) : size{width, height}, name{name} {
         if (!glfwInit())
-            EXIT_ERROR(fmt::format("Failed to create window {}", name));
+            EXIT_ERROR(fmt::format("Failed to create handle {}", name));
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-        window = glfwCreateWindow(size.width, size.height, this->name.c_str(), nullptr, nullptr);
+        handle = glfwCreateWindow(size.width, size.height, this->name.c_str(), nullptr, nullptr);
 
-        spdlog::info("Open window {}", this->name);
+        spdlog::info("Open handle {}", this->name);
     }
 
     Window::~Window() = default;
 
     void Window::destroy() {
-        if (window) {
-            spdlog::info("Destroy window {}", this->name);
+        if (handle) {
+            spdlog::info("Destroy handle {}", this->name);
 
-            glfwDestroyWindow(window);
+            glfwDestroyWindow(handle);
         }
 
         glfwTerminate();
     }
 
     bool Window::shouldClose() const {
-        return glfwWindowShouldClose(window);
+        return glfwWindowShouldClose(handle);
     }
 
     VkSurfaceKHR Window::createWindowSurface(const VkInstance& instance) const {
         VkSurfaceKHR surface;
 
-        VK_CHECK_RESULT(glfwCreateWindowSurface(instance, window, nullptr, &surface),
-                        "Failed to create window surface!");
+        VK_CHECK_RESULT(glfwCreateWindowSurface(instance, handle, nullptr, &surface),
+                        "Failed to create handle surface!");
 
         return surface;
     }
 
     GLFWwindow *Window::getHandle() {
-        return window;
+        return handle;
     }
 
     Window::Size Window::getSize() const {

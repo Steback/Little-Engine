@@ -29,7 +29,7 @@ namespace lve {
     }
 
     void Mesh::bind(const vk::CommandBuffer& cmdBuffer) {
-        vk::Buffer buffers[] = {vertexBuffer.buffer};
+        vk::Buffer buffers[] = {vertexBuffer.handle};
         vk::DeviceSize  offsets[] = {0};
         cmdBuffer.bindVertexBuffers(0, 1, buffers, offsets);
     }

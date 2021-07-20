@@ -45,9 +45,9 @@ namespace lve {
         for (auto& image : depthImages)
             image.destroy(device->getLogicalDevice());
 
-        if (swapchain) {
-            device->getLogicalDevice().destroy(swapchain);
-            swapchain = VK_NULL_HANDLE;
+        if (handle) {
+            device->getLogicalDevice().destroy(handle);
+            handle = VK_NULL_HANDLE;
         }
 
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
@@ -106,7 +106,7 @@ namespace lve {
         );
 
         vk::ResultValue result = device->getLogicalDevice().acquireNextImageKHR(
-                swapchain,
+                handle,
                 std::numeric_limits<uint64_t>::max(),
                 imageAvailableSemaphores[currentFrame],
                 nullptr
@@ -118,10 +118,10 @@ namespace lve {
             case vk::Result::eTimeout:
             case vk::Result::eNotReady:
             case vk::Result::eSuboptimalKHR:
-                VK_ERROR(result.result, "Failed to acquire swap chain image!");
+                VK_ERROR(result.result, "Failed to acquire swap chain handle!");
         }
 
-        THROW_EX("Failed to acquire swap chain image!");
+        THROW_EX("Failed to acquire swap chain handle!");
     }
 
     vk::Result SwapChain::submitCommandBuffer(const vk::CommandBuffer& cmdBuffer, uint32_t imageIndex) {
@@ -139,7 +139,7 @@ namespace lve {
         VK_HPP_CHECK_RESULT(graphicsQueue.submit(1, &submitInfo, inFlightFences[currentFrame]),
                             "Failed to submit draw command Buffer!");
 
-        vk::PresentInfoKHR presentInfo(1, signalSemaphores, 1, &swapchain, &imageIndex);
+        vk::PresentInfoKHR presentInfo(1, signalSemaphores, 1, &handle, &imageIndex);
         vk::Result result = presentQueue.presentKHR(presentInfo);
 
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
@@ -196,13 +196,13 @@ namespace lve {
         createInfo.clipped = true;
         createInfo.oldSwapchain = nullptr;
 
-        swapchain = device->getLogicalDevice().createSwapchainKHR(createInfo);
+        handle = device->getLogicalDevice().createSwapchainKHR(createInfo);
 
-        std::vector<vk::Image> swapChainImages = device->getLogicalDevice().getSwapchainImagesKHR(swapchain);
+        std::vector<vk::Image> swapChainImages = device->getLogicalDevice().getSwapchainImagesKHR(handle);
         images.resize(imageCount);
 
         for (size_t i = 0; i < imageCount; ++i)
-            images[i].image = swapChainImages[i];
+            images[i].handle = swapChainImages[i];
 
         format = surfaceFormat.format;
     }
@@ -211,7 +211,7 @@ namespace lve {
         for (auto& image : images) {
             vk::ImageViewCreateInfo createInfo{
                     {}, // flags
-                    image.image,
+                    image.handle,
                     vk::ImageViewType::e2D,
                     format,
                     {}, // components
@@ -243,7 +243,7 @@ namespace lve {
 
             image = Image(device->getLogicalDevice(), imageInfo);
 
-            vk::MemoryRequirements memoryRequirements = device->getLogicalDevice().getImageMemoryRequirements(image.image);
+            vk::MemoryRequirements memoryRequirements = device->getLogicalDevice().getImageMemoryRequirements(image.handle);
             image.bind(
                     device->getLogicalDevice(),
                     device->getMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal),

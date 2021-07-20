@@ -7,13 +7,13 @@ namespace lve {
     Buffer::Buffer(vk::Device device, vk::DeviceSize size, vk::BufferUsageFlags usage)
             : device(device), size(size) {
         vk::BufferCreateInfo createInfo({}, size, usage, vk::SharingMode::eExclusive);
-        buffer = this->device.createBuffer(createInfo);
+        handle = this->device.createBuffer(createInfo);
     }
 
     Buffer::~Buffer() = default;
 
     void Buffer::destroy() const {
-        if (buffer) device.destroy(buffer);
+        if (handle) device.destroy(handle);
 
         if (memory) device.freeMemory(memory);
     }
@@ -24,7 +24,7 @@ namespace lve {
     }
 
     void Buffer::bind(vk::DeviceSize offset) const {
-        device.bindBufferMemory(buffer, memory, offset);
+        device.bindBufferMemory(handle, memory, offset);
     }
 
     void Buffer::map(vk::DeviceSize size_, vk::DeviceSize offset) {
@@ -43,7 +43,7 @@ namespace lve {
 
     void Buffer::setupDescriptor(vk::DeviceSize offset) {
         descriptor.offset = offset;
-        descriptor.buffer = buffer;
+        descriptor.buffer = handle;
         descriptor.range = size;
     }
 

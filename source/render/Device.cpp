@@ -185,7 +185,7 @@ namespace lve {
     Buffer Device::createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties) {
         Buffer buffer(logicalDevice, size, usage);
 
-        vk::MemoryRequirements requirements = logicalDevice.getBufferMemoryRequirements(buffer.buffer);
+        vk::MemoryRequirements requirements = logicalDevice.getBufferMemoryRequirements(buffer.handle);
         buffer.allocateMemory(requirements.size, getMemoryType(requirements.memoryTypeBits, properties));
         buffer.bind();
 

@@ -36,7 +36,7 @@ namespace lve {
 
     public:
         vk::Device device{};
-        vk::Buffer buffer{};
+        vk::Buffer handle{};
         vk::DeviceMemory memory{};
         vk::DescriptorBufferInfo descriptor{};
         vk::DescriptorSet descriptorSet{};

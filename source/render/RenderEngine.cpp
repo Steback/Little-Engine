@@ -76,7 +76,7 @@ namespace lve {
         indexImage = swapChain->acquireNextImage();
 
         vk::Result result = swapChain->submitCommandBuffer(graphicsCmdBuffers[indexImage], indexImage);
-        VK_HPP_CHECK_RESULT(result, "Failed to present swap chain image!")
+        VK_HPP_CHECK_RESULT(result, "Failed to present swap chain handle!")
     }
 
     void RenderEngine::beginDraw(const std::array<float, 4>& clearColor) {

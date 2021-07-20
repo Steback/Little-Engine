@@ -9,7 +9,7 @@ namespace lve {
         format = createInfo.format;
         mipLevels = createInfo.mipLevels;
         extent = createInfo.extent;
-        image = device.createImage(createInfo);
+        handle = device.createImage(createInfo);
     }
 
     Image::~Image() = default;
@@ -17,11 +17,11 @@ namespace lve {
     void Image::bind(vk::Device device, uint32_t memoryTypeIndex, vk::DeviceSize size, vk::ImageAspectFlagBits aspectFlags) {
         memory = device.allocateMemory({size, memoryTypeIndex});
 
-        device.bindImageMemory(image, memory, 0);
+        device.bindImageMemory(handle, memory, 0);
 
         vk::ImageViewCreateInfo viewCreateInfo(
                 {}, // flags
-                image,
+                handle,
                 vk::ImageViewType::e2D,
                 format,
                 {}, // Components
@@ -33,12 +33,12 @@ namespace lve {
 
     void Image::destroy(vk::Device device) {
         device.destroy(view);
-        device.destroy(image);
+        device.destroy(handle);
         device.free(memory);
     }
 
     const vk::Image &Image::getHandle() const {
-        return image;
+        return handle;
     }
 
     const vk::ImageView &Image::getView() const {

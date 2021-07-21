@@ -14,25 +14,6 @@
 #include "../fileManager/FileManager.hpp"
 
 
-inline void sierpinski(std::vector<lve::Mesh::Vertex> &vertices,
-                       int depth,
-                       const lve::vec2& left,
-                       const lve::vec2& right,
-                       const lve::vec2& top) {
-    if (depth <= 0) {
-        vertices.push_back({top});
-        vertices.push_back({right});
-        vertices.push_back({left});
-    } else {
-        auto leftTop = 0.5f * (left + top);
-        auto rightTop = 0.5f * (right + top);
-        auto leftRight = 0.5f * (left + right);
-        sierpinski(vertices, depth - 1, left, leftRight, leftTop);
-        sierpinski(vertices, depth - 1, leftRight, right, rightTop);
-        sierpinski(vertices, depth - 1, leftTop, rightTop, top);
-    }
-}
-
 namespace lve {
 
     RenderEngine::RenderEngine(std::shared_ptr<Window> window) : window(std::move(window)) {
@@ -48,8 +29,11 @@ namespace lve {
         device = std::make_shared<Device>(instance, reqValidationLayers, &surface);
         swapChain = std::make_unique<SwapChain>(device, this->window->getExtent(), surface);
 
-        std::vector<Mesh::Vertex> vertices{};
-        sierpinski(vertices, 5, {-0.5f, 0.5f}, {0.5f, 0.5f}, {0.0f, -0.5f});
+        std::vector<Mesh::Vertex> vertices{
+                { {0.0f, -0.5f}, {1.0f, 0.0f, 0.0f} },
+                { {0.5f, 0.5f}, {0.0f, 1.0f, 0.0f} },
+                { {-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f} }
+        };
 
         model = std::make_unique<Mesh>(device, vertices);
 

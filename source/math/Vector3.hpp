@@ -19,8 +19,6 @@ namespace lve {
 
         Vector3(const Vector3& v);
 
-        explicit Vector3(const Vector2& v);
-
         Vector3& set(float x_, float y_, float z_);
 
         float operator[](unsigned int i);

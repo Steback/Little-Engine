@@ -8,18 +8,19 @@
 #include "vulkan/vulkan.hpp"
 
 #include "../math/Vector2.hpp"
+#include "../math/Vector3.hpp"
 #include "../render/Buffer.hpp"
 
 
 namespace lve {
 
-    class Vector2;
     class Device;
 
     class Mesh {
     public:
         struct Vertex {
             vec2 position;
+            vec3 color;
 
             static std::vector<vk::VertexInputBindingDescription> getBindingDescriptions();
 

@@ -11,9 +11,7 @@ namespace lve {
 
     Vector2::Vector2(float x, float y) : x(x), y(y) {  }
 
-    Vector2::Vector2(const Vector2 &v) : x(v.x), y(v.y) {
-
-    }
+    Vector2::Vector2(const Vector2 &v) = default;
 
     Vector2 &Vector2::set(float x_, float y_) {
         x = x_; y = y_;

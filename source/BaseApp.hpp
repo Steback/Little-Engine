@@ -14,6 +14,7 @@ namespace lve {
     class Window;
     class Config;
     class RenderEngine;
+    class Mesh;
 
     class BaseApp {
     public:
@@ -35,6 +36,7 @@ namespace lve {
     private:
         std::shared_ptr<Window> window;
         std::unique_ptr<RenderEngine> renderEngine;
+        std::unique_ptr<Mesh> model;
     };
 
 } // namespace lve

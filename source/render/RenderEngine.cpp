@@ -10,7 +10,6 @@
 #include "SwapChain.hpp"
 #include "pipeline/GraphicsPipeline.hpp"
 #include "../tools/Tools.hpp"
-#include "../mesh/Mesh.hpp"
 #include "../fileManager/FileManager.hpp"
 
 
@@ -29,13 +28,7 @@ namespace lve {
         device = std::make_shared<Device>(instance, reqValidationLayers, &surface);
         swapChain = std::make_unique<SwapChain>(device, this->window->getExtent(), surface);
 
-        std::vector<Mesh::Vertex> vertices{
-                { {0.0f, -0.5f}, {1.0f, 0.0f, 0.0f} },
-                { {0.5f, 0.5f}, {0.0f, 1.0f, 0.0f} },
-                { {-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f} }
-        };
 
-        model = std::make_unique<Mesh>(device, vertices);
 
         createPipelines();
         createCmdBuffers();
@@ -44,11 +37,7 @@ namespace lve {
     RenderEngine::~RenderEngine() = default;
 
     void RenderEngine::cleanup() {
-        device->getLogicalDevice().waitIdle();
-
-        model->destroy();
-
-        device->getLogicalDevice().destroy(graphicsCmdPool);
+        device->getLogicalDevice().destroy(commandPool);
         graphicsPipeline->destroy();
         swapChain->cleanup(device->getAllocator());
         instance->getHandle().destroy(surface);
@@ -56,23 +45,42 @@ namespace lve {
         instance->destroy();
     }
 
-    void RenderEngine::draw() {
+    void RenderEngine::beginDraw(const std::array<float, 4>& clearColor) {
         vk::Result result = swapChain->acquireNextImage(&imageIndex);
 
-        result = swapChain->submitCommandBuffer(graphicsCmdBuffers[imageIndex], imageIndex);
-        VK_HPP_CHECK_RESULT(result, "Failed to present swap chain handle!")
-    }
+        std::array<vk::ClearValue, 2> clearValues{};
+        clearValues[0].color = {clearColor};
+        clearValues[1].depthStencil = {{1.0f, 0}};
+        vk::CommandBufferBeginInfo beginInfo{};
+        commandBuffers[imageIndex].begin(beginInfo);
 
-    void RenderEngine::beginDraw(const std::array<float, 4>& clearColor) {
+        vk::RenderPassBeginInfo renderPassBeginInfo(
+                swapChain->getRenderPass(),
+                swapChain->getFrameBuffer(imageIndex),
+                {{0, 0}, swapChain->getExtent()}, // renderArea
+                castU32(clearValues.size()),
+                clearValues.data()
+        );
 
+        commandBuffers[imageIndex].beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
+
+        graphicsPipeline->bind(commandBuffers[imageIndex]);
     }
 
     void RenderEngine::endDraw() {
+        commandBuffers[imageIndex].endRenderPass();
+        commandBuffers[imageIndex].end();
 
+        vk::Result result = swapChain->submitCommandBuffer(commandBuffers[imageIndex], imageIndex);
+        VK_HPP_CHECK_RESULT(result, "Failed to present swap chain handle!")
     }
 
     const std::shared_ptr<Device> &RenderEngine::getDevice() const {
         return device;
+    }
+
+    vk::CommandBuffer RenderEngine::getCommandBuffer() {
+        return commandBuffers[imageIndex];
     }
 
     void RenderEngine::createPipelines() {
@@ -84,42 +92,16 @@ namespace lve {
     }
 
     void RenderEngine::createCmdBuffers() {
-        graphicsCmdPool = device->createCommandPool(device->getQueueFamilyIndices().graphics);
+        commandPool = device->createCommandPool(device->getQueueFamilyIndices().graphics);
 
-        graphicsCmdBuffers.resize(swapChain->imageCount());
+        commandBuffers.resize(swapChain->imageCount());
         vk::CommandBufferAllocateInfo allocateInfo(
-                graphicsCmdPool,
+                commandPool,
                 vk::CommandBufferLevel::ePrimary,
-                castU32(graphicsCmdBuffers.size())
+                castU32(commandBuffers.size())
         );
 
-        graphicsCmdBuffers = device->getLogicalDevice().allocateCommandBuffers(allocateInfo);
-
-        std::array<vk::ClearValue, 2> clearValues{};
-        clearValues[0].color = {std::array<float, 4>({{0.1f, 0.1f, 0.1f, 1.0f}})};
-        clearValues[1].depthStencil = {{1.0f, 0}};
-
-        for (size_t i = 0; i < graphicsCmdBuffers.size(); ++i) {
-            vk::CommandBufferBeginInfo beginInfo{};
-            graphicsCmdBuffers[i].begin(beginInfo);
-
-            vk::RenderPassBeginInfo renderPassBeginInfo(
-                    swapChain->getRenderPass(),
-                    swapChain->getFrameBuffer(i),
-                    {{0, 0}, swapChain->getExtent()}, // renderArea
-                    castU32(clearValues.size()),
-                    clearValues.data()
-            );
-
-            graphicsCmdBuffers[i].beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
-
-            graphicsPipeline->bind(graphicsCmdBuffers[i]);
-            model->bind(graphicsCmdBuffers[i]);
-            model->draw(graphicsCmdBuffers[i]);
-
-            graphicsCmdBuffers[i].endRenderPass();
-            graphicsCmdBuffers[i].end();
-        }
+        commandBuffers = device->getLogicalDevice().allocateCommandBuffers(allocateInfo);
     }
 
 } // namespace lve

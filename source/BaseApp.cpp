@@ -6,6 +6,8 @@
 #include "render/pipeline/GraphicsPipeline.hpp"
 #include "render/RenderEngine.hpp"
 #include "logger/Logger.hpp"
+#include "mesh/Mesh.hpp"
+#include "render/Device.hpp"
 
 
 namespace lve {
@@ -18,6 +20,14 @@ namespace lve {
         config = std::make_unique<Config>("config.json", cli);
         window = std::make_shared<Window>(config->getWidth(), config->getHeight(), config->getAppName());
         renderEngine = std::make_unique<RenderEngine>(window);
+
+        std::vector<Mesh::Vertex> vertices{
+                { {0.0f, -0.5f}, {1.0f, 0.0f, 0.0f} },
+                { {0.5f, 0.5f}, {0.0f, 1.0f, 0.0f} },
+                { {-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f} }
+        };
+
+        model = std::make_unique<Mesh>(renderEngine->getDevice(), vertices);
     }
 
     BaseApp::~BaseApp() = default;
@@ -30,11 +40,22 @@ namespace lve {
     void BaseApp::loop() {
         while (!window->shouldClose()) {
             glfwPollEvents();
-            renderEngine->draw();
+
+            renderEngine->beginDraw({0.1f, 0.1f, 0.1f, 1.0f});
+
+            vk::CommandBuffer commandBuffer = renderEngine->getCommandBuffer();
+            model->bind(commandBuffer);
+            model->draw(commandBuffer);
+
+            renderEngine->endDraw();
         }
     }
 
     void BaseApp::shutdown() {
+        renderEngine->getDevice()->getLogicalDevice().waitIdle();
+
+        model->destroy();
+
         renderEngine->cleanup();
         window->destroy();
     }

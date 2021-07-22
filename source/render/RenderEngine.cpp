@@ -48,7 +48,7 @@ namespace lve {
         }
 
         if (result != vk::Result::eSuccess && result != vk::Result::eSuboptimalKHR)
-            THROW_EX("Failed to acquire swap chain image!");
+            THROW_EX("Failed to acquire swap chain image!")
 
         std::array<vk::ClearValue, 2> clearValues{};
         clearValues[0].color = {clearColor};
@@ -65,6 +65,17 @@ namespace lve {
 
         commandBuffers[imageIndex].beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
 
+        vk::Viewport viewport(
+                0.0f, 0.0,
+                static_cast<float>(swapChain->getExtent().width), static_cast<float>(swapChain->getExtent().height),
+                0.0f, 1.0f
+        );
+        vk::Rect2D scissor({0, 0}, swapChain->getExtent());
+
+        commandBuffers[imageIndex].setViewport(0, 1, &viewport);
+        commandBuffers[imageIndex].setScissor(0, 1, &scissor);
+
+
         graphicsPipeline->bind(commandBuffers[imageIndex]);
     }
 
@@ -77,7 +88,7 @@ namespace lve {
         if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR || window->wasWindowResized()) {
             window->resetWindowResizeFlag();
             recreateDrawResources();
-            return; ;
+            return;
         }
 
         VK_HPP_CHECK_RESULT(result, "Failed to present swap chain handle!")
@@ -101,7 +112,8 @@ namespace lve {
         graphicsPipeline = std::make_unique<GraphicsPipeline>(
                 device->getLogicalDevice(),
                 "model.vert.spv","model.frag.spv",
-                GraphicsPipeline::defaultConfig(swapChain->getRenderPass(), window->getSize().width, window->getSize().height)
+                GraphicsPipeline::defaultConfig(swapChain->getRenderPass(),
+                                                {vk::DynamicState::eViewport, vk::DynamicState::eScissor})
         );
     }
 

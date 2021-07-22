@@ -74,7 +74,7 @@ namespace lve {
                 &config.multisampleInfo, // pMultisampleState
                 &config.depthStencilInfo, // pDepthStencilState
                 &config.colorBlendInfo, // pColorBlendState
-                nullptr, // pDynamicState
+                &config.dynamicStateInfo, // pDynamicState
                 layout, // layout
                 config.renderPass, // renderPass
                 config.subpass // subpass
@@ -104,7 +104,7 @@ namespace lve {
         return layout;
     }
 
-    Pipeline::Config GraphicsPipeline::defaultConfig(const vk::RenderPass& renderPass, uint32_t width, uint32_t height) {
+    Pipeline::Config GraphicsPipeline::defaultConfig(const vk::RenderPass& renderPass, const std::vector<vk::DynamicState>& dynamicStateEnables) {
         Config config;
 
         config.inputAssemblyInfo = vk::PipelineInputAssemblyStateCreateInfo(
@@ -113,26 +113,12 @@ namespace lve {
                 false // primitiveRestartEnable
         );
 
-        config.viewport = vk::Viewport(
-                0.0f, // x
-                0.0f, // y
-                static_cast<float>(width), // width
-                static_cast<float>(height), // height
-                0.0f, // minDepth
-                1.0f // maxDepth
-        );
-
-        config.scissor = vk::Rect2D(
-                {0, 0}, // offset
-                {width, height} // extent
-        );
-
         config.viewportInfo = vk::PipelineViewportStateCreateInfo(
                 {}, // flags
                 1, // viewportCount
-                &config.viewport, // pViewports
+                nullptr, // pViewports
                 1, // scissorCount
-                &config.scissor // pScissors
+                nullptr // pScissors
         );
 
         config.rasterizationInfo = vk::PipelineRasterizationStateCreateInfo(
@@ -191,6 +177,12 @@ namespace lve {
                 {}, // back
                 0.0f, // minDepthBounds
                 1.0f // maxDepthBounds
+        );
+
+        config.dynamicStateInfo = vk::PipelineDynamicStateCreateInfo(
+                {},
+                castU32(dynamicStateEnables.size()),
+                dynamicStateEnables.data()
         );
 
         config.renderPass = renderPass;

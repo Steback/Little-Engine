@@ -14,8 +14,6 @@ namespace lve {
     class Pipeline {
     public:
         struct Config {
-            vk::Viewport viewport;
-            vk::Rect2D scissor;
             vk::PipelineViewportStateCreateInfo viewportInfo;
             vk::PipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
             vk::PipelineRasterizationStateCreateInfo rasterizationInfo;
@@ -23,6 +21,7 @@ namespace lve {
             vk::PipelineColorBlendAttachmentState colorBlendAttachment;
             vk::PipelineColorBlendStateCreateInfo colorBlendInfo;
             vk::PipelineDepthStencilStateCreateInfo depthStencilInfo;
+            vk::PipelineDynamicStateCreateInfo dynamicStateInfo;
             vk::RenderPass renderPass = nullptr;
             uint32_t subpass = 0;
         };

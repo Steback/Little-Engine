@@ -53,7 +53,7 @@ namespace lve {
 
         [[nodiscard]] float extentAspectRatio() const;
 
-        uint32_t acquireNextImage();
+        vk::Result acquireNextImage(uint32_t* imageIndex);
 
         vk::Result submitCommandBuffer(const vk::CommandBuffer& cmdBuffer, uint32_t imageIndex);
 

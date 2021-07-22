@@ -57,9 +57,9 @@ namespace lve {
     }
 
     void RenderEngine::draw() {
-        indexImage = swapChain->acquireNextImage();
+        vk::Result result = swapChain->acquireNextImage(&imageIndex);
 
-        vk::Result result = swapChain->submitCommandBuffer(graphicsCmdBuffers[indexImage], indexImage);
+        result = swapChain->submitCommandBuffer(graphicsCmdBuffers[imageIndex], imageIndex);
         VK_HPP_CHECK_RESULT(result, "Failed to present swap chain handle!")
     }
 

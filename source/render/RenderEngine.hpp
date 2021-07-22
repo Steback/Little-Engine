@@ -45,7 +45,7 @@ namespace lve {
         std::unique_ptr<GraphicsPipeline> graphicsPipeline{};
         std::unique_ptr<SwapChain> swapChain{};
         vk::SurfaceKHR surface{};
-        uint32_t indexImage{};
+        uint32_t imageIndex{};
         vk::CommandPool graphicsCmdPool;
         std::vector<vk::CommandBuffer> graphicsCmdBuffers;
         std::unique_ptr<Mesh> model;

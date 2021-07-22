@@ -97,7 +97,7 @@ namespace lve {
         return static_cast<float>(extent.width) / static_cast<float>(extent.height);
     }
 
-    uint32_t SwapChain::acquireNextImage() {
+    vk::Result SwapChain::acquireNextImage(uint32_t* imageIndex) {
         device->getLogicalDevice().waitForFences(
                 1,
                 &inFlightFences[currentFrame],
@@ -112,16 +112,8 @@ namespace lve {
                 nullptr
         );
 
-        switch (result.result) {
-            case vk::Result::eSuccess:
-                return result.value;
-            case vk::Result::eTimeout:
-            case vk::Result::eNotReady:
-            case vk::Result::eSuboptimalKHR:
-                VK_ERROR(result.result, "Failed to acquire swap chain handle!");
-        }
-
-        THROW_EX("Failed to acquire swap chain handle!");
+        *imageIndex = result.value;
+        return result.result;
     }
 
     vk::Result SwapChain::submitCommandBuffer(const vk::CommandBuffer& cmdBuffer, uint32_t imageIndex) {
@@ -139,8 +131,10 @@ namespace lve {
         VK_HPP_CHECK_RESULT(graphicsQueue.submit(1, &submitInfo, inFlightFences[currentFrame]),
                             "Failed to submit draw command Buffer!");
 
-        vk::PresentInfoKHR presentInfo(1, signalSemaphores, 1, &handle, &imageIndex);
-        vk::Result result = presentQueue.presentKHR(presentInfo);
+        // Vulkan-Hpp throw a exception if result is VK_ERROR_OUT_OF_DATE_KHR, so there is not possible handle the result
+        // that present return. Is preferable use the C-API instead.
+        VkPresentInfoKHR presentInfo = vk::PresentInfoKHR(1, signalSemaphores, 1, &handle, &imageIndex);
+        auto result = static_cast<vk::Result>(vkQueuePresentKHR(presentQueue, &presentInfo));
 
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 

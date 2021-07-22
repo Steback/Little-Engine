@@ -13,47 +13,48 @@
 
 namespace lve {
 
-    SwapChain::SwapChain(std::shared_ptr<Device> device, const vk::Extent2D &windowExtent, const vk::SurfaceKHR& surface)
-            : device(std::move(device)), surface(surface) {
-        graphicsQueue = this->device->getGraphicsQueue();
-        presentQueue = this->device->getPresentQueue();
-        depthFormat = this->device->findSupportFormat(
+    SwapChain::SwapChain(const std::shared_ptr<Device>& device, const vk::Extent2D &windowExtent, const vk::SurfaceKHR& surface)
+            : surface(surface) {
+        logicalDevice = device->getLogicalDevice();
+        graphicsQueue = device->getGraphicsQueue();
+        presentQueue =  device->getPresentQueue();
+        vk::Format depthFormat = device->findSupportFormat(
                 {vk::Format::eD32Sfloat, vk::Format::eD32SfloatS8Uint, vk::Format::eD24UnormS8Uint},
                 vk::ImageTiling::eOptimal,
                 vk::FormatFeatureFlagBits::eDepthStencilAttachment
         );
 
-        createSwapChain();
+        createSwapChain(device);
         createImageViews();
-        createRenderPass();
-        createDepthResources();
+        createRenderPass(depthFormat);
+        createDepthResources(device, depthFormat);
         createFramebuffers();
         createSyncObjects();
     }
 
     SwapChain::~SwapChain() = default;
 
-    void SwapChain::cleanup() {
+    void SwapChain::cleanup(const vma::Allocator& allocator) {
         for (auto& framebuffer : framebuffers)
-            device->getLogicalDevice().destroy(framebuffer);
+            logicalDevice.destroy(framebuffer);
 
-        device->getLogicalDevice().destroy(renderPass);
+        logicalDevice.destroy(renderPass);
 
         for (auto& image : images)
-            device->getLogicalDevice().destroy(image.view);
+            logicalDevice.destroy(image.view);
 
         for (auto& image : depthImages)
-            image.destroy(device->getLogicalDevice(), device->getAllocator());
+            image.destroy(logicalDevice, allocator);
 
         if (handle) {
-            device->getLogicalDevice().destroy(handle);
+            logicalDevice.destroy(handle);
             handle = VK_NULL_HANDLE;
         }
 
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
-            device->getLogicalDevice().destroy(renderFinishedSemaphores[i]);
-            device->getLogicalDevice().destroy(imageAvailableSemaphores[i]);
-            device->getLogicalDevice().destroy(inFlightFences[i]);
+            logicalDevice.destroy(renderFinishedSemaphores[i]);
+            logicalDevice.destroy(imageAvailableSemaphores[i]);
+            logicalDevice.destroy(inFlightFences[i]);
         }
     }
 
@@ -77,10 +78,6 @@ namespace lve {
         return format;
     }
 
-    vk::Format SwapChain::getDepthFormat() {
-        return depthFormat;
-    }
-
     vk::Extent2D SwapChain::getExtent() {
         return extent;
     }
@@ -98,14 +95,14 @@ namespace lve {
     }
 
     vk::Result SwapChain::acquireNextImage(uint32_t* imageIndex) {
-        device->getLogicalDevice().waitForFences(
+        logicalDevice.waitForFences(
                 1,
                 &inFlightFences[currentFrame],
                 true,
                 std::numeric_limits<uint64_t>::max()
         );
 
-        vk::ResultValue result = device->getLogicalDevice().acquireNextImageKHR(
+        vk::ResultValue result = logicalDevice.acquireNextImageKHR(
                 handle,
                 std::numeric_limits<uint64_t>::max(),
                 imageAvailableSemaphores[currentFrame],
@@ -118,7 +115,7 @@ namespace lve {
 
     vk::Result SwapChain::submitCommandBuffer(const vk::CommandBuffer& cmdBuffer, uint32_t imageIndex) {
         if (imagesInFlight[imageIndex])
-            device->getLogicalDevice().waitForFences(1, &imagesInFlight[imageIndex], true, std::numeric_limits<uint64_t>::max());
+            logicalDevice.waitForFences(1, &imagesInFlight[imageIndex], true, std::numeric_limits<uint64_t>::max());
 
         imagesInFlight[imageIndex] = inFlightFences[currentFrame];
 
@@ -127,7 +124,7 @@ namespace lve {
         vk::Semaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
         vk::SubmitInfo submitInfo(1, waitSemaphores, waitStages, 1, &cmdBuffer, 1, signalSemaphores);
 
-        device->getLogicalDevice().resetFences(inFlightFences[currentFrame]);
+        logicalDevice.resetFences(inFlightFences[currentFrame]);
         VK_HPP_CHECK_RESULT(graphicsQueue.submit(1, &submitInfo, inFlightFences[currentFrame]),
                             "Failed to submit draw command Buffer!");
 
@@ -150,7 +147,7 @@ namespace lve {
         return details;
     }
 
-    void SwapChain::createSwapChain() {
+    void SwapChain::createSwapChain(const std::shared_ptr<Device>& device) {
         SupportDetails supportDetails = querySwapChainSupport(device->getPhysicalDevice(), surface);
         vk::SurfaceFormatKHR surfaceFormat = chooseSurfaceFormat(supportDetails.formats);
         vk::PresentModeKHR presentMode = choosePresentMode(supportDetails.presentModes);
@@ -190,9 +187,9 @@ namespace lve {
         createInfo.clipped = true;
         createInfo.oldSwapchain = nullptr;
 
-        handle = device->getLogicalDevice().createSwapchainKHR(createInfo);
+        handle = logicalDevice.createSwapchainKHR(createInfo);
 
-        std::vector<vk::Image> swapChainImages = device->getLogicalDevice().getSwapchainImagesKHR(handle);
+        std::vector<vk::Image> swapChainImages = logicalDevice.getSwapchainImagesKHR(handle);
         images.resize(imageCount);
 
         for (size_t i = 0; i < imageCount; ++i)
@@ -212,11 +209,11 @@ namespace lve {
                     {vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1} // subresourceRange
             };
 
-            image.view = device->getLogicalDevice().createImageView(createInfo);
+            image.view = logicalDevice.createImageView(createInfo);
         }
     }
 
-    void SwapChain::createDepthResources() {
+    void SwapChain::createDepthResources(const std::shared_ptr<Device>& device, vk::Format depthFormat) {
         depthImages.resize(images.size());
         for (auto& image : depthImages) {
             vk::ImageCreateInfo imageInfo(
@@ -236,11 +233,11 @@ namespace lve {
             );
 
             image = Image(device->getAllocator(), imageInfo, vma::MemoryUsage::eGpuOnly);
-            image.createView(device->getLogicalDevice(), vk::ImageAspectFlagBits::eDepth);
+            image.createView(logicalDevice, vk::ImageAspectFlagBits::eDepth);
         }
     }
 
-    void SwapChain::createRenderPass() {
+    void SwapChain::createRenderPass(vk::Format depthFormat) {
         vk::AttachmentDescription colorAttachment(
                 {},
                 format,
@@ -301,7 +298,7 @@ namespace lve {
                 &dependency
         );
 
-        renderPass = device->getLogicalDevice().createRenderPass(createInfo);
+        renderPass = logicalDevice.createRenderPass(createInfo);
     }
 
     void SwapChain::createFramebuffers() {
@@ -318,7 +315,7 @@ namespace lve {
                     1 // layers
             );
 
-            framebuffers[i] = device->getLogicalDevice().createFramebuffer(createInfo);
+            framebuffers[i] = logicalDevice.createFramebuffer(createInfo);
         }
     }
 
@@ -332,9 +329,9 @@ namespace lve {
         vk::FenceCreateInfo fenceInfo(vk::FenceCreateFlagBits::eSignaled);
 
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
-            imageAvailableSemaphores[i] = device->getLogicalDevice().createSemaphore(semaphoreInfo);
-            renderFinishedSemaphores[i] = device->getLogicalDevice().createSemaphore(semaphoreInfo);
-            inFlightFences[i] = device->getLogicalDevice().createFence(fenceInfo);
+            imageAvailableSemaphores[i] = logicalDevice.createSemaphore(semaphoreInfo);
+            renderFinishedSemaphores[i] = logicalDevice.createSemaphore(semaphoreInfo);
+            inFlightFences[i] = logicalDevice.createFence(fenceInfo);
         }
     }
 

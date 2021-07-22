@@ -7,6 +7,7 @@
 
 #define VULKAN_HPP_NO_NODISCARD_WARNINGS
 #include "vulkan/vulkan.hpp"
+#include "../extras/vk_mem_alloc.hpp"
 
 
 namespace lve {
@@ -23,7 +24,7 @@ namespace lve {
         };
 
     public:
-        SwapChain(std::shared_ptr<Device> device, const vk::Extent2D& windowExtent, const vk::SurfaceKHR& surface);
+        SwapChain(const std::shared_ptr<Device>& device, const vk::Extent2D& windowExtent, const vk::SurfaceKHR& surface);
 
         SwapChain(const SwapChain&) = delete;
 
@@ -31,7 +32,7 @@ namespace lve {
 
         SwapChain& operator=(const SwapChain&) = delete;
 
-        void cleanup();
+        void cleanup(const vma::Allocator& allocator);
 
         vk::Framebuffer getFrameBuffer(size_t index);
 
@@ -42,8 +43,6 @@ namespace lve {
         size_t imageCount();
 
         vk::Format getFormat();
-
-        vk::Format getDepthFormat();
 
         vk::Extent2D getExtent();
 
@@ -60,13 +59,13 @@ namespace lve {
         static SupportDetails querySwapChainSupport(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface);
 
     private:
-        void createSwapChain();
+        void createSwapChain(const std::shared_ptr<Device>& device);
 
         void createImageViews();
 
-        void createDepthResources();
+        void createDepthResources(const std::shared_ptr<Device>& device, vk::Format depthFormat);
 
-        void createRenderPass();
+        void createRenderPass(vk::Format depthFormat);
 
         void createFramebuffers();
 
@@ -79,14 +78,13 @@ namespace lve {
         vk::Extent2D chooseExtent(const vk::SurfaceCapabilitiesKHR& capabilities);
 
     private:
-        std::shared_ptr<Device> device;
+        vk::Device logicalDevice;
         vk::SurfaceKHR surface;
         vk::SwapchainKHR handle;
         vk::Queue graphicsQueue;
         vk::Queue presentQueue;
 
         vk::Format format{};
-        vk::Format depthFormat{};
         vk::Extent2D extent;
         vk::Extent2D windowExtent;
 

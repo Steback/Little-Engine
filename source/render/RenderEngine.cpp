@@ -50,7 +50,7 @@ namespace lve {
 
         device->getLogicalDevice().destroy(graphicsCmdPool);
         graphicsPipeline->destroy();
-        swapChain->cleanup();
+        swapChain->cleanup(device->getAllocator());
         instance->getHandle().destroy(surface);
         device->destroy();
         instance->destroy();

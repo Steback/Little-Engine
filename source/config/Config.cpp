@@ -67,7 +67,7 @@ namespace lve {
 
     void Config::setupCliOptions(CLI::App &cli) {
         // TODO: Find for a better approach to add cli options dynamically
-        cli.add_flag("--deviceInfo", "Enable print physical device info");
+        cli.add_flag("--deviceInfo", "Enable print physical logicalDevice info");
     }
 
 } // namespace lve

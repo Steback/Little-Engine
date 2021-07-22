@@ -17,9 +17,12 @@ namespace lve {
             EXIT_ERROR(fmt::format("Failed to create handle {}", name));
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
         handle = glfwCreateWindow(size.width, size.height, this->name.c_str(), nullptr, nullptr);
+
+        glfwSetWindowUserPointer(handle, this);
+        glfwSetFramebufferSizeCallback(handle, framebufferResizeCallback);
 
         spdlog::info("Open handle {}", this->name);
     }
@@ -59,6 +62,20 @@ namespace lve {
 
     VkExtent2D Window::getExtent() const {
         return {castU32(size.width), castU32(size.height)};
+    }
+
+    bool Window::wasWindowResized() const {
+        return framebufferResized;
+    }
+
+    void Window::resetWindowResizeFlag() {
+        framebufferResized = false;
+    }
+
+    void Window::framebufferResizeCallback(GLFWwindow* window, int width, int height) {
+        auto* win = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+        win->framebufferResized = true;
+        win->size = {width, height};
     }
 
 } // namespace lve

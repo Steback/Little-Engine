@@ -26,6 +26,9 @@ namespace lve {
     public:
         SwapChain(const std::shared_ptr<Device>& device, const vk::Extent2D& windowExtent, const vk::SurfaceKHR& surface);
 
+        SwapChain(const std::shared_ptr<Device>& device, const vk::Extent2D& windowExtent, const vk::SurfaceKHR& surface,
+                  const std::shared_ptr<SwapChain>& oldSwapChain);
+
         SwapChain(const SwapChain&) = delete;
 
         ~SwapChain();
@@ -59,7 +62,7 @@ namespace lve {
         static SupportDetails querySwapChainSupport(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface);
 
     private:
-        void createSwapChain(const std::shared_ptr<Device>& device);
+        void createSwapChain(const std::shared_ptr<Device>& device, vk::SurfaceKHR surface, const std::shared_ptr<SwapChain>& oldSwapChain = nullptr);
 
         void createImageViews();
 
@@ -79,8 +82,9 @@ namespace lve {
 
     private:
         vk::Device logicalDevice;
-        vk::SurfaceKHR surface;
+
         vk::SwapchainKHR handle;
+
         vk::Queue graphicsQueue;
         vk::Queue presentQueue;
 

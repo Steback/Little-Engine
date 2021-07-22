@@ -32,10 +32,16 @@ namespace lve {
 
         vk::CommandBuffer getCommandBuffer();
 
+        void setupDrawResources();
+
     private:
         void createPipelines();
 
         void createCmdBuffers();
+
+        void recreateDrawResources();
+
+        void freeCommandBuffers();
 
     private:
         std::shared_ptr<Window> window{};

@@ -33,6 +33,7 @@ namespace lve {
     BaseApp::~BaseApp() = default;
 
     void BaseApp::run() {
+        renderEngine->setupDrawResources();
         loop();
         shutdown();
     }

@@ -26,12 +26,6 @@ namespace lve {
         instance = std::make_shared<Instance>(reqValidationLayers);
         surface = vk::SurfaceKHR(this->window->createWindowSurface(instance->getHandle()));
         device = std::make_shared<Device>(instance, reqValidationLayers, &surface);
-        swapChain = std::make_unique<SwapChain>(device, this->window->getExtent(), surface);
-
-
-
-        createPipelines();
-        createCmdBuffers();
     }
 
     RenderEngine::~RenderEngine() = default;
@@ -48,6 +42,14 @@ namespace lve {
     void RenderEngine::beginDraw(const std::array<float, 4>& clearColor) {
         vk::Result result = swapChain->acquireNextImage(&imageIndex);
 
+        if (result == vk::Result::eErrorOutOfDateKHR) {
+            recreateDrawResources();
+            return;
+        }
+
+        if (result != vk::Result::eSuccess && result != vk::Result::eSuboptimalKHR)
+            THROW_EX("Failed to acquire swap chain image!");
+
         std::array<vk::ClearValue, 2> clearValues{};
         clearValues[0].color = {clearColor};
         clearValues[1].depthStencil = {{1.0f, 0}};
@@ -58,8 +60,7 @@ namespace lve {
                 swapChain->getRenderPass(),
                 swapChain->getFrameBuffer(imageIndex),
                 {{0, 0}, swapChain->getExtent()}, // renderArea
-                castU32(clearValues.size()),
-                clearValues.data()
+                clearValues
         );
 
         commandBuffers[imageIndex].beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
@@ -72,6 +73,13 @@ namespace lve {
         commandBuffers[imageIndex].end();
 
         vk::Result result = swapChain->submitCommandBuffer(commandBuffers[imageIndex], imageIndex);
+
+        if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR || window->wasWindowResized()) {
+            window->resetWindowResizeFlag();
+            recreateDrawResources();
+            return; ;
+        }
+
         VK_HPP_CHECK_RESULT(result, "Failed to present swap chain handle!")
     }
 
@@ -81,6 +89,12 @@ namespace lve {
 
     vk::CommandBuffer RenderEngine::getCommandBuffer() {
         return commandBuffers[imageIndex];
+    }
+
+    void RenderEngine::setupDrawResources() {
+        swapChain = std::make_unique<SwapChain>(device, this->window->getExtent(), surface);
+        createPipelines();
+        createCmdBuffers();
     }
 
     void RenderEngine::createPipelines() {
@@ -102,6 +116,31 @@ namespace lve {
         );
 
         commandBuffers = device->getLogicalDevice().allocateCommandBuffers(allocateInfo);
+    }
+
+    void RenderEngine::recreateDrawResources() {
+        auto extent = window->getExtent();
+
+        while (extent.width == 0 || extent.height == 0) {
+            extent = window->getExtent();
+            glfwWaitEvents();
+        }
+
+        device->getLogicalDevice().waitIdle();
+
+        graphicsPipeline->destroy();
+
+        swapChain = std::make_unique<SwapChain>(device, extent, surface, std::move(swapChain));
+        if (swapChain->imageCount() != commandBuffers.size()) {
+            freeCommandBuffers();
+            createCmdBuffers();
+        }
+
+        createPipelines();
+    }
+
+    void RenderEngine::freeCommandBuffers() {
+        device->getLogicalDevice().free(commandPool, commandBuffers);
     }
 
 } // namespace lve

@@ -13,8 +13,7 @@
 
 namespace lve {
 
-    SwapChain::SwapChain(const std::shared_ptr<Device>& device, const vk::Extent2D &windowExtent, const vk::SurfaceKHR& surface)
-            : surface(surface) {
+    SwapChain::SwapChain(const std::shared_ptr<Device>& device, const vk::Extent2D &windowExtent, const vk::SurfaceKHR& surface) {
         logicalDevice = device->getLogicalDevice();
         graphicsQueue = device->getGraphicsQueue();
         presentQueue =  device->getPresentQueue();
@@ -24,12 +23,34 @@ namespace lve {
                 vk::FormatFeatureFlagBits::eDepthStencilAttachment
         );
 
-        createSwapChain(device);
+        createSwapChain(device, surface);
         createImageViews();
         createRenderPass(depthFormat);
         createDepthResources(device, depthFormat);
         createFramebuffers();
         createSyncObjects();
+    }
+
+    SwapChain::SwapChain(const std::shared_ptr<Device> &device, const vk::Extent2D &windowExtent, const vk::SurfaceKHR& surface,
+                         const std::shared_ptr<SwapChain>& oldSwapChain) {
+        logicalDevice = oldSwapChain->logicalDevice;
+        graphicsQueue = oldSwapChain->graphicsQueue;
+        presentQueue = oldSwapChain->presentQueue;
+
+        vk::Format depthFormat = device->findSupportFormat(
+                {vk::Format::eD32Sfloat, vk::Format::eD32SfloatS8Uint, vk::Format::eD24UnormS8Uint},
+                vk::ImageTiling::eOptimal,
+                vk::FormatFeatureFlagBits::eDepthStencilAttachment
+        );
+
+        createSwapChain(device, surface, oldSwapChain);
+        createImageViews();
+        createRenderPass(depthFormat);
+        createDepthResources(device, depthFormat);
+        createFramebuffers();
+        createSyncObjects();
+
+        oldSwapChain->cleanup(device->getAllocator());
     }
 
     SwapChain::~SwapChain() = default;
@@ -147,7 +168,7 @@ namespace lve {
         return details;
     }
 
-    void SwapChain::createSwapChain(const std::shared_ptr<Device>& device) {
+    void SwapChain::createSwapChain(const std::shared_ptr<Device>& device, vk::SurfaceKHR surface, const std::shared_ptr<SwapChain>& oldSwapChain) {
         SupportDetails supportDetails = querySwapChainSupport(device->getPhysicalDevice(), surface);
         vk::SurfaceFormatKHR surfaceFormat = chooseSurfaceFormat(supportDetails.formats);
         vk::PresentModeKHR presentMode = choosePresentMode(supportDetails.presentModes);
@@ -185,7 +206,7 @@ namespace lve {
         createInfo.compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque;
         createInfo.presentMode = presentMode;
         createInfo.clipped = true;
-        createInfo.oldSwapchain = nullptr;
+        createInfo.oldSwapchain = oldSwapChain == nullptr ? nullptr : oldSwapChain->handle;
 
         handle = logicalDevice.createSwapchainKHR(createInfo);
 
@@ -352,7 +373,6 @@ namespace lve {
             }
         }
 
-        spdlog::info("Present mode: V-Sync - {}", vk::to_string(vk::PresentModeKHR::eFifo));
         return vk::PresentModeKHR::eFifo;
     }
 

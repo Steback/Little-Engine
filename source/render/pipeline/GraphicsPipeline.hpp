@@ -5,9 +5,16 @@
 #include <string>
 
 #include "Pipeline.hpp"
+#include "../../math/Vector2.hpp"
+#include "../../math/Vector3.hpp"
 
 
 namespace lve {
+
+    struct SimplePushConstantData {
+        vec2 offset;
+        alignas(16) vec3 color;
+    };
 
     class GraphicsPipeline : public Pipeline {
     public:

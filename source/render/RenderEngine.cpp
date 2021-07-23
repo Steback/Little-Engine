@@ -155,4 +155,8 @@ namespace lve {
         device->getLogicalDevice().free(commandPool, commandBuffers);
     }
 
+    vk::PipelineLayout RenderEngine::getLayout() {
+        return graphicsPipeline->getLayout();
+    }
+
 } // namespace lve

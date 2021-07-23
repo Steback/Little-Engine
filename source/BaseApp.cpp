@@ -8,6 +8,7 @@
 #include "logger/Logger.hpp"
 #include "mesh/Mesh.hpp"
 #include "render/Device.hpp"
+#include "render/pipeline/GraphicsPipeline.hpp"
 
 
 namespace lve {
@@ -46,7 +47,22 @@ namespace lve {
 
             vk::CommandBuffer commandBuffer = renderEngine->getCommandBuffer();
             model->bind(commandBuffer);
-            model->draw(commandBuffer);
+
+            for (int i = 0; i < 4; ++i) {
+                SimplePushConstantData push{};
+                push.offset = {0.0f, -0.4f + i * 0.25f};
+                push.color = {0.0f, 0.0f, 0.2f + 0.2f * i};
+
+                commandBuffer.pushConstants(
+                        renderEngine->getLayout(),
+                        vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment,
+                        0,
+                        sizeof(SimplePushConstantData),
+                        &push
+                );
+
+                model->draw(commandBuffer);
+            }
 
             renderEngine->endDraw();
         }

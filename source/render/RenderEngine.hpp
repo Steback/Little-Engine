@@ -34,6 +34,8 @@ namespace lve {
 
         void setupDrawResources();
 
+        vk::PipelineLayout getLayout();
+
     private:
         void createPipelines();
 

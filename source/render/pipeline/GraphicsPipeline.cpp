@@ -52,12 +52,18 @@ namespace lve {
                 attributes.data() // pVertexAttributeDescriptions
         );
 
+        vk::PushConstantRange pushConstantRange(
+                vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment,
+                0,
+                sizeof(SimplePushConstantData)
+        );
+
         vk::PipelineLayoutCreateInfo layoutInfo(
                 {},
                 0,
                 nullptr,
-                0,
-                nullptr
+                1,
+                &pushConstantRange
         );
 
         layout = device.createPipelineLayout(layoutInfo);

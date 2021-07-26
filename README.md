@@ -16,6 +16,7 @@ All the dependencies are installed with [Conan](https://conan.io/) package manag
 | [Nlohmann json](https://github.com/nlohmann/json) | 3.9.1 |  
 | [CLI11](https://github.com/CLIUtils/CLI11) | 1.9.1 |  
 | [Vulkan® Memory Allocator](https://gpuopen.com/vulkan-memory-allocator) - [C++ Bindings](https://github.com/malte-v/VulkanMemoryAllocator-Hpp) | 2.3.0 |  
+| [Entt](https://github.com/skypjack/entt) | 3.8.0 |  
 
 ## Build
 ### Requirements

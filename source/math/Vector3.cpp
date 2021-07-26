@@ -15,16 +15,18 @@ namespace lve {
 
     Vector3::Vector3(const Vector3 &v) = default;
 
+    Vector3::Vector3(const float *source) : x(source[0]), y(source[1]), z(source[2]) {  }
+
     Vector3 &Vector3::set(float x_, float y_, float z_) {
         x = x_; y = y_; z = z_;
         return *this;
     }
 
-    float Vector3::operator[](unsigned int i) {
+    float& Vector3::operator[](unsigned int i) {
         return ((&x)[i]);
     }
 
-    float Vector3::operator[](unsigned int i) const {
+    const float& Vector3::operator[](unsigned int i) const {
         return ((&x)[i]);
     }
 

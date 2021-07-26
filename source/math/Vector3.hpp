@@ -19,11 +19,13 @@ namespace lve {
 
         Vector3(const Vector3& v);
 
+        explicit Vector3(const float source[3]);
+
         Vector3& set(float x_, float y_, float z_);
 
-        float operator[](unsigned int i);
+        float& operator[](unsigned int i);
 
-        float operator[](unsigned int i) const;
+        const float& operator[](unsigned int i) const;
 
         Vector3& operator=(const Vector3& v);
 

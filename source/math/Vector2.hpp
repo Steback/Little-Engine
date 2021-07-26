@@ -17,11 +17,13 @@ namespace lve {
 
         Vector2(const Vector2& v);
 
+        explicit Vector2(const float source[2]);
+
         Vector2& set(float x_, float y_);
 
-        float operator[](unsigned int i);
+        float& operator[](unsigned int i);
 
-        float operator[](unsigned int i) const;
+        const float& operator[](unsigned int i) const;
 
         Vector2& operator=(const Vector2& v);
 

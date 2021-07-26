@@ -13,16 +13,18 @@ namespace lve {
 
     Vector2::Vector2(const Vector2 &v) = default;
 
+    Vector2::Vector2(const float *source) : x(source[0]), y(source[1]) {  }
+
     Vector2 &Vector2::set(float x_, float y_) {
         x = x_; y = y_;
         return *this;
     }
 
-    float Vector2::operator[](unsigned int i) {
+    float& Vector2::operator[](unsigned int i) {
         return ((&x)[i]);
     }
 
-    float Vector2::operator[](unsigned int i) const {
+    const float& Vector2::operator[](unsigned int i) const {
         return ((&x)[i]);
     }
 

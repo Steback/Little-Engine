@@ -6,12 +6,13 @@
 #include "render/pipeline/GraphicsPipeline.hpp"
 #include "render/RenderEngine.hpp"
 #include "logger/Logger.hpp"
-#include "mesh/Mesh.hpp"
 #include "render/Device.hpp"
 #include "render/pipeline/GraphicsPipeline.hpp"
 #include "scene/Scene.hpp"
 #include "scene/Entity.hpp"
 #include "scene/components/Transform.hpp"
+#include "resources/AssetsManager.hpp"
+#include "scene/components/MeshInterface.hpp"
 
 
 namespace lve {
@@ -31,11 +32,12 @@ namespace lve {
                 { {-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f} }
         };
 
+        assetsManager = std::make_unique<AssetsManager>(renderEngine->getDevice());
+
         scene = std::make_unique<Scene>();
         Entity* entity = scene->addEntity("Triangle");
         entity->addComponent<component::Transform>(vec2{0.0f, 0.0f}, 3.14159f, vec2{1.0f, 1.0f});
-
-        model = std::make_unique<Mesh>(renderEngine->getDevice(), vertices);
+        entity->addComponent<component::MeshInterface>(assetsManager->addMesh(0, vertices));
     }
 
     BaseApp::~BaseApp() = default;
@@ -53,7 +55,8 @@ namespace lve {
             renderEngine->beginDraw({0.1f, 0.1f, 0.1f, 1.0f});
 
             vk::CommandBuffer commandBuffer = renderEngine->getCommandBuffer();
-            model->bind(commandBuffer);
+
+            assetsManager->bindMeshes(commandBuffer);
 
             for (auto& [id, entity] : scene->getEntities()) {
                 auto& transform = entity->getComponent<component::Transform>();
@@ -71,7 +74,7 @@ namespace lve {
                         &push
                 );
 
-                model->draw(commandBuffer);
+                entity->getComponent<component::MeshInterface>().draw(commandBuffer);
             }
 
             renderEngine->endDraw();
@@ -81,7 +84,7 @@ namespace lve {
     void BaseApp::shutdown() {
         renderEngine->getDevice()->getLogicalDevice().waitIdle();
 
-        model->destroy();
+        assetsManager->cleanup();
 
         renderEngine->cleanup();
         window->destroy();

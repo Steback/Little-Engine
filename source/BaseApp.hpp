@@ -14,8 +14,8 @@ namespace lve {
     class Window;
     class Config;
     class RenderEngine;
-    class Mesh;
     class Scene;
+    class AssetsManager;
 
     class BaseApp {
     public:
@@ -34,8 +34,8 @@ namespace lve {
     private:
         std::shared_ptr<Window> window;
         std::unique_ptr<RenderEngine> renderEngine;
-        std::unique_ptr<Mesh> model;
         std::unique_ptr<Scene> scene;
+        std::unique_ptr<AssetsManager> assetsManager;
     };
 
 } // namespace lve

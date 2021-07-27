@@ -9,6 +9,9 @@
 #include "mesh/Mesh.hpp"
 #include "render/Device.hpp"
 #include "render/pipeline/GraphicsPipeline.hpp"
+#include "scene/Scene.hpp"
+#include "scene/Entity.hpp"
+#include "scene/components/Transform.hpp"
 
 
 namespace lve {
@@ -27,6 +30,10 @@ namespace lve {
                 { {0.5f, 0.5f}, {0.0f, 1.0f, 0.0f} },
                 { {-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f} }
         };
+
+        scene = std::make_unique<Scene>();
+        Entity* entity = scene->addEntity("Triangle");
+        entity->addComponent<component::Transform>(vec2{0.0f, 0.0f}, 3.14159f, vec2{1.0f, 1.0f});
 
         model = std::make_unique<Mesh>(renderEngine->getDevice(), vertices);
     }
@@ -48,10 +55,13 @@ namespace lve {
             vk::CommandBuffer commandBuffer = renderEngine->getCommandBuffer();
             model->bind(commandBuffer);
 
-            for (int i = 0; i < 4; ++i) {
+            for (auto& [id, entity] : scene->getEntities()) {
+                auto& transform = entity->getComponent<component::Transform>();
+
                 SimplePushConstantData push{};
-                push.offset = {0.0f, -0.4f + i * 0.25f};
-                push.color = {0.0f, 0.0f, 0.2f + 0.2f * i};
+                push.offset = transform.translation;
+                push.color = {0.2f, 0.0f, 0.2f};
+                push.transform = transform.getWorldMatrix();
 
                 commandBuffer.pushConstants(
                         renderEngine->getLayout(),
@@ -75,10 +85,6 @@ namespace lve {
 
         renderEngine->cleanup();
         window->destroy();
-    }
-
-    void BaseApp::loadModels() {
-
     }
 
 } // namespace lve

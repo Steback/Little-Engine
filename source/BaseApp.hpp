@@ -15,6 +15,7 @@ namespace lve {
     class Config;
     class RenderEngine;
     class Mesh;
+    class Scene;
 
     class BaseApp {
     public:
@@ -31,12 +32,10 @@ namespace lve {
         static std::unique_ptr<Config> config;
 
     private:
-        void loadModels();
-
-    private:
         std::shared_ptr<Window> window;
         std::unique_ptr<RenderEngine> renderEngine;
         std::unique_ptr<Mesh> model;
+        std::unique_ptr<Scene> scene;
     };
 
 } // namespace lve

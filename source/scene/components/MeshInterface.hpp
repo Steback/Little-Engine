@@ -11,19 +11,15 @@ namespace lve {
 
     class Mesh;
 
-    namespace component {
+    class MeshInterface {
+    public:
+        explicit MeshInterface(std::shared_ptr<Mesh> mesh);
 
-        class MeshInterface {
-        public:
-            explicit MeshInterface(std::shared_ptr<Mesh> mesh);
+        void draw(vk::CommandBuffer cmdBuffer);
 
-            void draw(vk::CommandBuffer cmdBuffer);
-
-        private:
-            std::shared_ptr<Mesh> mesh;
-        };
-
-    } // namespace component
+    private:
+        std::shared_ptr<Mesh> mesh;
+    };
 
 } // namespace lve
 

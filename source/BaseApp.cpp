@@ -36,8 +36,8 @@ namespace lve {
 
         scene = std::make_unique<Scene>();
         Entity* entity = scene->addEntity("Triangle");
-        entity->addComponent<component::Transform>(vec2{0.0f, 0.0f}, 3.14159f, vec2{1.0f, 1.0f});
-        entity->addComponent<component::MeshInterface>(assetsManager->addMesh(0, vertices));
+        entity->addComponent<Transform>(vec2{0.0f, 0.0f}, 3.14159f, vec2{1.0f, 1.0f});
+        entity->addComponent<MeshInterface>(assetsManager->addMesh(0, vertices));
     }
 
     BaseApp::~BaseApp() = default;
@@ -59,7 +59,7 @@ namespace lve {
             assetsManager->bindMeshes(commandBuffer);
 
             for (auto& [id, entity] : scene->getEntities()) {
-                auto& transform = entity->getComponent<component::Transform>();
+                auto& transform = entity->getComponent<Transform>();
 
                 SimplePushConstantData push{};
                 push.offset = transform.translation;
@@ -74,7 +74,7 @@ namespace lve {
                         &push
                 );
 
-                entity->getComponent<component::MeshInterface>().draw(commandBuffer);
+                entity->getComponent<MeshInterface>().draw(commandBuffer);
             }
 
             renderEngine->endDraw();

@@ -9,23 +9,19 @@ namespace lve {
 
     class Matrix2;
 
-    namespace component {
+    class Transform {
+    public:
+        Transform();
 
-        class Transform {
-        public:
-            Transform();
+        Transform(const vec2& t, float r, const vec2& s);
 
-            Transform(const vec2& t, float r, const vec2& s);
+        [[nodiscard]] Matrix2 getWorldMatrix() const;
 
-            [[nodiscard]] Matrix2 getWorldMatrix() const;
-
-        public:
-            vec2 translation;
-            vec2 scale{1.0f};
-            float rotation{};
-        };
-
-    } // namespace component
+    public:
+        vec2 translation;
+        vec2 scale{1.0f};
+        float rotation{};
+    };
 
 } // namespace lve
 

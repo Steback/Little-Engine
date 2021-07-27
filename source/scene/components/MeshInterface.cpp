@@ -3,7 +3,7 @@
 #include "../../mesh/Mesh.hpp"
 
 
-namespace lve::component {
+namespace lve {
 
     MeshInterface::MeshInterface(std::shared_ptr<Mesh> mesh) : mesh(std::move(mesh)) {
 

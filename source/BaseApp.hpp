@@ -13,7 +13,7 @@ namespace lve {
 
     class Window;
     class Config;
-    class RenderEngine;
+    class Renderer;
     class Scene;
     class AssetsManager;
 
@@ -33,7 +33,7 @@ namespace lve {
 
     private:
         std::shared_ptr<Window> window;
-        std::unique_ptr<RenderEngine> renderEngine;
+        std::unique_ptr<Renderer> renderer;
         std::unique_ptr<Scene> scene;
         std::unique_ptr<AssetsManager> assetsManager;
     };

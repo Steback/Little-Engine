@@ -59,6 +59,8 @@ namespace lve {
 
         vk::Result submitCommandBuffer(const vk::CommandBuffer& cmdBuffer, uint32_t imageIndex);
 
+        bool compareFormats(const SwapChain& swapChain);
+
         static SupportDetails querySwapChainSupport(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface);
 
     private:
@@ -66,9 +68,9 @@ namespace lve {
 
         void createImageViews();
 
-        void createDepthResources(const std::shared_ptr<Device>& device, vk::Format depthFormat);
+        void createDepthResources(const std::shared_ptr<Device>& device);
 
-        void createRenderPass(vk::Format depthFormat);
+        void createRenderPass();
 
         void createFramebuffers();
 
@@ -89,6 +91,8 @@ namespace lve {
         vk::Queue presentQueue;
 
         vk::Format format{};
+        vk::Format depthFormat;
+
         vk::Extent2D extent;
         vk::Extent2D windowExtent;
 

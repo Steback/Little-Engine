@@ -4,14 +4,14 @@
 #include "render/Window.hpp"
 #include "fileManager/FileManager.hpp"
 #include "render/pipeline/GraphicsPipeline.hpp"
-#include "render/RenderEngine.hpp"
+#include "render/Renderer.hpp"
 #include "logger/Logger.hpp"
 #include "render/Device.hpp"
-#include "render/pipeline/GraphicsPipeline.hpp"
 #include "scene/Scene.hpp"
 #include "scene/Entity.hpp"
-#include "scene/components/Transform.hpp"
 #include "resources/AssetsManager.hpp"
+#include "render/RenderSystem.hpp"
+#include "scene/components/Transform.hpp"
 #include "scene/components/MeshInterface.hpp"
 
 
@@ -24,7 +24,7 @@ namespace lve {
         Logger::setup();
         config = std::make_unique<Config>("config.json", cli);
         window = std::make_shared<Window>(config->getWidth(), config->getHeight(), config->getAppName());
-        renderEngine = std::make_unique<RenderEngine>(window);
+        renderer = std::make_unique<Renderer>(window);
 
         std::vector<Mesh::Vertex> vertices{
                 { {0.0f, -0.5f}, {1.0f, 0.0f, 0.0f} },
@@ -32,7 +32,7 @@ namespace lve {
                 { {-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f} }
         };
 
-        assetsManager = std::make_unique<AssetsManager>(renderEngine->getDevice());
+        assetsManager = std::make_unique<AssetsManager>(renderer->getDevice());
 
         scene = std::make_unique<Scene>();
         Entity* entity = scene->addEntity("Triangle");
@@ -43,50 +43,31 @@ namespace lve {
     BaseApp::~BaseApp() = default;
 
     void BaseApp::run() {
-        renderEngine->setupDrawResources();
+        renderer->setupDrawResources();
         loop();
         shutdown();
     }
 
     void BaseApp::loop() {
+        RenderSystem renderSystem(renderer->getDevice(), renderer->getRenderPass());
+
         while (!window->shouldClose()) {
             glfwPollEvents();
 
-            renderEngine->beginDraw({0.1f, 0.1f, 0.1f, 1.0f});
-
-            vk::CommandBuffer commandBuffer = renderEngine->getCommandBuffer();
-
-            assetsManager->bindMeshes(commandBuffer);
-
-            for (auto& [id, entity] : scene->getEntities()) {
-                auto& transform = entity->getComponent<Transform>();
-
-                SimplePushConstantData push{};
-                push.offset = transform.translation;
-                push.color = {0.2f, 0.0f, 0.2f};
-                push.transform = transform.getWorldMatrix();
-
-                commandBuffer.pushConstants(
-                        renderEngine->getLayout(),
-                        vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment,
-                        0,
-                        sizeof(SimplePushConstantData),
-                        &push
-                );
-
-                entity->getComponent<MeshInterface>().draw(commandBuffer);
+            if (auto commandBuffer = renderer->beginFrame()) {
+                renderer->beginSwapChainRenderPass(commandBuffer);
+                renderSystem.renderEntities(commandBuffer, scene->getRegistry());
+                renderer->endSwapChainRenderPass(commandBuffer);
+                renderer->endFrame();
             }
-
-            renderEngine->endDraw();
         }
+
+        renderer->getDevice()->getLogicalDevice().waitIdle();
     }
 
     void BaseApp::shutdown() {
-        renderEngine->getDevice()->getLogicalDevice().waitIdle();
-
         assetsManager->cleanup();
-
-        renderEngine->cleanup();
+        renderer->cleanup();
         window->destroy();
     }
 

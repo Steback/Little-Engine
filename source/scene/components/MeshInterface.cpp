@@ -9,7 +9,11 @@ namespace lve {
 
     }
 
-    void MeshInterface::draw(vk::CommandBuffer cmdBuffer) {
+    void MeshInterface::bind(vk::CommandBuffer cmdBuffer) const {
+        mesh->bind(cmdBuffer);
+    }
+
+    void MeshInterface::draw(vk::CommandBuffer cmdBuffer) const {
         mesh->draw(cmdBuffer);
     }
 

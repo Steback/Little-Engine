@@ -15,7 +15,9 @@ namespace lve {
     public:
         explicit MeshInterface(std::shared_ptr<Mesh> mesh);
 
-        void draw(vk::CommandBuffer cmdBuffer);
+        void bind(vk::CommandBuffer cmdBuffer) const;
+
+        void draw(vk::CommandBuffer cmdBuffer) const;
 
     private:
         std::shared_ptr<Mesh> mesh;

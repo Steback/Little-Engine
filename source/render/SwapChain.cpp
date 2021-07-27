@@ -17,7 +17,7 @@ namespace lve {
         logicalDevice = device->getLogicalDevice();
         graphicsQueue = device->getGraphicsQueue();
         presentQueue =  device->getPresentQueue();
-        vk::Format depthFormat = device->findSupportFormat(
+        depthFormat = device->findSupportFormat(
                 {vk::Format::eD32Sfloat, vk::Format::eD32SfloatS8Uint, vk::Format::eD24UnormS8Uint},
                 vk::ImageTiling::eOptimal,
                 vk::FormatFeatureFlagBits::eDepthStencilAttachment
@@ -25,8 +25,8 @@ namespace lve {
 
         createSwapChain(device, surface);
         createImageViews();
-        createRenderPass(depthFormat);
-        createDepthResources(device, depthFormat);
+        createRenderPass();
+        createDepthResources(device);
         createFramebuffers();
         createSyncObjects();
     }
@@ -37,7 +37,7 @@ namespace lve {
         graphicsQueue = oldSwapChain->graphicsQueue;
         presentQueue = oldSwapChain->presentQueue;
 
-        vk::Format depthFormat = device->findSupportFormat(
+        depthFormat = device->findSupportFormat(
                 {vk::Format::eD32Sfloat, vk::Format::eD32SfloatS8Uint, vk::Format::eD24UnormS8Uint},
                 vk::ImageTiling::eOptimal,
                 vk::FormatFeatureFlagBits::eDepthStencilAttachment
@@ -45,12 +45,10 @@ namespace lve {
 
         createSwapChain(device, surface, oldSwapChain);
         createImageViews();
-        createRenderPass(depthFormat);
-        createDepthResources(device, depthFormat);
+        createRenderPass();
+        createDepthResources(device);
         createFramebuffers();
         createSyncObjects();
-
-        oldSwapChain->cleanup(device->getAllocator());
     }
 
     SwapChain::~SwapChain() = default;
@@ -147,7 +145,7 @@ namespace lve {
 
         logicalDevice.resetFences(inFlightFences[currentFrame]);
         VK_HPP_CHECK_RESULT(graphicsQueue.submit(1, &submitInfo, inFlightFences[currentFrame]),
-                            "Failed to submit draw command Buffer!");
+                            "Failed to submit draw command Buffer!")
 
         // Vulkan-Hpp throw a exception if result is VK_ERROR_OUT_OF_DATE_KHR, so there is not possible handle the result
         // that present return. Is preferable use the C-API instead.
@@ -157,6 +155,10 @@ namespace lve {
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
         return result;
+    }
+
+    bool SwapChain::compareFormats(const SwapChain &swapChain) {
+        return swapChain.depthFormat == depthFormat && swapChain.format == format;
     }
 
     SwapChain::SupportDetails SwapChain::querySwapChainSupport(const vk::PhysicalDevice& device, const vk::SurfaceKHR& surface) {
@@ -234,7 +236,7 @@ namespace lve {
         }
     }
 
-    void SwapChain::createDepthResources(const std::shared_ptr<Device>& device, vk::Format depthFormat) {
+    void SwapChain::createDepthResources(const std::shared_ptr<Device>& device) {
         depthImages.resize(images.size());
         for (auto& image : depthImages) {
             vk::ImageCreateInfo imageInfo(
@@ -258,7 +260,7 @@ namespace lve {
         }
     }
 
-    void SwapChain::createRenderPass(vk::Format depthFormat) {
+    void SwapChain::createRenderPass() {
         vk::AttachmentDescription colorAttachment(
                 {},
                 format,
@@ -301,10 +303,10 @@ namespace lve {
         vk::SubpassDependency dependency(
                 VK_SUBPASS_EXTERNAL, // srcSubpass
                 0, // dstSubpass
-                vk::PipelineStageFlagBits::eColorAttachmentOutput, // srcStageMask
-                vk::PipelineStageFlagBits::eColorAttachmentOutput, // dstStageMask
+                vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests, // srcStageMask
+                vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests, // dstStageMask
                 {}, // srcAccessMask
-                vk::AccessFlagBits::eColorAttachmentWrite, // dstAccessMask
+                vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite, // dstAccessMask
                 {} // subpassFlags
         );
 

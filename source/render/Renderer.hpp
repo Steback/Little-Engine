@@ -13,32 +13,33 @@ namespace lve {
     class Window;
     class Instance;
     class Device;
-    class GraphicsPipeline;
     class SwapChain;
 
-    class RenderEngine {
+    class Renderer {
     public:
-        explicit RenderEngine(std::shared_ptr<Window> window);
+        explicit Renderer(std::shared_ptr<Window> window);
 
-        ~RenderEngine();
+        ~Renderer();
 
         void cleanup();
 
-        void beginDraw(const std::array<float, 4>& clearColor);
+        vk::CommandBuffer beginFrame();
 
-        void endDraw();
+        void endFrame();
 
         [[nodiscard]] const std::shared_ptr<Device> &getDevice() const;
 
-        vk::CommandBuffer getCommandBuffer();
+        [[nodiscard]] vk::CommandBuffer getCommandBuffer() const;
 
         void setupDrawResources();
 
-        vk::PipelineLayout getLayout();
+        [[nodiscard]] vk::RenderPass getRenderPass() const;
+
+        void beginSwapChainRenderPass(vk::CommandBuffer commandBuffer);
+
+        void endSwapChainRenderPass(vk::CommandBuffer commandBuffer) const;
 
     private:
-        void createPipelines();
-
         void createCmdBuffers();
 
         void recreateDrawResources();
@@ -47,14 +48,19 @@ namespace lve {
 
     private:
         std::shared_ptr<Window> window{};
+
         std::shared_ptr<Instance> instance{};
         std::shared_ptr<Device> device{};
-        std::unique_ptr<GraphicsPipeline> graphicsPipeline{};
+
         std::unique_ptr<SwapChain> swapChain{};
         vk::SurfaceKHR surface{};
-        uint32_t imageIndex{};
+
         vk::CommandPool commandPool;
         std::vector<vk::CommandBuffer> commandBuffers;
+
+        uint32_t imageIndex{};
+        uint32_t currentFrameIndex{0};
+        bool isFrameStarted{false};
     };
 
 } // namespace lve

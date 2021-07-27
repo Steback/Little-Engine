@@ -11,6 +11,7 @@
 
 namespace lve {
 
+    using registry_t = entt::registry;
     using id_t = entt::entity;
 
     class Entity;
@@ -27,9 +28,11 @@ namespace lve {
 
         const std::unordered_map<id_t, std::unique_ptr<Entity>>& getEntities() const;
 
+        const registry_t& getRegistry() const;
+
     private:
         std::unordered_map<id_t, std::unique_ptr<Entity>> entities;
-        entt::registry registry;
+        registry_t registry;
     };
 
 } // namespace lve

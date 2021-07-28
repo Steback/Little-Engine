@@ -13,6 +13,7 @@
 #include "render/RenderSystem.hpp"
 #include "scene/components/Transform.hpp"
 #include "scene/components/MeshInterface.hpp"
+#include "math/Utils.hpp"
 
 
 namespace lve {
@@ -36,7 +37,7 @@ namespace lve {
 
         scene = std::make_unique<Scene>();
         Entity* entity = scene->addEntity("Triangle");
-        entity->addComponent<Transform>(vec2{0.0f, 0.0f}, 3.14159f, vec2{1.0f, 1.0f});
+        entity->addComponent<Transform>(vec2{0.0f, 0.0f}, lve::pi(), vec2{1.0f, 1.0f});
         entity->addComponent<MeshInterface>(assetsManager->addMesh(0, vertices));
     }
 

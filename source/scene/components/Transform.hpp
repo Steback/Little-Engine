@@ -2,25 +2,25 @@
 #define LITTLEVULKANENGINE_COMPONENTS_TRANSFORM_HPP
 
 
-#include "../../math/Vector2.hpp"
+#include "../../math/Vector3.hpp"
 
 
 namespace lve {
 
-    class Matrix2;
+    class Matrix4;
 
     class Transform {
     public:
         Transform();
 
-        Transform(const vec2& t, float r, const vec2& s);
+        Transform(const vec3& t, const vec3& r, const vec3& s);
 
-        [[nodiscard]] Matrix2 getWorldMatrix() const;
+        [[nodiscard]] Matrix4 getWorldMatrix() const;
 
     public:
-        vec2 translation;
-        vec2 scale{1.0f};
-        float rotation{};
+        vec3 translation;
+        vec3 scale{1.0f};
+        vec3 rotation{};
     };
 
 } // namespace lve

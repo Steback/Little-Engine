@@ -7,6 +7,7 @@
 #include "pipeline/GraphicsPipeline.hpp"
 #include "../scene/components/Transform.hpp"
 #include "../scene/components/MeshInterface.hpp"
+#include "../math/Utils.hpp"
 
 
 namespace lve {
@@ -23,15 +24,17 @@ namespace lve {
         pipeline->destroy();
     }
 
-    void RenderSystem::renderEntities(vk::CommandBuffer commandBuffer, const registry_t &registry) {
+    void RenderSystem::renderEntities(vk::CommandBuffer commandBuffer, registry_t &registry) {
         pipeline->bind(commandBuffer);
 
         for (auto& entity : registry.view<Transform, MeshInterface>()) {
             auto& transform = registry.get<Transform>(entity);
             auto& meshInterface = registry.get<MeshInterface>(entity);
 
+            transform.rotation.y = mod(transform.rotation.y + 0.01f, 2 * pi());
+            transform.rotation.x = mod(transform.rotation.x + 0.005f, 2 * pi());
+
             SimplePushConstantData push{};
-            push.offset = transform.translation;
             push.color = {0.2f, 0.0f, 0.2f};
             push.transform = transform.getWorldMatrix();
 

@@ -24,7 +24,7 @@ namespace lve {
 
         RenderSystem& operator=(const RenderSystem&) = delete;
 
-        void renderEntities(vk::CommandBuffer commandBuffer, const registry_t& registry);
+        void renderEntities(vk::CommandBuffer commandBuffer, registry_t& registry);
 
     private:
         std::shared_ptr<Device> device;

@@ -13,7 +13,6 @@
 #include "render/RenderSystem.hpp"
 #include "scene/components/Transform.hpp"
 #include "scene/components/MeshInterface.hpp"
-#include "math/Utils.hpp"
 
 
 namespace lve {
@@ -28,16 +27,64 @@ namespace lve {
         renderer = std::make_unique<Renderer>(window);
 
         std::vector<Mesh::Vertex> vertices{
-                { {0.0f, -0.5f}, {1.0f, 0.0f, 0.0f} },
-                { {0.5f, 0.5f}, {0.0f, 1.0f, 0.0f} },
-                { {-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f} }
+                // left face (white)
+                {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
+                {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
+                {{-.5f, -.5f, .5f}, {.9f, .9f, .9f}},
+                {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
+                {{-.5f, .5f, -.5f}, {.9f, .9f, .9f}},
+                {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
+
+                // right face (yellow)
+                {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
+                {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
+                {{.5f, -.5f, .5f}, {.8f, .8f, .1f}},
+                {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
+                {{.5f, .5f, -.5f}, {.8f, .8f, .1f}},
+                {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
+
+                // top face (orange, remember y axis points down)
+                {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+                {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+                {{-.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+                {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+                {{.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+                {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+
+                // bottom face (red)
+                {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+                {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
+                {{-.5f, .5f, .5f}, {.8f, .1f, .1f}},
+                {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+                {{.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+                {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
+
+                // nose face (blue)
+                {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+                {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+                {{-.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+                {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+                {{.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+                {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+
+                // tail face (green)
+                {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+                {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+                {{-.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+                {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+                {{.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+                {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}}
         };
+
+        for (auto& v : vertices) {
+            v.position += {.0f, .0f, .0f};
+        }
 
         assetsManager = std::make_unique<AssetsManager>(renderer->getDevice());
 
         scene = std::make_unique<Scene>();
         Entity* entity = scene->addEntity("Triangle");
-        entity->addComponent<Transform>(vec2{0.0f, 0.0f}, lve::pi(), vec2{1.0f, 1.0f});
+        entity->addComponent<Transform>(vec3{.0f, .0f, .5f}, vec3(0.0f), vec3{.5f, .5f, .5f});
         entity->addComponent<MeshInterface>(assetsManager->addMesh(0, vertices));
     }
 

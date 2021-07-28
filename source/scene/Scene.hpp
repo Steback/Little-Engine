@@ -28,7 +28,7 @@ namespace lve {
 
         const std::unordered_map<id_t, std::unique_ptr<Entity>>& getEntities() const;
 
-        const registry_t& getRegistry() const;
+        registry_t& getRegistry();
 
     private:
         std::unordered_map<id_t, std::unique_ptr<Entity>> entities;

@@ -65,6 +65,8 @@ namespace lve {
         Vector4 rows[4];
     };
 
+    using mat4 = Matrix4;
+
 } // namespace lve
 
 

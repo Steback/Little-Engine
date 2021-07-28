@@ -19,7 +19,7 @@ namespace lve {
     class Mesh {
     public:
         struct Vertex {
-            vec2 position;
+            vec3 position;
             vec3 color;
 
             static std::vector<vk::VertexInputBindingDescription> getBindingDescriptions();

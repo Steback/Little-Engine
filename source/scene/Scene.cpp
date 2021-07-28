@@ -21,7 +21,7 @@ namespace lve {
         return entities;
     }
 
-    const registry_t &Scene::getRegistry() const {
+    registry_t &Scene::getRegistry() {
         return registry;
     }
 

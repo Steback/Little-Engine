@@ -25,12 +25,24 @@ namespace lve {
         const float c1 = std::cos(rotation.y);
         const float s1 = std::sin(rotation.y);
 
-        return Matrix4(
-                {scale.x * (c1 * c3 + s1 * s2 * s3), scale.y * (c3 * s1 * s2 - c1 * s3), scale.z * (c2 * s1), translation.x},
-                {scale.x * (c2 * s3), scale.y * (c2 * c3), scale.z * (-s2), translation.y},
-                {scale.x * (c1 * s2 * s3 - c3 * s1), scale.y * (c1 * c3 * s2 + s1 * s3), scale.z * (c1 * c2), translation.z},
-                {0.0f, 0.0f, 0.0f, 1.0f}
-        );
+        return Matrix4{
+                {
+                    scale.x * (c1 * c3 + s1 * s2 * s3),
+                    scale.x * (c2 * s3),
+                    scale.x * (c1 * s2 * s3 - c3 * s1),
+                    0.0f,
+                },{
+                    scale.y * (c3 * s1 * s2 - c1 * s3),
+                    scale.y * (c2 * c3),
+                    scale.y * (c1 * c3 * s2 + s1 * s3),
+                    0.0f,
+                },{
+                    scale.z * (c2 * s1),
+                    scale.z * (-s2),
+                    scale.z * (c1 * c2),
+                    0.0f,
+                },
+                {translation.x, translation.y, translation.z, 1.0f}};
     }
 
 } // namespace lve::component

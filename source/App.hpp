@@ -11,6 +11,7 @@
 namespace lve {
 
     class Window;
+    class Renderer;
 
     class App : NonCopyable {
     public:
@@ -27,6 +28,7 @@ namespace lve {
     private:
         Config config;
         std::shared_ptr<Window> window;
+        std::unique_ptr<Renderer> renderer;
     };
 
 } // namespace lve

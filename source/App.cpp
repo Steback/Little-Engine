@@ -3,6 +3,7 @@
 #include "files/FilesManager.hpp"
 #include "logs/Logs.hpp"
 #include "window/Window.hpp"
+#include "graphics/Renderer.hpp"
 
 
 namespace lve {
@@ -16,8 +17,8 @@ namespace lve {
         Logger::addFile("error.log");
 
         config = Config("config.json");
-
         window = std::make_shared<Window>(config.getAppName(), config.getWidth(), config.getHeight());
+        renderer = std::make_unique<Renderer>(window);
     }
 
     App::~App() {

@@ -18,7 +18,7 @@ namespace lve {
 
         config = Config("config.json");
         window = std::make_shared<Window>(config.getAppName(), config.getWidth(), config.getHeight());
-        renderer = std::make_unique<Renderer>(window);
+        renderer = std::make_unique<Renderer>(window, config);
     }
 
     App::~App() {

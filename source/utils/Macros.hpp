@@ -17,5 +17,15 @@
     throw std::runtime_error(LVE_ERROR_MESSAGE(message)); \
 }
 
+#define CASTU32(num) static_cast<uint32_t>(num)
+
+#define VK_CHECK_RESULT(result, message) { \
+    if (result != VK_SUCCESS) LVE_THROW_EX(message); \
+}
+
+#define VK_CHECK_RESULT_EXIT(result, message) { \
+    if (result != VK_SUCCESS) LVE_LOG_ERROR_EXIT(message); \
+}
+
 
 #endif //LITTLEVULKANENGINE_MACROS_HPP

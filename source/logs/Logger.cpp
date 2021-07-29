@@ -18,7 +18,7 @@ namespace lve {
 
         files[file.getName()] = spdlog::basic_logger_mt("LVE", file.getPath().string());
 
-        spdlog::info("{} log created", file.getPath().string());
+        spdlog::info("{} file created", file.getPath().string());
     }
 
     std::shared_ptr<spdlog::logger> Logger::getFile(const std::string& name) {

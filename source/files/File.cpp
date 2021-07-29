@@ -39,4 +39,12 @@ namespace lve {
         return buffer;
     }
 
+    void File::remove() {
+        if (exists(path)) std::filesystem::remove(path);
+    }
+
+    std::string File::getName() const {
+        return path.filename();
+    }
+
 } // namespace lv

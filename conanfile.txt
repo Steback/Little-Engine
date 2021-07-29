@@ -1,5 +1,5 @@
 [requires]
-spdlog/1.8.2
+spdlog/1.9.0
 glfw/3.3.2
 vulkan-headers/1.2.182
 vulkan-loader/1.2.182

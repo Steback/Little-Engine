@@ -1,6 +1,8 @@
 #include "App.hpp"
 
 #include "files/FilesManager.hpp"
+#include "logs/Logs.hpp"
+#include "files/File.hpp"
 
 
 namespace lve {
@@ -10,6 +12,8 @@ namespace lve {
         fileManager->addPath("data");
         fileManager->addPath("logs");
         fileManager->addPath("bin/shaders");
+
+        Logger::addFile(File(fileManager->getPath("logs") / "error.log"));
     }
 
     App::~App() {

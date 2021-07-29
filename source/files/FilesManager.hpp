@@ -24,6 +24,8 @@ namespace lve {
 
         File getFile(const std::string& fileName);
 
+        std::filesystem::path getPath(const std::string& name);
+
     private:
         std::unordered_map<std::string, std::filesystem::path> paths;
     };

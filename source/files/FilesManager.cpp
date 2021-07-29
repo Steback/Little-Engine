@@ -46,4 +46,8 @@ namespace lve {
         return File();
     }
 
+    std::filesystem::path FilesManager::getPath(const std::string& name) {
+        return paths[name];
+    }
+
 } // namespace lv

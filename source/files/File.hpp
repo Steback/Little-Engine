@@ -22,6 +22,10 @@ namespace lve {
 
         std::vector<char> read();
 
+        void remove();
+
+        [[nodiscard]] std::string getName() const;
+
     private:
         std::filesystem::path path;
     };

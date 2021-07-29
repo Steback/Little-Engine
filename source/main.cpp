@@ -1,6 +1,5 @@
-#include "spdlog/spdlog.h"
-
 #include "App.hpp"
+#include "logs/Logs.hpp"
 
 
 int main(int argc, char** argv) {
@@ -9,7 +8,7 @@ int main(int argc, char** argv) {
     try {
         app.run();
     } catch (const std::runtime_error& e) {
-        spdlog::error(e.what());
+        LVE_LOG_ERROR(e.what());
     }
 
     return 0;

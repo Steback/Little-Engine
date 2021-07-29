@@ -21,9 +21,7 @@ namespace lve {
         renderer = std::make_unique<Renderer>(window, config);
     }
 
-    App::~App() {
-
-    }
+    App::~App() = default;
 
     void App::start() {
 

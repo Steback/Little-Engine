@@ -81,17 +81,18 @@ namespace lve {
         createInfo.enabledExtensionCount = CASTU32(extensions.size());
         createInfo.ppEnabledExtensionNames = extensions.data();
 
-#ifdef LVE_DEBUG
-        VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
-        populateDebugMessengerCreateInfo(debugCreateInfo);
-        createInfo.pNext = &debugCreateInfo;
-#endif
-
         VK_CHECK_RESULT_EXIT(vkCreateInstance(&createInfo, nullptr, &instance),
                              "Failed to create instance!")
 
         hasGflwRequiredInstanceExtensions();
-        setupDebugMessenger();
+
+#ifdef LVE_DEBUG
+        VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
+        populateDebugMessengerCreateInfo(debugCreateInfo);
+
+        VK_CHECK_RESULT_EXIT(CreateDebugUtilsMessengerEXT(instance, &debugCreateInfo, nullptr, &debugMessenger),
+                             "failed to set up debug messenger!")
+#endif
     }
 
     Instance::~Instance() {
@@ -114,16 +115,6 @@ namespace lve {
 #endif
 
         return extensions;
-    }
-
-    void Instance::setupDebugMessenger() {
-#ifdef LVE_DEBUG
-        VkDebugUtilsMessengerCreateInfoEXT createInfo;
-        populateDebugMessengerCreateInfo(createInfo);
-
-        VK_CHECK_RESULT_EXIT(CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger),
-                             "failed to set up debug messenger!")
-#endif
     }
 
     void Instance::hasGflwRequiredInstanceExtensions() {

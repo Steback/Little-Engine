@@ -15,8 +15,6 @@ namespace lve {
         instance = std::make_shared<Instance>(validationLayers, config.getAppName().c_str());
     }
 
-    Renderer::~Renderer() {
-
-    }
+    Renderer::~Renderer() = default;
 
 } // namespace lv

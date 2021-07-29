@@ -16,13 +16,11 @@ namespace lve {
     public:
         Instance(const std::vector<const char*>& layers, const char* appName);
 
-        ~Instance();
+        ~Instance() override;
 
         static std::vector<const char*> getRequiredExtensions();
 
     private:
-        void setupDebugMessenger();
-
         static void hasGflwRequiredInstanceExtensions();
 
         static bool checkLayersSupport(const std::vector<const char*>& layers);

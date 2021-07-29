@@ -4,6 +4,8 @@
 
 #include <memory>
 
+#include "utils/NonCopyable.hpp"
+
 
 namespace lve {
 
@@ -11,11 +13,11 @@ namespace lve {
     class Config;
     class Instance;
 
-    class Renderer {
+    class Renderer : NonCopyable {
     public:
         explicit Renderer(std::shared_ptr<Window> window, const Config& config);
 
-        ~Renderer();
+        ~Renderer() override;
 
     private:
         std::shared_ptr<Window> window;

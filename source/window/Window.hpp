@@ -4,6 +4,7 @@
 
 #include <string>
 
+#define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
 
 #include "utils/NonCopyable.hpp"
@@ -32,6 +33,8 @@ namespace lve {
         void setSize(const Size &size_);
 
         bool isOpen();
+
+        void createWindowSurface(VkInstance instance, VkSurfaceKHR *surface);
 
     private:
         GLFWwindow* window{};

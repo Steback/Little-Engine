@@ -4,6 +4,8 @@
 
 #include <memory>
 
+#include "vulkan/vulkan.h"
+
 #include "utils/NonCopyable.hpp"
 
 
@@ -12,6 +14,7 @@ namespace lve {
     class Window;
     class Config;
     class Instance;
+    class Device;
 
     class Renderer : NonCopyable {
     public:
@@ -22,6 +25,8 @@ namespace lve {
     private:
         std::shared_ptr<Window> window;
         std::shared_ptr<Instance> instance;
+        std::shared_ptr<Device> device;
+        VkSurfaceKHR surface{};
     };
 
 } // namespace lve

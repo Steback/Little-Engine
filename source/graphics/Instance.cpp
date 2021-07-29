@@ -74,15 +74,15 @@ namespace lve {
 
         VkInstanceCreateInfo createInfo{VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO};
         createInfo.pApplicationInfo = &applicationInfo;
-        createInfo.enabledLayerCount = CASTU32(layers.size());
+        createInfo.enabledLayerCount = LVE_CASTU32(layers.size());
         createInfo.ppEnabledLayerNames = layers.data();
 
         auto extensions = getRequiredExtensions();
-        createInfo.enabledExtensionCount = CASTU32(extensions.size());
+        createInfo.enabledExtensionCount = LVE_CASTU32(extensions.size());
         createInfo.ppEnabledExtensionNames = extensions.data();
 
-        VK_CHECK_RESULT_EXIT(vkCreateInstance(&createInfo, nullptr, &instance),
-                             "Failed to create instance!")
+        LVE_VK_CHECK_RESULT_EXIT(vkCreateInstance(&createInfo, nullptr, &instance),
+                                 "Failed to create instance!")
 
         hasGflwRequiredInstanceExtensions();
 
@@ -90,8 +90,8 @@ namespace lve {
         VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
         populateDebugMessengerCreateInfo(debugCreateInfo);
 
-        VK_CHECK_RESULT_EXIT(CreateDebugUtilsMessengerEXT(instance, &debugCreateInfo, nullptr, &debugMessenger),
-                             "failed to set up debug messenger!")
+        LVE_VK_CHECK_RESULT_EXIT(CreateDebugUtilsMessengerEXT(instance, &debugCreateInfo, nullptr, &debugMessenger),
+                                 "failed to set up debug messenger!")
 #endif
     }
 
@@ -101,6 +101,26 @@ namespace lve {
 #endif
 
         vkDestroyInstance(instance, nullptr);
+    }
+
+    VkPhysicalDevice Instance::pickPhysicalDevice(const std::vector<const char *> &extensions) {
+        uint32_t deviceCount = 0;
+        vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+
+        if (deviceCount == 0) LVE_LOG_ERROR_EXIT("Failed to find GPUs with Vulkan support!");
+
+        std::vector<VkPhysicalDevice> physicalDevices(deviceCount);
+        vkEnumeratePhysicalDevices(instance, &deviceCount, physicalDevices.data());
+
+        for (auto& device : physicalDevices) {
+            if (checkExtensionsSupport(device, extensions)) return device;
+        }
+
+        LVE_LOG_ERROR_EXIT("Failed to find a suitable GPU!")
+    }
+
+    const VkInstance &Instance::getHandle() {
+        return instance;
     }
 
     std::vector<const char *> Instance::getRequiredExtensions() {
@@ -117,6 +137,19 @@ namespace lve {
         return extensions;
     }
 
+    bool Instance::checkExtensionsSupport(const VkPhysicalDevice &device, const std::vector<const char *> &extensions) {
+        uint32_t extensionsCount = 0;
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionsCount, nullptr);
+
+        std::vector<VkExtensionProperties> properties(extensionsCount);
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionsCount, properties.data());
+
+        return std::all_of(extensions.begin(), extensions.end(), [&properties](const char* name){
+            return std::find_if(properties.begin(), properties.end(), [&name](const VkExtensionProperties& property){
+                return std::strcmp(property.extensionName, name) == 0;
+            }) != properties.end();
+        });    }
+
     void Instance::hasGflwRequiredInstanceExtensions() {
         uint32_t extensionCount = 0;
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
@@ -124,15 +157,13 @@ namespace lve {
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
         std::unordered_set<std::string> available;
-        for (const auto &extension : extensions) {
+        for (const auto &extension : extensions)
             available.insert(extension.extensionName);
-        }
 
         auto requiredExtensions = getRequiredExtensions();
         for (const auto &required : requiredExtensions) {
-            if (available.find(required) == available.end()) {
-                throw std::runtime_error("Missing required glfw extension");
-            }
+            if (available.find(required) == available.end())
+                LVE_LOG_ERROR_EXIT("Missing required glfw extension")
         }
     }
 

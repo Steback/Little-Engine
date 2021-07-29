@@ -1,6 +1,8 @@
 #include "Renderer.hpp"
 #include "Instance.hpp"
+#include "Device.hpp"
 #include "config/Config.hpp"
+#include "window/Window.hpp"
 
 
 namespace lve {
@@ -13,8 +15,15 @@ namespace lve {
 #endif
 
         instance = std::make_shared<Instance>(validationLayers, config.getAppName().c_str());
+        this->window->createWindowSurface(instance->getHandle(), &surface);
+
+        VkPhysicalDeviceFeatures features{};
+        std::vector<const char*> extensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+        device = std::make_shared<Device>(instance, validationLayers, features, extensions);
     }
 
-    Renderer::~Renderer() = default;
+    Renderer::~Renderer() {
+        vkDestroySurfaceKHR(instance->getHandle(), surface, nullptr);
+    }
 
 } // namespace lv

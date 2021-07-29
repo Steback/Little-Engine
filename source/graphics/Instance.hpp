@@ -18,7 +18,13 @@ namespace lve {
 
         ~Instance() override;
 
+        VkPhysicalDevice pickPhysicalDevice(const std::vector<const char*>& extensions);
+
+        const VkInstance& getHandle();
+
         static std::vector<const char*> getRequiredExtensions();
+
+        static bool checkExtensionsSupport(const VkPhysicalDevice &device, const std::vector<const char *> &extensions);
 
     private:
         static void hasGflwRequiredInstanceExtensions();

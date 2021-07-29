@@ -10,9 +10,12 @@ static void errorCallback(int error, const char* description) {
 namespace lve {
 
     Window::Window(std::string name, int width, int height) : name(std::move(name)), size({width, height}) {
+        glfwSetErrorCallback(errorCallback);
+
         if (!glfwInit()) LVE_LOG_ERROR_EXIT("Failed to init GLFW");
 
-        glfwSetErrorCallback(errorCallback);
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
         window = glfwCreateWindow(width, height, this->name.c_str(), nullptr, nullptr);
 
@@ -43,6 +46,11 @@ namespace lve {
 
     bool Window::isOpen() {
         return !glfwWindowShouldClose(window);
+    }
+
+    void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR *surface) {
+        LVE_VK_CHECK_RESULT_EXIT(glfwCreateWindowSurface(instance, window, nullptr, surface),
+                                 "Failed to create window surface")
     }
 
 } // namespace lv

@@ -95,7 +95,9 @@ namespace lve {
 #endif
     }
 
-    Instance::~Instance() {
+    Instance::~Instance() = default;
+
+    void Instance::destroy() {
 #ifdef LVE_DEBUG
         DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 #endif

@@ -18,7 +18,9 @@ namespace lve {
         createAllocator(instance);
     }
 
-    Device::~Device() {
+    Device::~Device() = default;
+
+    void Device::destroy() {
         vmaDestroyAllocator(allocator);
         vkDestroyDevice(logicalDevice, nullptr);
     }

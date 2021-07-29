@@ -33,9 +33,15 @@ namespace lve {
         }
     }
 
+    void App::shutdown() {
+        renderer->cleanup();
+        window->destroy();
+    }
+
     void App::run() {
         start();
         loop();
+        shutdown();
     }
 
 } // namespace lv

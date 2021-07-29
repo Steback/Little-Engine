@@ -30,6 +30,8 @@ namespace lve {
 
         ~Device() override;
 
+        void destroy();
+
         uint32_t getQueueFamilyIndex(const VkQueueFlags& flags, VkSurfaceKHR* surface = nullptr);
 
         VkFormat findSupportFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling,

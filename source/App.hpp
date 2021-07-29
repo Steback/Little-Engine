@@ -23,6 +23,8 @@ namespace lve {
 
         void loop();
 
+        void shutdown();
+
         void run();
 
     private:

@@ -22,8 +22,12 @@ namespace lve {
         device = std::make_shared<Device>(instance, validationLayers, features, extensions);
     }
 
-    Renderer::~Renderer() {
+    Renderer::~Renderer() = default;
+
+    void Renderer::cleanup() {
+        device->destroy();
         vkDestroySurfaceKHR(instance->getHandle(), surface, nullptr);
+        instance->destroy();
     }
 
 } // namespace lv

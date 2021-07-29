@@ -22,6 +22,8 @@ namespace lve {
 
         ~Renderer() override;
 
+        void cleanup();
+
     private:
         std::shared_ptr<Window> window;
         std::shared_ptr<Instance> instance;

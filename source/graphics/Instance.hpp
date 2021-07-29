@@ -18,6 +18,8 @@ namespace lve {
 
         ~Instance() override;
 
+        void destroy();
+
         VkPhysicalDevice pickPhysicalDevice(const std::vector<const char*>& extensions);
 
         const VkInstance& getHandle();

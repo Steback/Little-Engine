@@ -22,7 +22,9 @@ namespace lve {
         spdlog::info("Window created: {}", this->name);
     }
 
-    Window::~Window() {
+    Window::~Window() = default;
+
+    void Window::destroy() {
         spdlog::info("Window deleted: {}", name);
         glfwDestroyWindow(window);
         glfwTerminate();

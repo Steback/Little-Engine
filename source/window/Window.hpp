@@ -24,6 +24,8 @@ namespace lve {
 
         ~Window() override;
 
+        void destroy();
+
         [[nodiscard]] const std::string &getName() const;
 
         void setName(const std::string &name_);

@@ -3,6 +3,7 @@
 #include "files/FilesManager.hpp"
 #include "logs/Logs.hpp"
 #include "files/File.hpp"
+#include "window/Window.hpp"
 
 
 namespace lve {
@@ -16,7 +17,8 @@ namespace lve {
         Logger::addFile(File(fileManager->getPath("logs") / "error.log"));
 
         config = Config(fileManager->getFile("config.json"));
-        spdlog::info("App Name: {}", config.getAppName());
+
+        window = std::make_shared<Window>(config.getAppName(), config.getWidth(), config.getHeight());
     }
 
     App::~App() {
@@ -28,7 +30,9 @@ namespace lve {
     }
 
     void App::loop() {
-
+        while (window->isOpen()) {
+            glfwPollEvents();
+        }
     }
 
     void App::run() {

@@ -1,6 +1,6 @@
 [requires]
 spdlog/1.9.0
-glfw/3.3.2
+glfw/3.3.4
 vulkan-headers/1.2.182
 vulkan-loader/1.2.182
 nlohmann_json/3.9.1

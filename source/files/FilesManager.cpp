@@ -5,9 +5,6 @@
 #include "File.hpp"
 
 
-#define FILENAME "FilesManager.cpp"
-
-
 namespace lve {
 
     FilesManager::FilesManager() {

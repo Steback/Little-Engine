@@ -5,9 +5,6 @@
 #include "utils/Macros.hpp"
 
 
-#define FILENAME "File.cpp"
-
-
 namespace lve {
 
     File::File() = default;

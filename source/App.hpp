@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "utils/NonCopyable.hpp"
+#include "config/Config.hpp"
 
 
 namespace lve {
@@ -25,6 +26,7 @@ namespace lve {
 
     private:
         std::unique_ptr<FilesManager> fileManager;
+        Config config;
     };
 
 } // namespace lve

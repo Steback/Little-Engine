@@ -47,4 +47,16 @@ namespace lve {
         return path.filename();
     }
 
+    void File::read(json& data) {
+        std::ifstream file(path);
+        file >> data;
+        file.close();
+    }
+
+    void File::write(json& data) {
+        std::ofstream file(path);
+        file << std::setw(4) << data;
+        file.close();
+    }
+
 } // namespace lv

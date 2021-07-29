@@ -5,6 +5,8 @@
 #include <vector>
 #include <filesystem>
 
+#include "utils/Json.hpp"
+
 
 namespace lve {
 
@@ -21,6 +23,10 @@ namespace lve {
         void setPath(const std::filesystem::path &newPath);
 
         std::vector<char> read();
+
+        void read(json& data);
+
+        void write(json& data);
 
         void remove();
 

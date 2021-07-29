@@ -14,6 +14,9 @@ namespace lve {
         fileManager->addPath("bin/shaders");
 
         Logger::addFile(File(fileManager->getPath("logs") / "error.log"));
+
+        config = Config(fileManager->getFile("config.json"));
+        spdlog::info("App Name: {}", config.getAppName());
     }
 
     App::~App() {

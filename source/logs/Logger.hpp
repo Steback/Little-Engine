@@ -16,7 +16,7 @@ namespace lve {
     public:
         ~Logger();
 
-        static void addFile(File file);
+        static void addFile(const std::string& name);
 
         static std::shared_ptr<spdlog::logger> getFile(const std::string& name);
 

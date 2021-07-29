@@ -13,7 +13,7 @@ namespace lve {
     public:
         Config();
 
-        explicit Config(const File& file);
+        explicit Config(const std::string& name);
 
         ~Config();
 

@@ -3,6 +3,7 @@
 #include "spdlog/spdlog.h"
 
 #include "files/File.hpp"
+#include "files/FilesManager.hpp"
 
 
 namespace lve {
@@ -13,7 +14,8 @@ namespace lve {
 
     Logger::~Logger() = default;
 
-    void Logger::addFile(File file) {
+    void Logger::addFile(const std::string& name) {
+        File file(FilesManager::getPath("logs") / name);
         file.remove();
 
         files[file.getName()] = spdlog::basic_logger_mt("LVE", file.getPath().string());

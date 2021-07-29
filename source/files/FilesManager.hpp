@@ -7,27 +7,26 @@
 #include <filesystem>
 
 
-#include "utils/NonCopyable.hpp"
-
-
 namespace lve {
 
     class File;
 
-    class FilesManager : NonCopyable {
+    class FilesManager {
     public:
-        FilesManager();
+        ~FilesManager();
 
-        ~FilesManager() override;
+        static void setRootPath();
 
-        void addPath(const std::string& name);
+        static void addPath(const std::string& name);
 
-        File getFile(const std::string& fileName);
+        static File getFile(const std::string& fileName);
 
-        std::filesystem::path getPath(const std::string& name);
+        static std::filesystem::path getPath(const std::string& name);
 
     private:
-        std::unordered_map<std::string, std::filesystem::path> paths;
+        FilesManager();
+
+        static std::unordered_map<std::string, std::filesystem::path> paths;
     };
 
 } // namespace lve

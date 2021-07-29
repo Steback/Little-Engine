@@ -10,7 +10,6 @@
 
 namespace lve {
 
-    class FilesManager;
     class Window;
 
     class App : NonCopyable {
@@ -26,7 +25,6 @@ namespace lve {
         void run();
 
     private:
-        std::unique_ptr<FilesManager> fileManager;
         Config config;
         std::shared_ptr<Window> window;
     };

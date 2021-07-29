@@ -7,7 +7,13 @@
 
 namespace lve {
 
-    FilesManager::FilesManager() {
+    std::unordered_map<std::string, std::filesystem::path> FilesManager::paths;
+
+    FilesManager::FilesManager() = default;
+
+    FilesManager::~FilesManager() = default;
+
+    void FilesManager::setRootPath() {
         std::filesystem::path root(absolute(std::filesystem::current_path()));
 
         if (root.filename() == "Release") {
@@ -20,8 +26,6 @@ namespace lve {
 
         spdlog::info("root path: {}", paths["root"].string());
     }
-
-    FilesManager::~FilesManager() = default;
 
     void FilesManager::addPath(const std::string &name) {
         std::filesystem::path path = paths["root"] / name;

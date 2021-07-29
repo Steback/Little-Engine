@@ -1,13 +1,15 @@
 #include "Config.hpp"
 
 #include "utils/Json.hpp"
+#include "files/FilesManager.hpp"
 
 
 namespace lve {
 
     Config::Config() = default;
 
-    Config::Config(const File& file) : file(file) {
+    Config::Config(const std::string& name)  {
+        file = FilesManager::getFile(name);
         load();
     }
 

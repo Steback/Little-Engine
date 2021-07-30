@@ -4,12 +4,14 @@
 
 #include "vk_mem_alloc.h"
 
+#include "utils/NonCopyable.hpp"
+
 
 namespace lve {
 
     class SwapChain;
 
-    class Image {
+    class Image : NonCopyable {
         friend SwapChain;
 
     public:
@@ -17,7 +19,7 @@ namespace lve {
 
         Image(VkDevice device, VmaAllocator allocator, const VkImageCreateInfo& createInfo, VmaMemoryUsage usage);
 
-        ~Image();
+        ~Image() override;
 
         void createView(VkImageAspectFlags aspectFlags);
 

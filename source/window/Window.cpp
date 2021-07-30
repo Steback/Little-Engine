@@ -55,4 +55,8 @@ namespace lve {
                                  "Failed to create window surface")
     }
 
+    VkExtent2D Window::getExtent() const {
+        return {CAST_U32(size.width), CAST_U32(size.height)};
+    }
+
 } // namespace lv

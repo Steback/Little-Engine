@@ -74,11 +74,11 @@ namespace lve {
 
         VkInstanceCreateInfo createInfo{VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO};
         createInfo.pApplicationInfo = &applicationInfo;
-        createInfo.enabledLayerCount = LVE_CASTU32(layers.size());
+        createInfo.enabledLayerCount = CAST_U32(layers.size());
         createInfo.ppEnabledLayerNames = layers.data();
 
         auto extensions = getRequiredExtensions();
-        createInfo.enabledExtensionCount = LVE_CASTU32(extensions.size());
+        createInfo.enabledExtensionCount = CAST_U32(extensions.size());
         createInfo.ppEnabledExtensionNames = extensions.data();
 
         LVE_VK_CHECK_RESULT_EXIT(vkCreateInstance(&createInfo, nullptr, &instance),
@@ -109,7 +109,7 @@ namespace lve {
         uint32_t deviceCount = 0;
         vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
 
-        if (deviceCount == 0) LVE_LOG_ERROR_EXIT("Failed to find GPUs with Vulkan support!");
+        if (deviceCount == 0) LVE_LOG_ERROR_EXIT("Failed to find GPUs with Vulkan support!")
 
         std::vector<VkPhysicalDevice> physicalDevices(deviceCount);
         vkEnumeratePhysicalDevices(instance, &deviceCount, physicalDevices.data());
@@ -121,7 +121,7 @@ namespace lve {
         LVE_LOG_ERROR_EXIT("Failed to find a suitable GPU!")
     }
 
-    const VkInstance &Instance::getHandle() {
+    VkInstance Instance::getHandle() {
         return instance;
     }
 

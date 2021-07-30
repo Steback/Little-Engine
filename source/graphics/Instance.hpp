@@ -22,7 +22,7 @@ namespace lve {
 
         VkPhysicalDevice pickPhysicalDevice(const std::vector<const char*>& extensions);
 
-        const VkInstance& getHandle();
+        VkInstance getHandle();
 
         static std::vector<const char*> getRequiredExtensions();
 

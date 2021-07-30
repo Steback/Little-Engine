@@ -15,6 +15,7 @@ namespace lve {
     class Config;
     class Instance;
     class Device;
+    class SwapChain;
 
     class Renderer : NonCopyable {
     public:
@@ -24,10 +25,13 @@ namespace lve {
 
         void cleanup();
 
+        void setupDrawResources();
+
     private:
         std::shared_ptr<Window> window;
         std::shared_ptr<Instance> instance;
         std::shared_ptr<Device> device;
+        std::unique_ptr<SwapChain> swapChain;
         VkSurfaceKHR surface{};
     };
 

@@ -24,7 +24,7 @@ namespace lve {
     App::~App() = default;
 
     void App::start() {
-
+        renderer->setupDrawResources();
     }
 
     void App::loop() {

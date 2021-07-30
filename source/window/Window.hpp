@@ -38,6 +38,8 @@ namespace lve {
 
         void createWindowSurface(VkInstance instance, VkSurfaceKHR *surface);
 
+        [[nodiscard]] VkExtent2D getExtent() const;
+
     private:
         GLFWwindow* window{};
         std::string name;

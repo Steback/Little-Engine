@@ -22,7 +22,7 @@ namespace lve {
 
     void Device::destroy() {
         vmaDestroyAllocator(allocator);
-        vkDestroyDevice(logicalDevice, nullptr);
+        vkDestroyDevice(device, nullptr);
     }
 
     uint32_t Device::getQueueFamilyIndex(const VkQueueFlags &flags, VkSurfaceKHR *surface) {
@@ -33,20 +33,20 @@ namespace lve {
         vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, properties.data());
 
         if (flags & VK_QUEUE_COMPUTE_BIT) {
-            for (uint32_t i = 0; i < LVE_CASTU32(properties.size()); ++i) {
+            for (uint32_t i = 0; i < CAST_U32(properties.size()); ++i) {
                 if ((properties[i].queueFlags & flags) && (!(properties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)))
                     return i;
             }
         }
 
         if (flags & VK_QUEUE_TRANSFER_BIT) {
-            for (uint32_t i = 0; i < LVE_CASTU32(properties.size()); ++i) {
+            for (uint32_t i = 0; i < CAST_U32(properties.size()); ++i) {
                 if ((properties[i].queueFlags & flags) && (!(properties[i].queueFlags & VK_QUEUE_COMPUTE_BIT)))
                     return i;
             }
         }
 
-        for (uint32_t i = 0; i < LVE_CASTU32(properties.size()); ++i) {
+        for (uint32_t i = 0; i < CAST_U32(properties.size()); ++i) {
             if (properties[i].queueFlags & flags) {
                 if (surface) {
                     VkBool32 supported = false;
@@ -64,18 +64,19 @@ namespace lve {
 
     VkFormat Device::findSupportFormat(const std::vector<VkFormat> &candidates, VkImageTiling tiling,
                                        VkFormatFeatureFlags features) {
-        for (auto& format : candidates) {
-            VkFormatProperties properties;
-            vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &properties);
+        for (VkFormat format : candidates) {
+            VkFormatProperties props;
+            vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
 
-            if (tiling == VK_IMAGE_TILING_LINEAR && (properties.linearTilingFeatures == features)) {
+            if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
                 return format;
-            } else if (tiling == VK_IMAGE_TILING_OPTIMAL && (properties.linearTilingFeatures == features)) {
+            } else if (
+                    tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) {
                 return format;
             }
         }
 
-        LVE_THROW_EX("Failed to find supported format!")
+        LVE_THROW_EX("Failed to find supported format!");
     }
 
     uint32_t Device::getMemoryType(uint32_t filter, VkMemoryPropertyFlags properties) {
@@ -87,7 +88,7 @@ namespace lve {
                 return i;
         }
 
-        LVE_THROW_EX("Failed to find suitable memory type")
+        LVE_THROW_EX("Failed to find suitable memory type");
     }
 
     void Device::createCommandPool(VkCommandPool& commandPool, uint32_t queueFamilyIndex) {
@@ -96,38 +97,38 @@ namespace lve {
 
         if (queueFamilyIndex == queueFamilyIndices.compute) {
             createInfo.queueFamilyIndex = queueFamilyIndices.compute;
-            vkCreateCommandPool(logicalDevice, &createInfo, nullptr, &commandPool);
+            vkCreateCommandPool(device, &createInfo, nullptr, &commandPool);
         } else if (queueFamilyIndex == queueFamilyIndices.transfer) {
             createInfo.queueFamilyIndex = queueFamilyIndices.transfer;
-            vkCreateCommandPool(logicalDevice, &createInfo, nullptr, &commandPool);
+            vkCreateCommandPool(device, &createInfo, nullptr, &commandPool);
         } else {
             createInfo.queueFamilyIndex = queueFamilyIndices.graphics;
-            vkCreateCommandPool(logicalDevice, &createInfo, nullptr, &commandPool);
+            vkCreateCommandPool(device, &createInfo, nullptr, &commandPool);
         }
     }
 
     void Device::getGraphicsQueue(VkQueue& queue) {
-        vkGetDeviceQueue(logicalDevice, queueFamilyIndices.graphics, 0, &queue);
+        vkGetDeviceQueue(device, queueFamilyIndices.graphics, 0, &queue);
     }
 
     void Device::getPresentQueue(VkQueue &queue) {
         if (queueFamilyIndices.graphics != queueFamilyIndices.present) {
-            vkGetDeviceQueue(logicalDevice, queueFamilyIndices.present, 0, &queue);
+            vkGetDeviceQueue(device, queueFamilyIndices.present, 0, &queue);
         } else {
-            vkGetDeviceQueue(logicalDevice, queueFamilyIndices.graphics, 1, &queue);
+            vkGetDeviceQueue(device, queueFamilyIndices.graphics, 1, &queue);
         }
     }
 
     void Device::getComputeQueue(VkQueue &queue) {
-        vkGetDeviceQueue(logicalDevice, queueFamilyIndices.compute, 0, &queue);
+        vkGetDeviceQueue(device, queueFamilyIndices.compute, 0, &queue);
     }
 
     void Device::getTransferQueue(VkQueue &queue) {
-        vkGetDeviceQueue(logicalDevice, queueFamilyIndices.transfer, 0, &queue);
+        vkGetDeviceQueue(device, queueFamilyIndices.transfer, 0, &queue);
     }
 
     const VkDevice& Device::getLogicalDevice() const {
-        return logicalDevice;
+        return device;
     }
 
     const VkPhysicalDevice& Device::getPhysicalDevice() const {
@@ -205,22 +206,23 @@ namespace lve {
         }
 
         VkDeviceCreateInfo createInfo{VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO};
-        createInfo.enabledLayerCount = LVE_CASTU32(layers.size());
+        createInfo.enabledLayerCount = CAST_U32(layers.size());
         createInfo.ppEnabledLayerNames = layers.data();
-        createInfo.enabledExtensionCount = LVE_CASTU32(extensions.size());
+        createInfo.enabledExtensionCount = CAST_U32(extensions.size());
         createInfo.ppEnabledExtensionNames = extensions.data();
-        createInfo.queueCreateInfoCount = LVE_CASTU32(queueCreateInfos.size());
+        createInfo.queueCreateInfoCount = CAST_U32(queueCreateInfos.size());
         createInfo.pQueueCreateInfos = queueCreateInfos.data();
         createInfo.pEnabledFeatures = &features;
 
-        LVE_VK_CHECK_RESULT_EXIT(vkCreateDevice(physicalDevice, &createInfo, nullptr, &logicalDevice),
+        LVE_VK_CHECK_RESULT_EXIT(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device),
                                  "Failed to create logical device!")
     }
 
     void Device::createAllocator(const std::shared_ptr<Instance> &instance) {
-        VmaAllocatorCreateInfo createInfo;
-        createInfo.vulkanApiVersion = VK_API_VERSION_1_2;
-        createInfo.device = logicalDevice;
+        VmaAllocatorCreateInfo createInfo{};
+        // TODO: Set Vulkan version 1.0 to VMA because vkGetImageMemoryRequirements2KHR is NULL
+        createInfo.vulkanApiVersion = VK_API_VERSION_1_0;
+        createInfo.device = device;
         createInfo.physicalDevice = physicalDevice;
         createInfo.instance = instance->getHandle();
 

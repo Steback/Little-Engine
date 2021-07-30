@@ -13,19 +13,15 @@
 
 #define LVE_ERROR_MESSAGE(message) fmt::format("{} {} {}", message, __FILENAME__, __LINE__)
 
-#define LVE_THROW_EX(message) { \
-    throw std::runtime_error(LVE_ERROR_MESSAGE(message)); \
-}
+#define LVE_THROW_EX(message) throw std::runtime_error(LVE_ERROR_MESSAGE(message))
 
-#define LVE_CASTU32(num) static_cast<uint32_t>(num)
+#define CAST_U32(num) static_cast<uint32_t>(num)
 
-#define LVE_VK_CHECK_RESULT(result, message) { \
-    if (result != VK_SUCCESS) LVE_THROW_EX(message); \
-}
+#define CAST_FLOAT(num) static_cast<float>(num)
 
-#define LVE_VK_CHECK_RESULT_EXIT(result, message) { \
-    if (result != VK_SUCCESS) LVE_LOG_ERROR_EXIT(message); \
-}
+#define LVE_VK_CHECK_RESULT(result, message) if (result != VK_SUCCESS) LVE_THROW_EX(message)
+
+#define LVE_VK_CHECK_RESULT_EXIT(result, message) if (result != VK_SUCCESS) LVE_LOG_ERROR_EXIT(message)
 
 
 #endif //LITTLEVULKANENGINE_MACROS_HPP

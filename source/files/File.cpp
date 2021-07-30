@@ -26,7 +26,7 @@ namespace lve {
     std::vector<char> File::read() {
         std::ifstream file{path, std::ios::ate | std::ios::binary};
 
-        if (!file.is_open()) LVE_THROW_EX("failed to open file: " + path.string())
+        if (!file.is_open()) LVE_THROW_EX("failed to open file: " + path.string());
 
         size_t fileSize = static_cast<size_t>(file.tellg());
         std::vector<char> buffer(fileSize);

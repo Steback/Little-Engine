@@ -64,7 +64,7 @@ namespace lve {
         void createAllocator(const std::shared_ptr<Instance>& instance);
 
     private:
-        VkDevice logicalDevice{};
+        VkDevice device{};
         VkPhysicalDevice physicalDevice{};
         QueueFamilyIndices queueFamilyIndices{};
         VmaAllocator allocator{};

@@ -2,7 +2,7 @@
 This project is an experimental game engine with Vulkan render. I use it for test ideas and new concepts about game engine development.
 
 ## Vulkan Game Engine Tutorial
-I init this project following the Brendan Galea's tutorials series [Vulkan Game Engine Tutorial](https://www.youtube.com/c/BrendanGalea/featured) that is a very well tutorial for learn Vulkan and Computer Graphics.
+I started this project following the Brendan Galea tutorials series [Vulkan Game Engine Tutorial](https://www.youtube.com/c/BrendanGalea/featured). He explains very well all concepts of each part about setting up a Game Engine with Vulkan. Also, he shows nice concepts about things you can do. I really recommend his tutorial and considered is the best vulkan tutorial so far.
 
 ## Third Party
 All the dependencies are installed with [Conan](https://conan.io/) package manager with the [conanfile.txt](conanfile.txt)

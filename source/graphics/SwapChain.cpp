@@ -1,6 +1,7 @@
 #include "SwapChain.hpp"
 
 #include <utility>
+#include <array>
 
 #include "spdlog/spdlog.h"
 

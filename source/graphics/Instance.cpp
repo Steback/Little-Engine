@@ -1,6 +1,7 @@
 #include "Instance.hpp"
 
 #include <unordered_set>
+#include <algorithm>
 
 #include "GLFW/glfw3.h"
 

@@ -44,7 +44,7 @@ namespace lve {
     }
 
     std::string File::getName() const {
-        return path.filename();
+        return path.filename().string();
     }
 
     void File::read(json& data) {

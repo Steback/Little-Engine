@@ -17,4 +17,5 @@ set(COMPILE_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/tools/compileShaders.py ${CMAKE_C
 execute_process(COMMAND python ${COMPILE_SCRIPT})
 
 # Source code and link
+include_directories(${PROJECT_SOURCE_DIR}/source)
 add_subdirectory(source)

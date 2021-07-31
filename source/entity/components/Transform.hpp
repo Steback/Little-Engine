@@ -33,7 +33,7 @@ namespace lve {
         [[nodiscard]] Matrix4 worldTransform() const;
 
     public:
-        const static uint32_t type = 1 << 0;
+        const static uint32_t type = 0x01;
 
     private:
         Vector3 translation;

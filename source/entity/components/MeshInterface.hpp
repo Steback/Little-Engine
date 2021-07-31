@@ -26,7 +26,7 @@ namespace lve {
         void draw(VkCommandBuffer commandBuffer);
 
     public:
-        const static uint32_t type = 1 << 1;
+        const static uint32_t type = 0x02;
 
     private:
         std::shared_ptr<Mesh> mesh{};

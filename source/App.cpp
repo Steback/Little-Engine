@@ -7,6 +7,7 @@
 #include "Mesh/Mesh.hpp"
 #include "graphics/Device.hpp"
 #include "graphics/RenderSystem.hpp"
+#include "scene/Scene.hpp"
 
 
 namespace lve {
@@ -27,6 +28,9 @@ namespace lve {
     App::~App() = default;
 
     void App::start() {
+        scene = std::make_unique<Scene>();
+        scene->addEntity("Triangle");
+
         std::vector<Mesh::Vertex> vertices{
             // left face (white)
             {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},

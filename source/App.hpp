@@ -13,6 +13,7 @@ namespace lve {
     class Window;
     class Renderer;
     class Mesh;
+    class Scene;
 
     class App : NonCopyable {
     public:
@@ -33,6 +34,7 @@ namespace lve {
         std::shared_ptr<Window> window;
         std::unique_ptr<Renderer> renderer;
         std::unique_ptr<Mesh> mesh;
+        std::unique_ptr<Scene> scene;
     };
 
 } // namespace lve

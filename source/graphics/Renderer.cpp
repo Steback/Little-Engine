@@ -182,4 +182,8 @@ namespace lve {
         vkDeviceWaitIdle(device->getDevice());
     }
 
+    std::shared_ptr<Device> Renderer::getDevice() {
+        return device;
+    }
+
 } // namespace lv

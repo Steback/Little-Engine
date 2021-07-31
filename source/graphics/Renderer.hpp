@@ -46,6 +46,8 @@ namespace lve {
 
         void waitDeviceIde();
 
+        std::shared_ptr<Device> getDevice();
+
     private:
         void createCommandBuffers();
 

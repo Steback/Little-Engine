@@ -27,11 +27,17 @@ namespace lve {
         spdlog::info("root path: {}", paths["root"].string());
     }
 
-    void FilesManager::addPath(const std::string &name) {
+    void FilesManager::addPath(const std::string &name, bool create) {
         std::filesystem::path path = paths["root"] / name;
 
         if (!exists(path)) {
             spdlog::error("{} not exists", path.string());
+
+            if (create) {
+                create_directories(path);
+                paths[name] = path;
+                spdlog::info("{} path: {}", name, paths[name].string());
+            }
         } else {
             paths[name] = path;
             spdlog::info("{} path: {}", name, paths[name].string());
@@ -47,7 +53,7 @@ namespace lve {
 
         spdlog::error("{} not exists", fileName);
 
-        return File();
+        return {};
     }
 
     std::filesystem::path FilesManager::getPath(const std::string& name) {

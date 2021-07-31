@@ -18,7 +18,7 @@ namespace lve {
     App::App() {
         FilesManager::setRootPath();
         FilesManager::addPath("data");
-        FilesManager::addPath("logs");
+        FilesManager::addPath("logs", true);
         FilesManager::addPath("bin/shaders");
 
         Logger::addFile("error.log");

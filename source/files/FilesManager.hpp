@@ -17,7 +17,7 @@ namespace lve {
 
         static void setRootPath();
 
-        static void addPath(const std::string& name);
+        static void addPath(const std::string& name, bool create = false);
 
         static File getFile(const std::string& fileName);
 

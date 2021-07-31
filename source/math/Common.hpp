@@ -8,7 +8,7 @@
 namespace lve {
 
     inline float pi() {
-        return 3.14159265358979323846264338327950288
+        return 3.14159265358979323846264338327950288;
     }
 
     inline float twoPi() {
@@ -16,7 +16,7 @@ namespace lve {
     }
 
     inline float mod(float a, float b) {
-        return a - b * std::floor(a / b)
+        return a - b * std::floor(a / b);
     }
 
 }

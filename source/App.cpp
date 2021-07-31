@@ -6,6 +6,7 @@
 #include "graphics/Renderer.hpp"
 #include "Mesh/Mesh.hpp"
 #include "graphics/Device.hpp"
+#include "graphics/RenderSystem.hpp"
 
 
 namespace lve {
@@ -82,22 +83,27 @@ namespace lve {
     }
 
     void App::loop() {
+        RenderSystem renderSystem(renderer->getDevice(), renderer->getRenderPass());
+
         while (window->isOpen()) {
             glfwPollEvents();
 
             if (auto commandBuffer = renderer->beginFrame()) {
                 renderer->beginSwapChainRenderPass(commandBuffer);
 
+                renderSystem.renderEntities(commandBuffer, mesh.get());
+
                 renderer->endSwapChainRenderPass(commandBuffer);
                 renderer->endFrame();
             }
         }
+
+        renderer->waitDeviceIde();
+        renderSystem.destroy();
     }
 
     void App::shutdown() {
         mesh->destroy();
-
-        renderer->waitDeviceIde();
         renderer->cleanup();
         window->destroy();
     }

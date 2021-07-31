@@ -7,15 +7,13 @@
 #include "vulkan/vulkan.h"
 
 #include "utils/NonCopyable.hpp"
-#include "math/Vector3.hpp"
-#include "math/Matrix4.hpp"
+#include "scene/Scene.hpp"
 
 
 namespace lve {
 
     class Device;
     class GraphicsPipeline;
-    class Mesh;
 
     class RenderSystem : NonCopyable {
     public:
@@ -25,10 +23,7 @@ namespace lve {
 
         void destroy();
 
-        void renderEntities(VkCommandBuffer commandBuffer, Mesh* mesh);
-
-    private:
-        [[nodiscard]] mat4 worldTransform() const;
+        void renderEntities(VkCommandBuffer commandBuffer, entt::registry& registry);
 
     private:
         std::shared_ptr<Device> device;

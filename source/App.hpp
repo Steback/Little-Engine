@@ -12,8 +12,8 @@ namespace lve {
 
     class Window;
     class Renderer;
-    class Mesh;
     class Scene;
+    class AssetsManager;
 
     class App : NonCopyable {
     public:
@@ -33,8 +33,8 @@ namespace lve {
         Config config;
         std::shared_ptr<Window> window;
         std::unique_ptr<Renderer> renderer;
-        std::unique_ptr<Mesh> mesh;
         std::unique_ptr<Scene> scene;
+        std::unique_ptr<AssetsManager> assetsManager;
     };
 
 } // namespace lve

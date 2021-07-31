@@ -37,7 +37,7 @@ namespace lve {
 
     template<typename T, typename ...Args>
     T &Entity::addComponent(Args&& ...args) {
-        components |= T::Type;
+        components |= T::type;
         return scene->registry.emplace<T>(id, std::forward<Args>(args)...);
     }
 
@@ -48,7 +48,7 @@ namespace lve {
 
     template<typename T>
     bool Entity::hasComponent() {
-        return components & T::Type;
+        return components & T::type;
     }
 
 } // namespace lve

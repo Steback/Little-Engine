@@ -5,9 +5,12 @@
 #include "window/Window.hpp"
 #include "graphics/Renderer.hpp"
 #include "Mesh/Mesh.hpp"
-#include "graphics/Device.hpp"
 #include "graphics/RenderSystem.hpp"
 #include "scene/Scene.hpp"
+#include "assets/AssetsManager.hpp"
+#include "entity/Entity.hpp"
+#include "entity/components/Transform.hpp"
+#include "entity/components/MeshInterface.hpp"
 
 
 namespace lve {
@@ -23,13 +26,13 @@ namespace lve {
         config = Config("config.json");
         window = std::make_shared<Window>(config.getAppName(), config.getWidth(), config.getHeight());
         renderer = std::make_unique<Renderer>(window, config);
+        assetsManager = std::make_unique<AssetsManager>(renderer->getDevice());
     }
 
     App::~App() = default;
 
     void App::start() {
         scene = std::make_unique<Scene>();
-        scene->addEntity("Triangle");
 
         std::vector<Mesh::Vertex> vertices{
             // left face (white)
@@ -81,7 +84,9 @@ namespace lve {
             {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
         };
 
-        mesh = std::make_unique<Mesh>(renderer->getDevice()->getAllocator(), vertices);
+        Entity* entity = scene->addEntity("cube");
+        entity->addComponent<Transform>(vec3(0.0f, 0.0f, 0.5f), vec3(), vec3(0.5f, 0.5f, 0.5f));
+        entity->addComponent<MeshInterface>(assetsManager->addMesh("cube", vertices));
 
         renderer->setupDrawResources();
     }
@@ -95,7 +100,7 @@ namespace lve {
             if (auto commandBuffer = renderer->beginFrame()) {
                 renderer->beginSwapChainRenderPass(commandBuffer);
 
-                renderSystem.renderEntities(commandBuffer, mesh.get());
+                renderSystem.renderEntities(commandBuffer, scene->getRegistry());
 
                 renderer->endSwapChainRenderPass(commandBuffer);
                 renderer->endFrame();
@@ -107,7 +112,7 @@ namespace lve {
     }
 
     void App::shutdown() {
-        mesh->destroy();
+        assetsManager->cleanup();
         renderer->cleanup();
         window->destroy();
     }

@@ -127,7 +127,7 @@ namespace lve {
         vkGetDeviceQueue(device, queueFamilyIndices.transfer, 0, &queue);
     }
 
-    const VkDevice& Device::getLogicalDevice() const {
+    const VkDevice& Device::getDevice() const {
         return device;
     }
 

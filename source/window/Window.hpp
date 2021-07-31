@@ -40,10 +40,18 @@ namespace lve {
 
         [[nodiscard]] VkExtent2D getExtent() const;
 
+        [[nodiscard]] bool wasWindowResized() const;
+
+        void resetWindowResizedFlag();
+
+    public:
+        static void framebufferResizeCallback(GLFWwindow *window, int width, int height);
+
     private:
         GLFWwindow* window{};
         std::string name;
         Size size{};
+        bool framebufferResized{false};
     };
 
 } // namespace lve

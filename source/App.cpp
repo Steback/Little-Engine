@@ -30,10 +30,18 @@ namespace lve {
     void App::loop() {
         while (window->isOpen()) {
             glfwPollEvents();
+
+            if (auto commandBuffer = renderer->beginFrame()) {
+                renderer->beginSwapChainRenderPass(commandBuffer);
+
+                renderer->endSwapChainRenderPass(commandBuffer);
+                renderer->endFrame();
+            }
         }
     }
 
     void App::shutdown() {
+        renderer->waitDeviceIde();
         renderer->cleanup();
         window->destroy();
     }

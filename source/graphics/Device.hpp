@@ -49,7 +49,7 @@ namespace lve {
 
         void getTransferQueue(VkQueue& queue);
 
-        [[nodiscard]] const VkDevice& getLogicalDevice() const;
+        [[nodiscard]] const VkDevice& getDevice() const;
 
         [[nodiscard]] const VkPhysicalDevice& getPhysicalDevice() const;
 

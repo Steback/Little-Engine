@@ -13,7 +13,7 @@ namespace lve {
 
     SwapChain::SwapChain(std::shared_ptr<Device> device, VkExtent2D windowExtent, VkSurfaceKHR surface)
             : device(std::move(device)), windowExtent(windowExtent), surface(surface) {
-        logicalDevice = this->device->getLogicalDevice();
+        logicalDevice = this->device->getDevice();
         this->device->getGraphicsQueue(graphicsQueue);
         this->device->getPresentQueue(presentQueue);
 
@@ -22,14 +22,14 @@ namespace lve {
 
     SwapChain::SwapChain(std::shared_ptr<Device> device, VkExtent2D windowExtent, VkSurfaceKHR surface, std::shared_ptr<SwapChain> oldSwapChain)
             : device(std::move(device)), windowExtent(windowExtent), surface(surface), oldSwapChain(std::move(oldSwapChain)) {
-        logicalDevice = this->device->getLogicalDevice();
+        logicalDevice = this->device->getDevice();
         graphicsQueue = this->oldSwapChain->graphicsQueue;
         presentQueue = this->oldSwapChain->presentQueue;
 
         init();
 
-        oldSwapChain->destroy();
-        oldSwapChain = nullptr;
+        this->oldSwapChain->destroy();
+        this->oldSwapChain = nullptr;
     }
 
     SwapChain::~SwapChain() = default;
@@ -99,7 +99,7 @@ namespace lve {
     VkResult SwapChain::acquireNextImage(uint32_t *imageIndex) {
         vkWaitForFences(logicalDevice, 1, &inFlightFences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
 
-        return vkAcquireNextImageKHR(
+        VkResult result = vkAcquireNextImageKHR(
                 logicalDevice,
                 swapChain,
                 std::numeric_limits<uint64_t>::max(),
@@ -107,11 +107,13 @@ namespace lve {
                 VK_NULL_HANDLE,
                 imageIndex
         );
+
+        return result;
     }
 
-    VkResult SwapChain::submitCommandBuffers(VkCommandBuffer const &commandBuffer, uint32_t *imageIndex) {
-        if (imagesInFlight[*imageIndex])
-            vkWaitForFences(logicalDevice, 1, &inFlightFences[*imageIndex], VK_TRUE, std::numeric_limits<uint64_t>::max());
+    VkResult SwapChain::submitCommandBuffers(VkCommandBuffer const &commandBuffer, const uint32_t *imageIndex) {
+        if (imagesInFlight[*imageIndex] != VK_NULL_HANDLE)
+            vkWaitForFences(logicalDevice, 1, &imagesInFlight[*imageIndex], VK_TRUE, std::numeric_limits<uint64_t>::max());
 
         imagesInFlight[*imageIndex] = inFlightFences[currentFrame];
 
@@ -407,7 +409,7 @@ namespace lve {
         }
 
         spdlog::info("Present mode: V-Sync");
-        return VK_PRESENT_MODE_FIFO_KHR;;
+        return VK_PRESENT_MODE_FIFO_KHR;
     }
 
     VkExtent2D SwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities) {
@@ -423,7 +425,7 @@ namespace lve {
                     std::min(capabilities.maxImageExtent.height, actualExtent.height));
 
             return actualExtent;
-        };
+        }
     }
 
 } // namespace lve

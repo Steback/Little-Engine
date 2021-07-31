@@ -19,6 +19,9 @@ namespace lve {
 
         window = glfwCreateWindow(width, height, this->name.c_str(), nullptr, nullptr);
 
+        glfwSetWindowUserPointer(window, this);
+        glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
+
         spdlog::info("Window created: {}", this->name);
     }
 
@@ -57,6 +60,20 @@ namespace lve {
 
     VkExtent2D Window::getExtent() const {
         return {CAST_U32(size.width), CAST_U32(size.height)};
+    }
+
+    bool Window::wasWindowResized() const {
+        return framebufferResized;
+    }
+
+    void Window::resetWindowResizedFlag() {
+        framebufferResized = false;
+    }
+
+    void Window::framebufferResizeCallback(GLFWwindow *window, int width, int height) {
+        auto win = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+        win->framebufferResized = true;
+        win->size = {width, height};
     }
 
 } // namespace lv

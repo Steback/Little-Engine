@@ -53,7 +53,7 @@ namespace lve {
 
         VkResult acquireNextImage(uint32_t* imageIndex);
 
-        VkResult submitCommandBuffers(const VkCommandBuffer& commandBuffer, uint32_t* imageIndex);
+        VkResult submitCommandBuffers(const VkCommandBuffer& commandBuffer, const uint32_t* imageIndex);
 
         bool compareFormats(const SwapChain& other);
 

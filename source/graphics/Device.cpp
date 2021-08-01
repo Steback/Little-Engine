@@ -14,6 +14,11 @@ namespace lve {
                    VkSurfaceKHR *surface) {
         physicalDevice = instance->pickPhysicalDevice(extensions);
 
+        VkPhysicalDeviceProperties properties;
+        vkGetPhysicalDeviceProperties(physicalDevice, &properties);
+
+        spdlog::info("GPU: {}", properties.deviceName);
+
         createLogicalDevice(layers, extensions, features, surface);
         createAllocator(instance);
     }

@@ -8,6 +8,7 @@
 #include "Image.hpp"
 #include "Device.hpp"
 #include "utils/Macros.hpp"
+#include "config/Cli.hpp"
 
 
 namespace lve {
@@ -409,8 +410,13 @@ namespace lve {
             }
         }
 
-        spdlog::info("Present mode: V-Sync");
-        return VK_PRESENT_MODE_FIFO_KHR;
+        if (Cli::checkOption("--immediate_mode")) {
+            spdlog::info("Present mode: Immediate");
+            return VK_PRESENT_MODE_IMMEDIATE_KHR;
+        } else {
+            spdlog::info("Present mode: V-Sync");
+            return VK_PRESENT_MODE_FIFO_KHR;
+        }
     }
 
     VkExtent2D SwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities) {

@@ -24,10 +24,9 @@ namespace lve {
         };
 
     public:
-        SwapChain(std::shared_ptr<Device> device, VkExtent2D windowExtent, VkSurfaceKHR surface);
+        SwapChain(std::shared_ptr<Device> device, VkExtent2D windowExtent);
 
-        SwapChain(std::shared_ptr<Device> device, VkExtent2D windowExtent, VkSurfaceKHR surface,
-                  std::shared_ptr<SwapChain> oldSwapChain);
+        SwapChain(std::shared_ptr<Device> device, VkExtent2D windowExtent, std::shared_ptr<SwapChain> oldSwapChain);
 
         ~SwapChain() override;
 
@@ -88,7 +87,6 @@ namespace lve {
         VkDevice logicalDevice{};
         VkQueue graphicsQueue{};
         VkQueue presentQueue{};
-        VkSurfaceKHR surface{};
 
         VkSwapchainKHR swapChain{};
         std::shared_ptr<SwapChain> oldSwapChain;

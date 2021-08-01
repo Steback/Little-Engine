@@ -11,7 +11,7 @@ namespace lve {
 
     class SwapChain;
 
-    class Image : NonCopyable {
+    class Image : NonCopyable{
         friend SwapChain;
 
     public:

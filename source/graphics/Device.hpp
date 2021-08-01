@@ -14,6 +14,7 @@
 namespace lve {
 
     class Instance;
+    class Window;
 
     class Device : NonCopyable {
     public:
@@ -25,14 +26,15 @@ namespace lve {
         };
 
     public:
-        Device(const std::shared_ptr<Instance>& instance, const std::vector<const char*>& layers, VkPhysicalDeviceFeatures features,
-               const std::vector<const char*>& extensions, VkSurfaceKHR* surface = nullptr);
+        Device(const std::shared_ptr<Instance>& instance, const std::shared_ptr<Window>& window,
+               const std::vector<const char*>& layers, VkPhysicalDeviceFeatures features,
+               const std::vector<const char*>& extensions);
 
         ~Device() override;
 
         void destroy();
 
-        uint32_t getQueueFamilyIndex(const VkQueueFlags& flags, VkSurfaceKHR* surface = nullptr);
+        uint32_t getQueueFamilyIndex(const VkQueueFlags& flags, VkSurfaceKHR surface_ = VK_NULL_HANDLE);
 
         VkFormat findSupportFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling,
                                    VkFormatFeatureFlags features);
@@ -57,9 +59,11 @@ namespace lve {
 
         [[nodiscard]] const VmaAllocator& getAllocator() const;
 
+        [[nodiscard]] const VkSurfaceKHR& getSurface() const;
+
     private:
         void createLogicalDevice(const std::vector<const char*>& layers, const std::vector<const char*>& extensions, VkPhysicalDeviceFeatures features,
-                                 VkSurfaceKHR* surface = nullptr, VkQueueFlags queueFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT);
+                                 VkQueueFlags queueFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT);
 
         void createAllocator(const std::shared_ptr<Instance>& instance);
 
@@ -68,6 +72,7 @@ namespace lve {
         VkPhysicalDevice physicalDevice{};
         QueueFamilyIndices queueFamilyIndices{};
         VmaAllocator allocator{};
+        VkSurfaceKHR surface{};
     };
 
 } // namespace lve

@@ -2,6 +2,7 @@
 
 #include "Instance.hpp"
 #include "logs/Logs.hpp"
+#include "window/Window.hpp"
 
 
 const float DEFAULT_QUEUE_PRIORITY = 1.0f;
@@ -9,17 +10,17 @@ const float DEFAULT_QUEUE_PRIORITY = 1.0f;
 
 namespace lve {
 
-    Device::Device(const std::shared_ptr<Instance> &instance, const std::vector<const char *> &layers,
-                   VkPhysicalDeviceFeatures features, const std::vector<const char *>& extensions,
-                   VkSurfaceKHR *surface) {
+    Device::Device(const std::shared_ptr<Instance> &instance, const std::shared_ptr<Window>& window, const std::vector<const char *> &layers,
+                   VkPhysicalDeviceFeatures features, const std::vector<const char *>& extensions) {
         physicalDevice = instance->pickPhysicalDevice(extensions);
 
         VkPhysicalDeviceProperties properties;
         vkGetPhysicalDeviceProperties(physicalDevice, &properties);
-
         spdlog::info("GPU: {}", properties.deviceName);
 
-        createLogicalDevice(layers, extensions, features, surface);
+        window->createWindowSurface(instance->getHandle(), &surface);
+
+        createLogicalDevice(layers, extensions, features);
         createAllocator(instance);
     }
 
@@ -30,7 +31,7 @@ namespace lve {
         vkDestroyDevice(device, nullptr);
     }
 
-    uint32_t Device::getQueueFamilyIndex(const VkQueueFlags &flags, VkSurfaceKHR *surface) {
+    uint32_t Device::getQueueFamilyIndex(const VkQueueFlags &flags, VkSurfaceKHR surface_) {
         uint32_t queueFamilyCount = 0;
         vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
 
@@ -53,9 +54,9 @@ namespace lve {
 
         for (uint32_t i = 0; i < CAST_U32(properties.size()); ++i) {
             if (properties[i].queueFlags & flags) {
-                if (surface) {
+                if (surface_) {
                     VkBool32 supported = false;
-                    vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, *surface, &supported);
+                    vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface_, &supported);
 
                     if (supported) return i;
                 }
@@ -120,7 +121,7 @@ namespace lve {
         if (queueFamilyIndices.graphics != queueFamilyIndices.present) {
             vkGetDeviceQueue(device, queueFamilyIndices.present, 0, &queue);
         } else {
-            vkGetDeviceQueue(device, queueFamilyIndices.graphics, 1, &queue);
+            vkGetDeviceQueue(device, queueFamilyIndices.graphics, 0, &queue);
         }
     }
 
@@ -148,9 +149,13 @@ namespace lve {
         return allocator;
     }
 
+    const VkSurfaceKHR &Device::getSurface() const {
+        return surface;
+    }
+
     void
     Device::createLogicalDevice(const std::vector<const char *> &layers, const std::vector<const char *>& extensions,
-                                VkPhysicalDeviceFeatures features, VkSurfaceKHR *surface, VkQueueFlags queueFlags) {
+                                VkPhysicalDeviceFeatures features, VkQueueFlags queueFlags) {
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos{};
 
         if (queueFlags & VK_QUEUE_GRAPHICS_BIT) {
@@ -158,11 +163,10 @@ namespace lve {
             queueFamilyIndices.present = getQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT, surface);
 
             if (queueFamilyIndices.graphics == queueFamilyIndices.present) {
-                const float queuesPriority[] = {DEFAULT_QUEUE_PRIORITY, DEFAULT_QUEUE_PRIORITY};
                 VkDeviceQueueCreateInfo createInfo{VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO};
                 createInfo.queueFamilyIndex = queueFamilyIndices.graphics;
-                createInfo.queueCount = 2;
-                createInfo.pQueuePriorities = queuesPriority;
+                createInfo.queueCount = 1;
+                createInfo.pQueuePriorities = &DEFAULT_QUEUE_PRIORITY;
 
                 queueCreateInfos.push_back(createInfo);
             } else {

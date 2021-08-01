@@ -13,8 +13,8 @@
 
 namespace lve {
 
-    SwapChain::SwapChain(std::shared_ptr<Device> device, VkExtent2D windowExtent, VkSurfaceKHR surface)
-            : device(std::move(device)), windowExtent(windowExtent), surface(surface) {
+    SwapChain::SwapChain(std::shared_ptr<Device> device, VkExtent2D windowExtent)
+            : device(std::move(device)), windowExtent(windowExtent) {
         logicalDevice = this->device->getDevice();
         this->device->getGraphicsQueue(graphicsQueue);
         this->device->getPresentQueue(presentQueue);
@@ -22,15 +22,14 @@ namespace lve {
         init();
     }
 
-    SwapChain::SwapChain(std::shared_ptr<Device> device, VkExtent2D windowExtent, VkSurfaceKHR surface, std::shared_ptr<SwapChain> oldSwapChain)
-            : device(std::move(device)), windowExtent(windowExtent), surface(surface), oldSwapChain(std::move(oldSwapChain)) {
-        logicalDevice = this->device->getDevice();
+    SwapChain::SwapChain(std::shared_ptr<Device> device, VkExtent2D windowExtent, std::shared_ptr<SwapChain> oldSwapChain)
+            : device(std::move(device)), windowExtent(windowExtent), oldSwapChain(std::move(oldSwapChain)) {
+        logicalDevice = this->oldSwapChain->logicalDevice;
         graphicsQueue = this->oldSwapChain->graphicsQueue;
         presentQueue = this->oldSwapChain->presentQueue;
 
         init();
 
-        this->oldSwapChain->destroy();
         this->oldSwapChain = nullptr;
     }
 
@@ -138,15 +137,12 @@ namespace lve {
         LVE_VK_CHECK_RESULT(vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]),
                             "failed to submit draw command buffer!");
 
-        VkPresentInfoKHR presentInfo = {};
-        presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-
+        VkPresentInfoKHR presentInfo = {VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
         presentInfo.waitSemaphoreCount = 1;
         presentInfo.pWaitSemaphores = signalSemaphores;
 
-        VkSwapchainKHR swapChains[] = {swapChain};
         presentInfo.swapchainCount = 1;
-        presentInfo.pSwapchains = swapChains;
+        presentInfo.pSwapchains = &swapChain;
 
         presentInfo.pImageIndices = imageIndex;
 
@@ -200,6 +196,7 @@ namespace lve {
     }
 
     void SwapChain::createSwapChain() {
+        VkSurfaceKHR surface = device->getSurface();
         SupportDetails support = querySwapChainSupport(device->getPhysicalDevice(), surface);
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(support.formats);

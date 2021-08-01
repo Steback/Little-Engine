@@ -16,11 +16,11 @@ namespace lve {
 #endif
 
         instance = std::make_shared<Instance>(validationLayers, config.getAppName().c_str());
-        this->window->createWindowSurface(instance->getHandle(), &surface);
 
         VkPhysicalDeviceFeatures features{};
         std::vector<const char*> extensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
-        device = std::make_shared<Device>(instance, validationLayers, features, extensions, &surface);
+        device = std::make_shared<Device>(instance, this->window, validationLayers, features, extensions);
+        logicalDevice = device->getDevice();
         device->createCommandPool(commandPool, device->getQueueFamilyIndices().graphics);
     }
 
@@ -28,16 +28,16 @@ namespace lve {
 
     void Renderer::cleanup() {
         freeCommandBuffers();
-        vkDestroyCommandPool(device->getDevice(), commandPool, nullptr);
+        vkDestroyCommandPool(logicalDevice, commandPool, nullptr);
 
         swapChain->destroy();
         device->destroy();
-        vkDestroySurfaceKHR(instance->getHandle(), surface, nullptr);
+        vkDestroySurfaceKHR(instance->getHandle(), device->getSurface(), nullptr);
         instance->destroy();
     }
 
     void Renderer::setupDrawResources() {
-        swapChain = std::make_unique<SwapChain>(device, window->getExtent(), surface);
+        swapChain = std::make_unique<SwapChain>(device, window->getExtent());
         createCommandBuffers();
     }
 
@@ -94,6 +94,9 @@ namespace lve {
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window->wasWindowResized()) {
             window->resetWindowResizedFlag();
             recreateSwapChain();
+            isFrameStarted = false;
+            currentFrameIndex = (currentFrameIndex + 1) % SwapChain::MAX_FRAMES_IN_FLIGHT;
+            return;
         } else if (result != VK_SUCCESS) {
             LVE_THROW_EX("Failed to present swap chain image!");
         }
@@ -154,7 +157,7 @@ namespace lve {
 
     void Renderer::freeCommandBuffers() {
         vkFreeCommandBuffers(
-                device->getDevice(),
+                logicalDevice,
                 commandPool,
                 CAST_U32(commandBuffers.size()),
                 commandBuffers.data());
@@ -168,18 +171,20 @@ namespace lve {
             glfwWaitEvents();
         }
 
-        vkDeviceWaitIdle(device->getDevice());
+        vkDeviceWaitIdle(logicalDevice);
 
         std::shared_ptr<SwapChain> oldSwapChain = std::move(swapChain);
-        swapChain = std::make_unique<SwapChain>(device, extent, surface, oldSwapChain);
+        swapChain = std::make_unique<SwapChain>(device, extent, oldSwapChain);
 
         if (!oldSwapChain->compareFormats(*swapChain)) {
             LVE_THROW_EX("Swap chain image(or depth) format has changed!");
         }
+
+        oldSwapChain->destroy();
     }
 
     void Renderer::waitDeviceIde() {
-        vkDeviceWaitIdle(device->getDevice());
+        vkDeviceWaitIdle(logicalDevice);
     }
 
     std::shared_ptr<Device> Renderer::getDevice() {

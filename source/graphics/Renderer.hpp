@@ -60,13 +60,12 @@ namespace lve {
 
         std::shared_ptr<Instance> instance;
         std::shared_ptr<Device> device;
+        VkDevice logicalDevice{};
 
         std::unique_ptr<SwapChain> swapChain;
 
         VkCommandPool commandPool{};
         std::vector<VkCommandBuffer> commandBuffers;
-
-        VkSurfaceKHR surface{};
 
         uint32_t imageIndex{};
         int currentFrameIndex{0};

@@ -37,7 +37,7 @@ namespace lve {
 
     void SwapChain::destroy() {
         for (auto& image : images)
-            vkDestroyImageView(logicalDevice, image->view, nullptr);
+            vkDestroyImageView(logicalDevice, image.view, nullptr);
 
         images.clear();
 
@@ -47,7 +47,7 @@ namespace lve {
         }
 
         for (auto& image : depthImages)
-            image->destroy();
+            image.destroy();
 
         for (auto& framebuffer : framebuffers)
             vkDestroyFramebuffer(logicalDevice, framebuffer, nullptr);
@@ -70,7 +70,7 @@ namespace lve {
     }
 
     VkImageView SwapChain::getImageView(size_t index) {
-        return images[index]->view;
+        return images[index].view;
     }
 
     size_t SwapChain::imageCount() {
@@ -243,8 +243,7 @@ namespace lve {
 
         images.resize(imageCount);
         for (size_t i = 0; i < imageCount; ++i) {
-            images[i] = std::make_unique<Image>();
-            images[i]->image = swapChainImages[i];
+            images[i].image = swapChainImages[i];
         }
 
         format = surfaceFormat.format;
@@ -254,7 +253,7 @@ namespace lve {
     void SwapChain::createImageViews() {
         for (auto& image : images) {
             VkImageViewCreateInfo viewInfo{VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO};
-            viewInfo.image = image->image;
+            viewInfo.image = image.image;
             viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
             viewInfo.format = format;
             viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -263,7 +262,7 @@ namespace lve {
             viewInfo.subresourceRange.baseArrayLayer = 0;
             viewInfo.subresourceRange.layerCount = 1;
 
-            LVE_VK_CHECK_RESULT(vkCreateImageView(logicalDevice, &viewInfo, nullptr, &image->view),
+            LVE_VK_CHECK_RESULT(vkCreateImageView(logicalDevice, &viewInfo, nullptr, &image.view),
                                 "Failed to create texture image view!");
         }
     }
@@ -286,8 +285,8 @@ namespace lve {
             imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
             imageInfo.flags = 0;
 
-            image = std::make_unique<Image>(logicalDevice, device->getAllocator(), imageInfo, VMA_MEMORY_USAGE_GPU_ONLY);
-            image->createView(VK_IMAGE_ASPECT_DEPTH_BIT);
+            image.create(logicalDevice, device->getAllocator(), imageInfo, VMA_MEMORY_USAGE_GPU_ONLY);
+            image.createView(VK_IMAGE_ASPECT_DEPTH_BIT);
         }
     }
 
@@ -356,7 +355,7 @@ namespace lve {
 
         framebuffers.resize(imageCount());
         for (size_t i = 0; i < imageCount(); i++) {
-            std::array<VkImageView, 2> attachments = {images[i]->view, depthImages[i]->view};
+            std::array<VkImageView, 2> attachments = {images[i].view, depthImages[i].view};
             framebufferInfo.attachmentCount = CAST_U32(attachments.size());
             framebufferInfo.pAttachments = attachments.data();
 

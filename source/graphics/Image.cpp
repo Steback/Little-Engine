@@ -7,18 +7,23 @@ namespace lve {
 
     Image::Image() = default;
 
-    Image::Image(VkDevice device, VmaAllocator allocator, const VkImageCreateInfo &createInfo, VmaMemoryUsage usage)
-            : device(device), allocator(allocator) {
+    Image::Image(VkDevice device, VmaAllocator allocator, const VkImageCreateInfo &createInfo, VmaMemoryUsage usage) {
+        create(device, allocator, createInfo, usage);
+    }
+
+    Image::~Image() = default;
+
+    void Image::create(VkDevice device_, VmaAllocator allocator_, const VkImageCreateInfo& createInfo, VmaMemoryUsage usage) {
+        device = device_;
+        allocator = allocator_;
         format = createInfo.format;
         mipLevels = createInfo.mipLevels;
         extent = createInfo.extent;
 
         VmaAllocationCreateInfo allocInfo{};
         allocInfo.usage = usage;
-        vmaCreateImage(this->allocator, &createInfo, &allocInfo, &image, &allocation, nullptr);
+        vmaCreateImage(allocator, &createInfo, &allocInfo, &image, &allocation, nullptr);
     }
-
-    Image::~Image() = default;
 
     void Image::createView(VkImageAspectFlags aspectFlags) {
         VkImageViewCreateInfo createInfo{VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO};

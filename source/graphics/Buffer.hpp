@@ -11,13 +11,13 @@
 
 namespace lve {
 
-    class Buffer : NonCopyable {
+    class Buffer {
     public:
         Buffer();
 
         explicit Buffer(VmaAllocator allocator);
 
-        ~Buffer() override;
+        ~Buffer();
 
         void destroy();
 

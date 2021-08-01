@@ -9,6 +9,7 @@
 
 #include "math/Vector3.hpp"
 #include "utils/NonCopyable.hpp"
+#include "graphics/Buffer.hpp"
 
 
 namespace lve {
@@ -43,7 +44,7 @@ namespace lve {
 
     private:
         VmaAllocator allocator;
-        std::unique_ptr<Buffer> vertexBuffer;
+        Buffer vertexBuffer;
         uint32_t vertexCount{};
     };
 

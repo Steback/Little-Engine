@@ -100,8 +100,8 @@ namespace lve {
         std::vector<VkFramebuffer> framebuffers;
         VkRenderPass renderPass{};
 
-        std::vector<std::unique_ptr<Image>> images;
-        std::vector<std::unique_ptr<Image>> depthImages;
+        std::vector<Image> images;
+        std::vector<Image> depthImages;
 
         std::vector<VkSemaphore> imageAvailableSemaphores;
         std::vector<VkSemaphore> renderFinishedSemaphores;

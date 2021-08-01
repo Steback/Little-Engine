@@ -11,7 +11,7 @@ namespace lve {
 
     class SwapChain;
 
-    class Image : NonCopyable{
+    class Image  {
         friend SwapChain;
 
     public:
@@ -19,7 +19,9 @@ namespace lve {
 
         Image(VkDevice device, VmaAllocator allocator, const VkImageCreateInfo& createInfo, VmaMemoryUsage usage);
 
-        ~Image() override;
+        ~Image();
+
+        void create(VkDevice device_, VmaAllocator allocator_, const VkImageCreateInfo& createInfo, VmaMemoryUsage usage);
 
         void createView(VkImageAspectFlags aspectFlags);
 

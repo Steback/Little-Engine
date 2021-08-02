@@ -30,8 +30,61 @@ namespace lve {
         projection[3][2] = -(far * near) / (far - near);
     }
 
+    void Camera::setViewDirection(const vec3 &position, const vec3 &direction, const vec3 &up) {
+        const vec3 w{direction.normal()};
+        const vec3 u{w.cross(up).normal()};
+        const vec3 v{w.cross(u)};
+
+        view = mat4{1.f};
+        view[0][0] = u.x;
+        view[1][0] = u.y;
+        view[2][0] = u.z;
+        view[0][1] = v.x;
+        view[1][1] = v.y;
+        view[2][1] = v.z;
+        view[0][2] = w.x;
+        view[1][2] = w.y;
+        view[2][2] = w.z;
+        view[3][0] = -(u * position);
+        view[3][1] = -(v * position);
+        view[3][2] = -(w * position);
+    }
+
+    void Camera::setViewTarget(const vec3 &position, const vec3 &target, const vec3 &up) {
+        setViewDirection(position, target - position, up);
+    }
+
+    void Camera::setViewYXZ(const vec3 &position, const vec3 &rotation) {
+        const float c3 = std::cos(rotation.z);
+        const float s3 = std::sin(rotation.z);
+        const float c2 = std::cos(rotation.x);
+        const float s2 = std::sin(rotation.x);
+        const float c1 = std::cos(rotation.y);
+        const float s1 = std::sin(rotation.y);
+        const vec3 u{(c1 * c3 + s1 * s2 * s3), (c2 * s3), (c1 * s2 * s3 - c3 * s1)};
+        const vec3 v{(c3 * s1 * s2 - c1 * s3), (c2 * c3), (c1 * c3 * s2 + s1 * s3)};
+        const vec3 w{(c2 * s1), (-s2), (c1 * c2)};
+        view = mat4{1.f};
+        view[0][0] = u.x;
+        view[1][0] = u.y;
+        view[2][0] = u.z;
+        view[0][1] = v.x;
+        view[1][1] = v.y;
+        view[2][1] = v.z;
+        view[0][2] = w.x;
+        view[1][2] = w.y;
+        view[2][2] = w.z;
+        view[3][0] = -(u * position);
+        view[3][1] = -(v * position);
+        view[3][2] = -(w * position);
+    }
+
     const Matrix4 &Camera::getProjection() const {
         return projection;
     }
 
-} // namespace lv
+    const Matrix4 &Camera::getView() const {
+        return view;
+    }
+
+} // namespace lve

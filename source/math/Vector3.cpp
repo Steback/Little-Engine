@@ -113,4 +113,12 @@ namespace lve {
         return "| " + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + " |";
     }
 
+    Vector3 Vector3::cross(const Vector3& v) const {
+        return {
+            y * v.z - z * v.y,
+            z * v.x - x * v.z,
+            x * v.y - y * v.x
+        };
+    }
+
 } // namespace lv

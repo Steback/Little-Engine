@@ -96,6 +96,8 @@ namespace lve {
     void App::loop() {
         RenderSystem renderSystem(renderer->getDevice(), renderer->getRenderPass());
         Camera camera;
+//         camera.setViewDirection(vec3(0.f), vec3(0.5f, 0.f, 1.f));
+        camera.setViewTarget({-1.f, -2.f, -2.f}, {0.f, 0.f, 2.5f});
 
         while (window->isOpen()) {
             glfwPollEvents();

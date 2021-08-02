@@ -54,9 +54,11 @@ namespace lve {
             transform.rotation.y = mod(transform.rotation.y + 0.01f, twoPi());
             transform.rotation.x = mod(transform.rotation.x + 0.005f, twoPi());
 
+            auto viewProjection = camera.getProjection() * camera.getView();
+
             SimplePushConstantData push{};
             push.color = {0.2f, 0.0f, 0.02f};
-            push.transform = camera.getProjection() * transform.worldTransform();
+            push.transform = viewProjection * transform.worldTransform();
 
             vkCmdPushConstants(
                     commandBuffer,

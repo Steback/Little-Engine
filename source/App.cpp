@@ -11,6 +11,8 @@
 #include "entity/Entity.hpp"
 #include "entity/components/Transform.hpp"
 #include "entity/components/MeshInterface.hpp"
+#include "graphics/Camera.hpp"
+#include "math/Common.hpp"
 
 
 namespace lve {
@@ -85,7 +87,7 @@ namespace lve {
         };
 
         Entity* entity = scene->addEntity("cube");
-        entity->addComponent<Transform>(vec3(0.0f, 0.0f, 0.5f), vec3(), vec3(0.5f, 0.5f, 0.5f));
+        entity->addComponent<Transform>(vec3(0.0f, 0.0f, 2.5f), vec3(), vec3(0.5f, 0.5f, 0.5f));
         entity->addComponent<MeshInterface>(assetsManager->addMesh("cube", vertices));
 
         renderer->setupDrawResources();
@@ -93,14 +95,19 @@ namespace lve {
 
     void App::loop() {
         RenderSystem renderSystem(renderer->getDevice(), renderer->getRenderPass());
+        Camera camera;
 
         while (window->isOpen()) {
             glfwPollEvents();
 
+            float aspect = renderer->getAspectRatio();
+//             camera.setOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
+            camera.setPerspectiveProjection(radians(50.f), aspect, 0.1f, 10.f);
+
             if (auto commandBuffer = renderer->beginFrame()) {
                 renderer->beginSwapChainRenderPass(commandBuffer);
 
-                renderSystem.renderEntities(commandBuffer, scene->getRegistry());
+                renderSystem.renderEntities(commandBuffer, scene->getRegistry(), camera);
 
                 renderer->endSwapChainRenderPass(commandBuffer);
                 renderer->endFrame();

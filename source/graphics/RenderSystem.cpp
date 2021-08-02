@@ -2,8 +2,11 @@
 
 #include <cmath>
 
+#include "fmt/format.h"
+
 #include "Device.hpp"
 #include "pipelines/GraphicsPipeline.hpp"
+#include "Camera.hpp"
 #include "math/Common.hpp"
 #include "math/Matrix4.hpp"
 #include "math/Vector3.hpp"
@@ -41,7 +44,7 @@ namespace lve {
         pipeline->destroy();
     }
 
-    void RenderSystem::renderEntities(VkCommandBuffer commandBuffer, entt::registry& registry) {
+    void RenderSystem::renderEntities(VkCommandBuffer commandBuffer, entt::registry& registry, const Camera& camera) {
         pipeline->bind(commandBuffer);
 
         for (auto& entity : registry.view<Transform, MeshInterface>()) {
@@ -53,7 +56,7 @@ namespace lve {
 
             SimplePushConstantData push{};
             push.color = {0.2f, 0.0f, 0.02f};
-            push.transform = transform.worldTransform();
+            push.transform = camera.getProjection() * transform.worldTransform();
 
             vkCmdPushConstants(
                     commandBuffer,

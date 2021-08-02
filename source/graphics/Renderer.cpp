@@ -143,6 +143,10 @@ namespace lve {
         vkCmdEndRenderPass(commandBuffer);
     }
 
+    float Renderer::getAspectRatio() const {
+        return swapChain->extentAspectRatio();
+    }
+
     void Renderer::createCommandBuffers() {
         commandBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
 

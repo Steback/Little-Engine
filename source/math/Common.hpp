@@ -19,6 +19,10 @@ namespace lve {
         return a - b * std::floor(a / b);
     }
 
+    inline float radians(float angle) {
+        return angle * 0.01745329251994329576923690768489f;
+    }
+
 }
 
 

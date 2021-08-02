@@ -49,7 +49,7 @@ namespace lve {
     }
 
     Vector4 Vector4::operator*(float n) const {
-        return {x - n, y - n, z - n, w - n};
+        return {x * n, y * n, z * n, w * n};
     }
 
     float Vector4::operator*(const Vector4 &v) const {

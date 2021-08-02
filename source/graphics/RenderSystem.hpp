@@ -14,6 +14,7 @@ namespace lve {
 
     class Device;
     class GraphicsPipeline;
+    class Camera;
 
     class RenderSystem : NonCopyable {
     public:
@@ -23,7 +24,7 @@ namespace lve {
 
         void destroy();
 
-        void renderEntities(VkCommandBuffer commandBuffer, entt::registry& registry);
+        void renderEntities(VkCommandBuffer commandBuffer, entt::registry& registry, const Camera& camera);
 
     private:
         std::shared_ptr<Device> device;

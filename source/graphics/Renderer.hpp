@@ -48,6 +48,8 @@ namespace lve {
 
         std::shared_ptr<Device> getDevice();
 
+        [[nodiscard]] float getAspectRatio() const;
+
     private:
         void createCommandBuffers();
 

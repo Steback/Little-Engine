@@ -19,3 +19,6 @@ execute_process(COMMAND python ${COMPILE_SCRIPT})
 # Source code and link
 include_directories(${PROJECT_SOURCE_DIR}/source)
 add_subdirectory(source)
+
+# Samples
+add_subdirectory(${PROJECT_SOURCE_DIR}/samples)

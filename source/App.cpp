@@ -11,7 +11,6 @@
 #include "entity/Entity.hpp"
 #include "entity/components/Transform.hpp"
 #include "entity/components/MeshInterface.hpp"
-#include "graphics/Camera.hpp"
 #include "math/Common.hpp"
 
 
@@ -86,6 +85,8 @@ namespace lve {
             {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
         };
 
+        Entity* cameraEntity = scene->addEntity("camera");
+        cameraEntity->addComponent<Transform>();
         Entity* entity = scene->addEntity("cube");
         entity->addComponent<Transform>(vec3(0.0f, 0.0f, 2.5f), vec3(), vec3(0.5f, 0.5f, 0.5f));
         entity->addComponent<MeshInterface>(assetsManager->addMesh("cube", vertices));
@@ -95,7 +96,7 @@ namespace lve {
 
     void App::loop() {
         RenderSystem renderSystem(renderer->getDevice(), renderer->getRenderPass());
-        Camera camera;
+
 //         camera.setViewDirection(vec3(0.f), vec3(0.5f, 0.f, 1.f));
         camera.setViewTarget({-1.f, -2.f, -2.f}, {0.f, 0.f, 2.5f});
 

@@ -44,3 +44,10 @@ conan install ..
 cmake .. -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 16"
 cmake --build . --config Release 
 ```
+
+### Samples
+* Camera Movement
+ 
+Example about how to implement a simple camera movement system with the keyboard input.
+
+![Camera Movement Sample](images/cameraMovementSample.png)

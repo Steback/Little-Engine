@@ -7,6 +7,7 @@
 #include "utils/NonCopyable.hpp"
 #include "config/Config.hpp"
 #include "graphics/Camera.hpp"
+#include "input/InputSystem.hpp"
 
 
 namespace lve {
@@ -35,6 +36,7 @@ namespace lve {
     private:
         Config config;
         Camera camera;
+        InputSystem input;
         std::shared_ptr<Window> window;
         std::unique_ptr<Renderer> renderer;
         std::unique_ptr<Scene> scene;

@@ -25,7 +25,7 @@ namespace lve {
         Logger::addFile("error.log");
 
         config = Config("config.json");
-        window = std::make_shared<Window>(config.getAppName(), config.getWidth(), config.getHeight());
+        window = std::make_shared<Window>(config.getAppName(), config.getWidth(), config.getHeight(), input);
         renderer = std::make_unique<Renderer>(window, config);
         assetsManager = std::make_unique<AssetsManager>(renderer->getDevice());
     }

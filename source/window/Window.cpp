@@ -1,6 +1,7 @@
 #include "Window.hpp"
 
 #include "logs/Logs.hpp"
+#include "input/InputSystem.hpp"
 
 
 static void errorCallback(int error, const char* description) {
@@ -9,7 +10,8 @@ static void errorCallback(int error, const char* description) {
 
 namespace lve {
 
-    Window::Window(std::string name, int width, int height) : name(std::move(name)), size({width, height}) {
+    Window::Window(std::string name, int width, int height, InputSystem& input)
+                : name(std::move(name)), size({width, height}), input(input) {
         glfwSetErrorCallback(errorCallback);
 
         if (!glfwInit()) LVE_LOG_ERROR_EXIT("Failed to init GLFW");
@@ -21,6 +23,7 @@ namespace lve {
 
         glfwSetWindowUserPointer(window, this);
         glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
+        glfwSetKeyCallback(window, keyCallback);
 
         spdlog::info("Window created: {}", this->name);
     }
@@ -74,6 +77,16 @@ namespace lve {
         auto win = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
         win->framebufferResized = true;
         win->size = {width, height};
+    }
+
+    void Window::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+        auto win = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+
+        if (action == GLFW_PRESS) {
+            win->input.setKey(key, MouseState::PRESS);
+        } else if (action == GLFW_RELEASE) {
+            win->input.setKey(key, MouseState::RELEASE);
+        }
     }
 
 } // namespace lv

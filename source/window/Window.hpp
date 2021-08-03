@@ -4,13 +4,15 @@
 
 #include <string>
 
-#define GLFW_INCLUDE_VULKAN
+#include "vulkan/vulkan.h"
 #include "GLFW/glfw3.h"
 
 #include "utils/NonCopyable.hpp"
 
 
 namespace lve {
+
+    class InputSystem;
 
     class Window : NonCopyable {
     public:
@@ -20,7 +22,7 @@ namespace lve {
         };
 
     public:
-        Window(std::string  name, int width, int height);
+        Window(std::string  name, int width, int height, InputSystem& input);
 
         ~Window() override;
 
@@ -47,11 +49,14 @@ namespace lve {
     public:
         static void framebufferResizeCallback(GLFWwindow *window, int width, int height);
 
+        static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
     private:
         GLFWwindow* window{};
         std::string name;
         Size size{};
         bool framebufferResized{false};
+        InputSystem& input;
     };
 
 } // namespace lve

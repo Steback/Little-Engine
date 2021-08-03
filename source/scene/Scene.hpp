@@ -31,6 +31,8 @@ namespace lve {
 
         Entity* getEntity(id_t id);
 
+        Entity* searchEntity(const std::string& name);
+
     private:
         entt::registry registry;
         std::unordered_map<id_t, std::unique_ptr<Entity>> entities;

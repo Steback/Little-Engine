@@ -50,10 +50,6 @@ namespace lve {
         for (auto& entity : registry.view<Transform, MeshInterface>()) {
             auto& transform = registry.get<Transform>(entity);
             auto& meshInterface = registry.get<MeshInterface>(entity);
-
-            transform.rotation.y = mod(transform.rotation.y + 0.01f, twoPi());
-            transform.rotation.x = mod(transform.rotation.x + 0.005f, twoPi());
-
             auto viewProjection = camera.getProjection() * camera.getView();
 
             SimplePushConstantData push{};

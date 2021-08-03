@@ -27,13 +27,13 @@ namespace lve {
 
         void loop();
 
-        virtual void update() = 0;
+        virtual void update(float deltaTime) = 0;
 
         void shutdown();
 
         void run();
 
-    private:
+    protected:
         Config config;
         Camera camera;
         InputSystem input;

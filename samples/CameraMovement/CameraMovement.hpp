@@ -4,6 +4,9 @@
 
 #include "App.hpp"
 
+#include "KeyboardMovementController.hpp"
+#include "entity/Entity.hpp"
+
 
 namespace lve {
 
@@ -13,10 +16,11 @@ namespace lve {
 
         ~CameraMovement() override;
 
-        void update() override;
+        void update(float deltaTime) override;
 
     private:
-
+        KeyboardMovementController cameraController;
+        id_t cameraID;
     };
 
 } // namespace lve

@@ -23,4 +23,12 @@ namespace lve {
         return entities[id].get();
     }
 
+    Entity *Scene::searchEntity(const std::string &name) {
+        for (auto& [id, entity] : entities) {
+            if (entity->getName() == name) return entity.get();
+        }
+
+        return nullptr;
+    }
+
 } // namespace lv

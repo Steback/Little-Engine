@@ -1,5 +1,7 @@
 #include "App.hpp"
 
+#include <chrono>
+
 #include "files/FilesManager.hpp"
 #include "logs/Logs.hpp"
 #include "window/Window.hpp"
@@ -28,12 +30,14 @@ namespace lve {
         window = std::make_shared<Window>(config.getAppName(), config.getWidth(), config.getHeight(), input);
         renderer = std::make_unique<Renderer>(window, config);
         assetsManager = std::make_unique<AssetsManager>(renderer->getDevice());
+        scene = std::make_unique<Scene>();
+        Entity* cameraEntity = scene->addEntity("camera");
+        cameraEntity->addComponent<Transform>();
     }
 
     App::~App() = default;
 
     void App::start() {
-        scene = std::make_unique<Scene>();
 
         std::vector<Mesh::Vertex> vertices{
             // left face (white)
@@ -85,8 +89,6 @@ namespace lve {
             {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
         };
 
-        Entity* cameraEntity = scene->addEntity("camera");
-        cameraEntity->addComponent<Transform>();
         Entity* entity = scene->addEntity("cube");
         entity->addComponent<Transform>(vec3(0.0f, 0.0f, 2.5f), vec3(), vec3(0.5f, 0.5f, 0.5f));
         entity->addComponent<MeshInterface>(assetsManager->addMesh("cube", vertices));
@@ -96,16 +98,19 @@ namespace lve {
 
     void App::loop() {
         RenderSystem renderSystem(renderer->getDevice(), renderer->getRenderPass());
-
-//         camera.setViewDirection(vec3(0.f), vec3(0.5f, 0.f, 1.f));
-        camera.setViewTarget({-1.f, -2.f, -2.f}, {0.f, 0.f, 2.5f});
+        auto currentTime = std::chrono::high_resolution_clock::now();
 
         while (window->isOpen()) {
             glfwPollEvents();
 
+            auto newTime = std::chrono::high_resolution_clock::now();
+            float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
+            currentTime = newTime;
+
             float aspect = renderer->getAspectRatio();
-//             camera.setOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
             camera.setPerspectiveProjection(radians(50.f), aspect, 0.1f, 10.f);
+
+            update(frameTime);
 
             if (auto commandBuffer = renderer->beginFrame()) {
                 renderer->beginSwapChainRenderPass(commandBuffer);
@@ -131,10 +136,6 @@ namespace lve {
         start();
         loop();
         shutdown();
-    }
-
-    void App::update() {
-
     }
 
 } // namespace lv

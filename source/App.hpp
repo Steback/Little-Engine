@@ -25,11 +25,13 @@ namespace lve {
 
         void loop();
 
+        virtual void update() = 0;
+
         void shutdown();
 
         void run();
 
-    private:
+    protected:
         Config config;
         std::shared_ptr<Window> window;
         std::unique_ptr<Renderer> renderer;

@@ -132,4 +132,8 @@ namespace lve {
         shutdown();
     }
 
+    void App::update() {
+
+    }
+
 } // namespace lv

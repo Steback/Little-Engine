@@ -9,7 +9,7 @@ cmake-build-debug/
 cmake-build-release/
 
 ### Binaries
-Engine
+bin/Engine
 bin/Release/
 
 ### VS Code

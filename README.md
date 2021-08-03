@@ -46,7 +46,7 @@ cmake --build . --config Release
 ```
 
 ### Samples
-* Camera Movement
+* [Camera Movement](samples/CameraMovement)
  
 Example about how to implement a simple camera movement system with the keyboard input.
 

@@ -15,8 +15,8 @@ namespace lve {
         for (auto& [id, mesh] : meshes) mesh->destroy();
     }
 
-    std::shared_ptr<Mesh> AssetsManager::addMesh(const std::string& id, const std::vector<Mesh::Vertex>& vertices) {
-        return meshes[id] = std::make_shared<Mesh>(device, vertices);
+    std::shared_ptr<Mesh> AssetsManager::addMesh(const std::string& id, const Mesh::Data& data) {
+        return meshes[id] = std::make_shared<Mesh>(device, data);
     }
 
     std::shared_ptr<Mesh> AssetsManager::getMesh(const std::string &id) {

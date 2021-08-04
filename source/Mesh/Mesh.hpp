@@ -28,8 +28,13 @@ namespace lve {
             static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
         };
 
+        struct Data {
+            std::vector<Vertex> vertices;
+            std::vector<uint32_t> indices;
+        };
+
     public:
-        Mesh(std::shared_ptr<Device> device, const std::vector<Vertex>& vertices);
+        Mesh(std::shared_ptr<Device> device, const Data& data);
 
         ~Mesh() override;
 
@@ -42,10 +47,15 @@ namespace lve {
     private:
         void createVertexBuffer(const std::vector<Vertex>& vertices);
 
+        void createIndexBuffer(const std::vector<uint32_t>& indices);
+
     private:
         std::shared_ptr<Device> device;
         Buffer vertexBuffer;
+        Buffer indexBuffer;
         uint32_t vertexCount{};
+        uint32_t indexCount{};
+        bool hasIndexBuffer{false};
     };
 
 } // namespace lve

@@ -21,13 +21,15 @@ namespace lve {
         };
     }
 
-    Mesh::Mesh(std::shared_ptr<Device> device, const std::vector<Vertex> &vertices) : device(std::move(device)) {
-        createVertexBuffer(vertices);
+    Mesh::Mesh(std::shared_ptr<Device> device, const Data& data) : device(std::move(device)) {
+        createVertexBuffer(data.vertices);
+        createIndexBuffer(data.indices);
     }
 
     Mesh::~Mesh() = default;
 
     void Mesh::destroy() {
+        indexBuffer.destroy();
         vertexBuffer.destroy();
     }
 
@@ -35,10 +37,18 @@ namespace lve {
         VkBuffer buffers[] = { vertexBuffer.getBuffer() };
         VkDeviceSize offsets[] = { 0 };
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+
+        if (hasIndexBuffer) {
+            vkCmdBindIndexBuffer(commandBuffer, indexBuffer.getBuffer(), 0, VK_INDEX_TYPE_UINT32);
+        }
     }
 
     void Mesh::draw(VkCommandBuffer commandBuffer) const {
-        vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
+        if (hasIndexBuffer) {
+            vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
+        } else {
+            vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
+        }
     }
 
     void Mesh::createVertexBuffer(const std::vector<Vertex> &vertices) {
@@ -55,6 +65,28 @@ namespace lve {
         vertexBuffer.allocateMemory(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VMA_MEMORY_USAGE_GPU_ONLY);
 
         device->copyBuffer(stagingBuffer, vertexBuffer, size);
+
+        stagingBuffer.destroy();
+    }
+
+    void Mesh::createIndexBuffer(const std::vector<uint32_t>& indices) {
+        indexCount = CAST_U32(indices.size());
+        hasIndexBuffer = indexCount > 0;
+
+        if (!hasIndexBuffer) return;
+
+        VkDeviceSize size = sizeof(indices[0]) * indexCount;
+
+        Buffer stagingBuffer(device->getAllocator());
+        stagingBuffer.allocateMemory(size, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU);
+        stagingBuffer.map();
+        stagingBuffer.copyTo(indices.data());
+        stagingBuffer.unmap();
+
+        indexBuffer = Buffer(device->getAllocator());
+        indexBuffer.allocateMemory(size, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VMA_MEMORY_USAGE_GPU_ONLY);
+
+        device->copyBuffer(stagingBuffer, indexBuffer, size);
 
         stagingBuffer.destroy();
     }

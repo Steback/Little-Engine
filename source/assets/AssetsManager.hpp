@@ -23,7 +23,7 @@ namespace lve {
 
         void cleanup();
 
-        std::shared_ptr<Mesh> addMesh(const std::string& id, const std::vector<Mesh::Vertex>& vertices);
+        std::shared_ptr<Mesh> addMesh(const std::string& id, const Mesh::Data& data);
 
         std::shared_ptr<Mesh> getMesh(const std::string& id);
 

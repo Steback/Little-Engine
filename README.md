@@ -17,7 +17,7 @@ All the dependencies are installed with [Conan](https://conan.io/) package manag
 | [CLI11](https://github.com/CLIUtils/CLI11) | 1.9.1 |  
 | [Vulkan® Memory Allocator](https://gpuopen.com/vulkan-memory-allocator) | 2.3.0 |  
 | [Entt](https://github.com/skypjack/entt) | 3.8.0 |  
-| [TinyObjLoader](https://github.com/tinyobjloader/tinyobjloader) | 3.8.0 |  
+| [TinyObjLoader](https://github.com/tinyobjloader/tinyobjloader) | x.x.x |  
 
 ## Build
 ### Requirements
@@ -46,7 +46,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 16"
 cmake --build . --config Release 
 ```
 
-### Samples
+## Samples
 * [Camera Movement](samples/CameraMovement)
  
 Example about how to implement a simple camera movement system with the keyboard input.

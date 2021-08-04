@@ -9,7 +9,7 @@ All the dependencies are installed with [Conan](https://conan.io/) package manag
 
 | Name | Version |
 ---|---
-| [spdlog]() | 1.8.2 | 
+| [spdlog](https://github.com/gabime/spdlog) | 1.8.2 | 
 | [GLFW](https://www.glfw.org) | 3.3.2 |
 | [Vulkan Headers](https://github.com/KhronosGroup/Vulkan-Headers) | 1.2.182 |  
 | [Vulkan Loader](https://github.com/KhronosGroup/Vulkan-Loader) | 1.2.182 |  

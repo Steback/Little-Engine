@@ -25,6 +25,8 @@ namespace lve {
 
         std::shared_ptr<Mesh> addMesh(const std::string& id, const Mesh::Data& data);
 
+        std::shared_ptr<Mesh> addMesh(const std::string& fileName);
+
         std::shared_ptr<Mesh> getMesh(const std::string& id);
 
     private:

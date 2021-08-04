@@ -8,6 +8,7 @@
 #include "vk_mem_alloc.h"
 
 #include "math/Vector3.hpp"
+#include "math/Vector2.hpp"
 #include "utils/NonCopyable.hpp"
 #include "graphics/Buffer.hpp"
 
@@ -22,6 +23,10 @@ namespace lve {
         struct Vertex {
             vec3 position;
             vec3 color;
+            vec3 normal;
+            vec2 uv;
+
+            bool operator==(const Vertex &other) const;
 
             static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
 

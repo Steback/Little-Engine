@@ -65,7 +65,7 @@ namespace lve {
 
         [[nodiscard]] std::string str() const;
 
-        Vector3 cross(const Vector3& v) const;
+        [[nodiscard]] Vector3 cross(const Vector3& v) const;
 
     public:
         float x{}, y{}, z{};

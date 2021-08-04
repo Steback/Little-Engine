@@ -21,6 +21,7 @@ namespace lve {
         FilesManager::addPath("data");
         FilesManager::addPath("logs", true);
         FilesManager::addPath("bin/shaders");
+        FilesManager::addPath("assets");
 
         Logger::addFile("error.log");
 

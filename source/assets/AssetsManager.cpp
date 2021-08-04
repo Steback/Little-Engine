@@ -16,7 +16,7 @@ namespace lve {
     }
 
     std::shared_ptr<Mesh> AssetsManager::addMesh(const std::string& id, const std::vector<Mesh::Vertex>& vertices) {
-        return meshes[id] = std::make_shared<Mesh>(device->getAllocator(), vertices);
+        return meshes[id] = std::make_shared<Mesh>(device, vertices);
     }
 
     std::shared_ptr<Mesh> AssetsManager::getMesh(const std::string &id) {

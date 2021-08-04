@@ -1,5 +1,7 @@
 #include "Mesh.hpp"
 
+#include <utility>
+
 #include "graphics/Device.hpp"
 #include "utils/Macros.hpp"
 
@@ -19,7 +21,7 @@ namespace lve {
         };
     }
 
-    Mesh::Mesh(VmaAllocator allocator, const std::vector<Vertex> &vertices) : allocator(allocator) {
+    Mesh::Mesh(std::shared_ptr<Device> device, const std::vector<Vertex> &vertices) : device(std::move(device)) {
         createVertexBuffer(vertices);
     }
 
@@ -42,12 +44,19 @@ namespace lve {
     void Mesh::createVertexBuffer(const std::vector<Vertex> &vertices) {
         vertexCount = CAST_U32(vertices.size());
         VkDeviceSize size = sizeof(vertices[0]) * vertexCount;
-        vertexBuffer = Buffer(allocator);
-        vertexBuffer.allocateMemory(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU);
 
-        vertexBuffer.map();
-        vertexBuffer.copyTo(vertices.data());
-        vertexBuffer.unmap();
+        Buffer stagingBuffer(device->getAllocator());
+        stagingBuffer.allocateMemory(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU);
+        stagingBuffer.map();
+        stagingBuffer.copyTo(vertices.data());
+        stagingBuffer.unmap();
+
+        vertexBuffer = Buffer(device->getAllocator());
+        vertexBuffer.allocateMemory(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VMA_MEMORY_USAGE_GPU_ONLY);
+
+        device->copyBuffer(stagingBuffer, vertexBuffer, size);
+
+        stagingBuffer.destroy();
     }
 
 } // namespace lv

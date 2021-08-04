@@ -21,7 +21,7 @@ namespace lve {
 
         void destroy();
 
-        void allocateMemory(VkDeviceSize size_, VkBufferUsageFlagBits usageFlags, VmaMemoryUsage memoryUsage);
+        void allocateMemory(VkDeviceSize size_, VkBufferUsageFlags usageFlags, VmaMemoryUsage memoryUsage);
 
         void map();
 

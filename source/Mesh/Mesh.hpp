@@ -29,7 +29,7 @@ namespace lve {
         };
 
     public:
-        Mesh(VmaAllocator allocator, const std::vector<Vertex>& vertices);
+        Mesh(std::shared_ptr<Device> device, const std::vector<Vertex>& vertices);
 
         ~Mesh() override;
 
@@ -43,7 +43,7 @@ namespace lve {
         void createVertexBuffer(const std::vector<Vertex>& vertices);
 
     private:
-        VmaAllocator allocator;
+        std::shared_ptr<Device> device;
         Buffer vertexBuffer;
         uint32_t vertexCount{};
     };

@@ -15,7 +15,7 @@ namespace lve {
         vmaDestroyBuffer(allocator, buffer, allocation);
     }
 
-    void Buffer::allocateMemory(VkDeviceSize size_, VkBufferUsageFlagBits usageFlags, VmaMemoryUsage memoryUsage) {
+    void Buffer::allocateMemory(VkDeviceSize size_, VkBufferUsageFlags usageFlags, VmaMemoryUsage memoryUsage) {
         size = size_;
         VkBufferCreateInfo bufferCreateInfo{VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
         bufferCreateInfo.usage = usageFlags;

@@ -15,6 +15,7 @@ namespace lve {
 
     class Instance;
     class Window;
+    class Buffer;
 
     class Device : NonCopyable {
     public:
@@ -61,6 +62,12 @@ namespace lve {
 
         [[nodiscard]] const VkSurfaceKHR& getSurface() const;
 
+        VkCommandBuffer beginSingleTimeCommands();
+
+        void endSingleTimeCommands(const VkCommandBuffer& commandBuffer);
+
+        void copyBuffer(Buffer& src, Buffer& dst, VkDeviceSize size);
+
     private:
         void createLogicalDevice(const std::vector<const char*>& layers, const std::vector<const char*>& extensions, VkPhysicalDeviceFeatures features,
                                  VkQueueFlags queueFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT);
@@ -73,6 +80,8 @@ namespace lve {
         QueueFamilyIndices queueFamilyIndices{};
         VmaAllocator allocator{};
         VkSurfaceKHR surface{};
+        VkQueue transferQueue{};
+        VkCommandPool transferCmdPool{};
     };
 
 } // namespace lve

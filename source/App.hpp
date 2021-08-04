@@ -19,13 +19,13 @@ namespace lve {
 
     class App : NonCopyable {
     public:
-        App();
+        explicit App(const std::string& appName);
 
         ~App() override;
 
-        void start();
-
         void loop();
+
+        virtual void start() = 0;
 
         virtual void update(float deltaTime) = 0;
 

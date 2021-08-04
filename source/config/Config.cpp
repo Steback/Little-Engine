@@ -19,14 +19,12 @@ namespace lve {
         json data;
         file.read(data);
 
-        appName = data["appName"].get<std::string>();
         width = data["width"].get<int>();
         height = data["height"].get<int>();
     }
 
     void Config::save() {
         json data = {
-                {"appName", appName},
                 {"width", width},
                 {"height", height}
         };

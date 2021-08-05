@@ -22,7 +22,7 @@ namespace lve {
 
     private:
         KeyboardMovementController cameraController;
-        id_t cameraID;
+        id_t cameraID{};
     };
 
 } // namespace lve

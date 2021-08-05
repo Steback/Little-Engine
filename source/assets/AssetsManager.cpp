@@ -39,11 +39,7 @@ namespace lve {
         for (auto& [id, mesh] : meshes) mesh->destroy();
     }
 
-    std::shared_ptr<Mesh> AssetsManager::addMesh(const std::string& id, const Mesh::Data& data) {
-        return meshes[id] = std::make_shared<Mesh>(device, data);
-    }
-
-    std::shared_ptr<Mesh> AssetsManager::addMesh(const std::string &fileName) {
+    std::pair<std::string, std::shared_ptr<Mesh>> AssetsManager::addMesh(const std::string &fileName) {
         File file = FilesManager::getFile(fileName);
         std::string id = file.getName();
         Mesh::Data data;
@@ -104,7 +100,7 @@ namespace lve {
             }
         }
 
-        return meshes[id] = std::make_unique<Mesh>(device, data);
+        return {id, meshes[id] = std::make_unique<Mesh>(device, data)};
     }
 
     std::shared_ptr<Mesh> AssetsManager::getMesh(const std::string &id) {

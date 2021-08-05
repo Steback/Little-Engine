@@ -10,17 +10,18 @@
 namespace lve {
 
     CameraMovement::CameraMovement() : App("Camera Movement") {
-        cameraID = scene->searchEntity("camera")->getId();
+
     }
 
     CameraMovement::~CameraMovement() = default;
 
     void CameraMovement::start() {
-        Entity* entity = scene->addEntity("cube");
-        entity->addComponent<Transform>(vec3(0.0f, 0.0f, 2.5f), vec3(), vec3(0.5f, 0.5f, 0.5f));
-        entity->addComponent<MeshInterface>(assetsManager->addMesh("models/colored_cube.obj"));
+        scene->load("CameraMovement/scene.json");
+        cameraID = scene->searchEntity("camera")->getId();
 
         renderer->setupDrawResources();
+
+        scene->save();
     }
 
     void CameraMovement::update(float deltaTime) {

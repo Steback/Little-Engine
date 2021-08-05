@@ -30,9 +30,7 @@ namespace lve {
         window = std::make_shared<Window>(config.getAppName(), config.getWidth(), config.getHeight(), input);
         renderer = std::make_unique<Renderer>(window, config);
         assetsManager = std::make_unique<AssetsManager>(renderer->getDevice());
-        scene = std::make_unique<Scene>();
-        Entity* cameraEntity = scene->addEntity("camera");
-        cameraEntity->addComponent<Transform>();
+        scene = std::make_unique<Scene>(*assetsManager);
     }
 
     App::~App() = default;

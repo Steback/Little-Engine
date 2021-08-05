@@ -3,6 +3,7 @@
 
 
 #include <memory>
+#include <string>
 
 #include "vulkan/vulkan.h"
 
@@ -15,7 +16,7 @@ namespace lve {
     public:
         MeshInterface();
 
-        explicit MeshInterface(std::shared_ptr<Mesh> mesh);
+        MeshInterface(std::string  id, std::shared_ptr<Mesh> mesh);
 
         std::shared_ptr<Mesh> getMesh();
 
@@ -25,10 +26,13 @@ namespace lve {
 
         void draw(VkCommandBuffer commandBuffer);
 
+        [[nodiscard]] const std::string &getId() const;
+
     public:
         const static uint32_t type = 0x02;
 
     private:
+        std::string id;
         std::shared_ptr<Mesh> mesh{};
     };
 

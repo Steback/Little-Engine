@@ -9,11 +9,13 @@
 #include "entt/entt.hpp"
 
 #include "utils/NonCopyable.hpp"
+#include "files/File.hpp"
 
 
 namespace lve {
 
     class Entity;
+    class AssetsManager;
 
     using id_t = entt::entity;
 
@@ -21,7 +23,7 @@ namespace lve {
         friend class Entity;
 
     public:
-        Scene();
+        explicit Scene(AssetsManager& assetsManager);
 
         ~Scene() override;
 
@@ -33,9 +35,15 @@ namespace lve {
 
         Entity* searchEntity(const std::string& name);
 
+        void load(const std::string& fileNme);
+
+        void save();
+
     private:
         entt::registry registry;
         std::unordered_map<id_t, std::unique_ptr<Entity>> entities;
+        File file;
+        AssetsManager& assetsManager;
     };
 
 } // namespace lve

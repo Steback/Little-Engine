@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Pipeline.hpp"
+#include "Shader.hpp"
 
 
 namespace lve {
@@ -31,14 +32,11 @@ namespace lve {
         static void defaultConfigInfo(ConfigInfo& configInfo, VkRenderPass renderPass);
 
     private:
-        void createShaderModule(const std::vector<char>& code, VkShaderModule& module);
-
-    private:
+        Shader vertexShader;
+        Shader fragmentShader;
         VkDevice device{};
         VkPipeline pipeline{};
         VkPipelineLayout layout{};
-        VkShaderModule vertShaderModule{};
-        VkShaderModule fragShaderModule{};
     };
 
 } // namespace lve

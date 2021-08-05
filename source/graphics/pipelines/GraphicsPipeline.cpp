@@ -19,27 +19,13 @@ namespace lve  {
                                        const std::vector<VkPushConstantRange>& constantRanges) : device(device) {
         assert(configInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no renderPass provided in configInfo");
 
-        auto vertCode = FilesManager::getFile(vertName).read();
-        createShaderModule(vertCode, vertShaderModule);
+        vertexShader = Shader(device, vertName, VK_SHADER_STAGE_VERTEX_BIT);
+        fragmentShader = Shader(device, fragName, VK_SHADER_STAGE_FRAGMENT_BIT);
 
-        auto fragCode = FilesManager::getFile(fragName).read();
-        createShaderModule(fragCode, fragShaderModule);
-
-        VkPipelineShaderStageCreateInfo shaderStages[2]{};
-        shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-        shaderStages[0].module = vertShaderModule;
-        shaderStages[0].pName = "main";
-        shaderStages[0].flags = 0;
-        shaderStages[0].pNext = nullptr;
-        shaderStages[0].pSpecializationInfo = nullptr;
-        shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-        shaderStages[1].module = fragShaderModule;
-        shaderStages[1].pName = "main";
-        shaderStages[1].flags = 0;
-        shaderStages[1].pNext = nullptr;
-        shaderStages[1].pSpecializationInfo = nullptr;
+        VkPipelineShaderStageCreateInfo shaderStages[2] = {
+                vertexShader.getPipelineStageCreateInfo(),
+                fragmentShader.getPipelineStageCreateInfo()
+        };
 
         auto bindingDescriptions = Mesh::Vertex::getBindingDescriptions();
         auto attributeDescriptions = Mesh::Vertex::getAttributeDescriptions();
@@ -82,8 +68,8 @@ namespace lve  {
     void GraphicsPipeline::destroy() {
         vkDestroyPipelineLayout(device, layout, nullptr);
         vkDestroyPipeline(device, pipeline, nullptr);
-        vkDestroyShaderModule(device, vertShaderModule, nullptr);
-        vkDestroyShaderModule(device, fragShaderModule, nullptr);
+        vertexShader.destroy();
+        fragmentShader.destroy();
     }
 
     void GraphicsPipeline::bind(VkCommandBuffer const &commandBuffer) const {
@@ -167,15 +153,6 @@ namespace lve  {
         configInfo.dynamicStateInfo.flags = 0;
 
         configInfo.renderPass = renderPass;
-    }
-
-    void GraphicsPipeline::createShaderModule(const std::vector<char> &code, VkShaderModule &module) {
-        VkShaderModuleCreateInfo createInfo{VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO};
-        createInfo.codeSize = code.size();
-        createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
-
-        LVE_VK_CHECK_RESULT(vkCreateShaderModule(device, &createInfo, nullptr, &module),
-                            "Failed to create shader module");
     }
 
 } // namespace lv

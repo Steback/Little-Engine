@@ -1,6 +1,26 @@
 {
     "entities": [
         {
+            "name": "camera",
+            "transform": {
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "translation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
             "meshInterface": {
                 "name": "colored_cube.obj"
             },
@@ -20,26 +40,6 @@
                     "x": 0.0,
                     "y": 0.0,
                     "z": 2.5
-                }
-            }
-        },
-        {
-            "name": "camera",
-            "transform": {
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "scale": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
-                },
-                "translation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
                 }
             }
         }

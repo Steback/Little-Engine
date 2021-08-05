@@ -20,8 +20,6 @@ namespace lve {
         cameraID = scene->searchEntity("camera")->getId();
 
         renderer->setupDrawResources();
-
-        scene->save();
     }
 
     void CameraMovement::update(float deltaTime) {

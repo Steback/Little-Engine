@@ -9,6 +9,7 @@
 #include "Camera.hpp"
 #include "math/Common.hpp"
 #include "math/Matrix4.hpp"
+#include "math/Matrix3.hpp"
 #include "math/Vector3.hpp"
 #include "entity/components/Transform.hpp"
 #include "entity/components/MeshInterface.hpp"
@@ -18,7 +19,7 @@ namespace lve {
 
     struct SimplePushConstantData {
         mat4 transform{1.f};
-        alignas(16) vec3 color{};
+        mat4 normalMatrix{1.f};
     };
 
     RenderSystem::RenderSystem(std::shared_ptr<Device> device, VkRenderPass renderPass)
@@ -53,8 +54,9 @@ namespace lve {
             auto viewProjection = camera.getProjection() * camera.getView();
 
             SimplePushConstantData push{};
-            push.color = {0.2f, 0.0f, 0.02f};
-            push.transform = viewProjection * transform.worldTransform();
+            auto modelMatrix = transform.worldTransform();
+            push.transform = viewProjection * modelMatrix;
+            push.normalMatrix = mat4(transform.normalMatrix());
 
             vkCmdPushConstants(
                     commandBuffer,

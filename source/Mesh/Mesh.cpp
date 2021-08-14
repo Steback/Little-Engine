@@ -18,6 +18,8 @@ namespace lve {
         return {
             { 0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position) },
             { 1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color) },
+            { 2, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, normal) },
+            { 3, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, uv) },
         };
     }
 

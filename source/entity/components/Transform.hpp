@@ -32,6 +32,8 @@ namespace lve {
 
         [[nodiscard]] Matrix4 worldTransform() const;
 
+        Matrix3 normalMatrix() const;
+
     public:
         const static uint32_t type = 0x01;
 

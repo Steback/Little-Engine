@@ -38,6 +38,13 @@ namespace lve {
         rows[3] = {m[12], m[13], m[14], m[15]};
     }
 
+    Matrix4::Matrix4(const Matrix3 &m) {
+        rows[0] = {m[0].x, m[0].y, m[0].z, 0.0f};
+        rows[1] = {m[1].x, m[1].y, m[1].z, 0.0f};
+        rows[2] = {m[2].x, m[2].y, m[2].z, 0.0f};
+        rows[3] = {0.0f, 0.0f, 0.0f, 1.0f};
+    }
+
     Matrix4::Matrix4(const Matrix4 &m) {
         rows[0] = m[0];
         rows[1] = m[1];

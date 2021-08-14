@@ -22,9 +22,9 @@
         },
         {
             "meshInterface": {
-                "name": "colored_cube.obj"
+                "name": "flat_vase.obj"
             },
-            "name": "cube",
+            "name": "flat_vase",
             "transform": {
                 "rotation": {
                     "x": 0.0,
@@ -32,13 +32,36 @@
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 0.5,
-                    "y": 0.5,
-                    "z": 0.5
+                    "x": 3.0,
+                    "y": 1.5,
+                    "z": 3.0
                 },
                 "translation": {
+                    "x": -0.5,
+                    "y": 0.5,
+                    "z": 2.5
+                }
+            }
+        },
+        {
+            "meshInterface": {
+                "name": "smooth_vase.obj"
+            },
+            "name": "smooth_vase",
+            "transform": {
+                "rotation": {
                     "x": 0.0,
                     "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 3.0,
+                    "y": 1.5,
+                    "z": 3.0
+                },
+                "translation": {
+                    "x": 0.5,
+                    "y": 0.5,
                     "z": 2.5
                 }
             }

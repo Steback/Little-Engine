@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include "math/Matrix3.hpp"
+
 
 namespace lve {
 
@@ -63,6 +65,32 @@ namespace lve {
                 0.0f,
             }, {
                 translation.x, translation.y, translation.z, 1.0f
+            }
+        };
+    }
+
+    Matrix3 Transform::normalMatrix() const {
+        const float c3 = std::cos(rotation.z);
+        const float s3 = std::sin(rotation.z);
+        const float c2 = std::cos(rotation.x);
+        const float s2 = std::sin(rotation.x);
+        const float c1 = std::cos(rotation.y);
+        const float s1 = std::sin(rotation.y);
+        const vec3 invScale = 1.0f / scale;
+
+        return mat3{
+            {
+                scale.x * (c1 * c3 + s1 * s2 * s3),
+                scale.x * (c2 * s3),
+                scale.x * (c1 * s2 * s3 - c3 * s1),
+            },{
+                scale.y * (c3 * s1 * s2 - c1 * s3),
+                scale.y * (c2 * c3),
+                scale.y * (c1 * c3 * s2 + s1 * s3),
+            },{
+                scale.z * (c2 * s1),
+                scale.z * (-s2),
+                scale.z * (c1 * c2),
             }
         };
     }

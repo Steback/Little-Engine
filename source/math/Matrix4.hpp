@@ -23,6 +23,8 @@ namespace lve {
 
         explicit Matrix4(const float m[16]);
 
+        explicit Matrix4(const Matrix3& m);
+
         Matrix4(const Matrix4& m);
 
         Matrix4& operator=(const Matrix4& m);

@@ -16,6 +16,7 @@ namespace lve {
     class Renderer;
     class Scene;
     class AssetsManager;
+    class RenderSystem;
 
     class App : NonCopyable {
     public:
@@ -27,7 +28,11 @@ namespace lve {
 
         virtual void start() = 0;
 
-        virtual void update(float deltaTime) = 0;
+        virtual void onUpdate(float deltaTime) = 0;
+
+        virtual void update(std::chrono::time_point<std::chrono::system_clock> currentTime);
+
+        virtual void render();
 
         void shutdown();
 
@@ -41,6 +46,7 @@ namespace lve {
         std::unique_ptr<Renderer> renderer;
         std::unique_ptr<Scene> scene;
         std::unique_ptr<AssetsManager> assetsManager;
+        std::unique_ptr<RenderSystem> renderSystem;
     };
 
 } // namespace lve

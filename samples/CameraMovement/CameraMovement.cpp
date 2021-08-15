@@ -5,6 +5,7 @@
 #include "entity/components/MeshInterface.hpp"
 #include "assets/AssetsManager.hpp"
 #include "graphics/Renderer.hpp"
+#include "graphics/RenderSystem.hpp"
 
 
 namespace lve {
@@ -20,9 +21,11 @@ namespace lve {
         cameraID = scene->searchEntity("camera")->getId();
 
         renderer->setupDrawResources();
+
+        renderSystem = std::make_unique<RenderSystem>(renderer->getDevice(), renderer->getRenderPass());
     }
 
-    void CameraMovement::update(float deltaTime) {
+    void CameraMovement::onUpdate(float deltaTime) {
         auto& transform = scene->getEntity(cameraID)->getComponent<Transform>();
 
         cameraController.moveInPlaneZX(input, deltaTime, transform);

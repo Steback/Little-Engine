@@ -18,7 +18,7 @@ namespace lve {
 
         void start() override;
 
-        void update(float deltaTime) override;
+        void onUpdate(float deltaTime) override;
 
     private:
         KeyboardMovementController cameraController;

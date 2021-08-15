@@ -36,36 +36,41 @@ namespace lve {
     App::~App() = default;
 
     void App::loop() {
-        RenderSystem renderSystem(renderer->getDevice(), renderer->getRenderPass());
         auto currentTime = std::chrono::high_resolution_clock::now();
 
         while (window->isOpen()) {
             glfwPollEvents();
-
-            auto newTime = std::chrono::high_resolution_clock::now();
-            float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
-            currentTime = newTime;
-
-            float aspect = renderer->getAspectRatio();
-            camera.setPerspectiveProjection(radians(50.f), aspect, 0.1f, 10.f);
-
-            update(frameTime);
-
-            if (auto commandBuffer = renderer->beginFrame()) {
-                renderer->beginSwapChainRenderPass(commandBuffer);
-
-                renderSystem.renderEntities(commandBuffer, scene->getRegistry(), camera);
-
-                renderer->endSwapChainRenderPass(commandBuffer);
-                renderer->endFrame();
-            }
+            update(currentTime);
+            render();
         }
+    }
 
-        renderer->waitDeviceIde();
-        renderSystem.destroy();
+    void App::update(std::chrono::time_point<std::chrono::system_clock> currentTime) {
+        auto newTime = std::chrono::high_resolution_clock::now();
+        float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
+        currentTime = newTime;
+
+        float aspect = renderer->getAspectRatio();
+        camera.setPerspectiveProjection(radians(50.f), aspect, 0.1f, 10.f);
+
+        onUpdate(frameTime);
+    }
+
+    void App::render() {
+        if (auto commandBuffer = renderer->beginFrame()) {
+            renderer->beginSwapChainRenderPass(commandBuffer);
+
+            renderSystem->renderEntities(commandBuffer, scene->getRegistry(), camera);
+
+            renderer->endSwapChainRenderPass(commandBuffer);
+            renderer->endFrame();
+        }
     }
 
     void App::shutdown() {
+        renderer->waitDeviceIde();
+
+        renderSystem->destroy();
         assetsManager->cleanup();
         renderer->cleanup();
         window->destroy();
@@ -76,5 +81,7 @@ namespace lve {
         loop();
         shutdown();
     }
+
+
 
 } // namespace lv

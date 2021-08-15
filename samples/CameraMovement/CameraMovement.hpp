@@ -20,6 +20,8 @@ namespace lve {
 
         void onUpdate(float deltaTime) override;
 
+        void onDrawEntity(VkPipelineLayout layout, VkCommandBuffer commandBuffer, id_t entityID) override;
+
     private:
         KeyboardMovementController cameraController;
         id_t cameraID{};

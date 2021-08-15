@@ -3,6 +3,7 @@
 
 
 #include <memory>
+#include <functional>
 
 #include "vulkan/vulkan.h"
 
@@ -18,13 +19,15 @@ namespace lve {
 
     class RenderSystem : NonCopyable {
     public:
-        RenderSystem(std::shared_ptr<Device> device, VkRenderPass renderPass);
+        RenderSystem(std::shared_ptr<Device> device, VkRenderPass renderPass, const std::string& shadersName,
+                     const std::vector<VkPushConstantRange>& pushConstantsRanges);
 
         ~RenderSystem() override;
 
         void destroy();
 
-        void renderEntities(VkCommandBuffer commandBuffer, entt::registry& registry, const Camera& camera);
+        void renderEntities(VkCommandBuffer commandBuffer, const Camera& camera, entt::registry & registry,
+                            const std::function<void(VkPipelineLayout, VkCommandBuffer, id_t)>& drawFunction);
 
     private:
         std::shared_ptr<Device> device;

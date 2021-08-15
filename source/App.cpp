@@ -60,7 +60,10 @@ namespace lve {
         if (auto commandBuffer = renderer->beginFrame()) {
             renderer->beginSwapChainRenderPass(commandBuffer);
 
-            renderSystem->renderEntities(commandBuffer, scene->getRegistry(), camera);
+            // TODO: So awful, find a better way to add dynamic draw
+            renderSystem->renderEntities(commandBuffer, camera, scene->getRegistry(), [&](VkPipelineLayout layout, VkCommandBuffer commandBuffer, id_t entityID){
+                onDrawEntity(layout, commandBuffer, entityID);
+            });
 
             renderer->endSwapChainRenderPass(commandBuffer);
             renderer->endFrame();

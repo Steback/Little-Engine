@@ -8,13 +8,13 @@
 #include "config/Config.hpp"
 #include "graphics/Camera.hpp"
 #include "input/InputSystem.hpp"
+#include "scene/Scene.hpp"
+#include "graphics/Renderer.hpp"
 
 
 namespace lve {
 
     class Window;
-    class Renderer;
-    class Scene;
     class AssetsManager;
     class RenderSystem;
 
@@ -28,11 +28,13 @@ namespace lve {
 
         virtual void start() = 0;
 
-        virtual void onUpdate(float deltaTime) = 0;
-
         virtual void update(std::chrono::time_point<std::chrono::system_clock> currentTime);
 
         virtual void render();
+
+        virtual void onUpdate(float deltaTime) = 0;
+
+        virtual void onDrawEntity(VkPipelineLayout layout, VkCommandBuffer commandBuffer, id_t entityID) = 0;
 
         void shutdown();
 

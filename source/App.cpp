@@ -45,7 +45,7 @@ namespace lve {
         }
     }
 
-    void App::update(std::chrono::time_point<std::chrono::system_clock> currentTime) {
+    void App::update(std::chrono::time_point<std::chrono::system_clock>& currentTime) {
         auto newTime = std::chrono::high_resolution_clock::now();
         float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
         currentTime = newTime;

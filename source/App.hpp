@@ -28,7 +28,7 @@ namespace lve {
 
         virtual void start() = 0;
 
-        virtual void update(std::chrono::time_point<std::chrono::system_clock> currentTime);
+        virtual void update(std::chrono::time_point<std::chrono::system_clock>& currentTime);
 
         virtual void render();
 

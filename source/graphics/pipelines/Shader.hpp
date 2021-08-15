@@ -3,9 +3,9 @@
 
 
 #include <string>
+#include <vector>
 
 #include "vulkan/vulkan.h"
-#include "spirv_cross.hpp"
 
 
 namespace lve {

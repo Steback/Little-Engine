@@ -10,6 +10,7 @@ cmake-build-release/
 
 ### Binaries
 bin/Engine
+bin/DiffuseShading
 bin/CameraMovement
 bin/Release/
 
